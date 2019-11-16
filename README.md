@@ -15,7 +15,7 @@ sudo apt-get install docker-compose
 
 Then you will need to build the docker container:
 ```
-cd winter19.team12
+cd winter19.team12/fitbit_monitor/
 docker-compose build
 ```
 If the error `ERROR: Couldn't connect to Docker daemon at http+docker://localunixsocket - is it running?` appears, try running `dockerd` command and retry building.  
