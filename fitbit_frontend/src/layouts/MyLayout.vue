@@ -1,84 +1,84 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="hHh lpR lfr">
+    <q-header reveal elevated class='bg-indigo'>
       <q-toolbar>
         <q-btn
           flat
           dense
           round
-          @click="leftDrawerOpen = !leftDrawerOpen"
+          @click="$refs.sidebar.toggle()"
           icon="menu"
           aria-label="Menu"
         />
 
         <q-toolbar-title>
-          Quasar App
+          Fitbit Monitoring System
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <user-info />
       </q-toolbar>
     </q-header>
 
     <q-drawer
-      v-model="leftDrawerOpen"
+      v-model="leftSidebar"
+      ref='sidebar'
       show-if-above
       bordered
-      content-class="bg-grey-2"
+      content-class="bg-grey-11"
     >
-      <q-list>
-        <q-item-label header>Essential Links</q-item-label>
-        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
+      <q-list padding>
+        <!--<q-item-label header>Essential Links</q-item-label>-->
+        <q-item :to='{name: "dashboard"}' clickable tag="a" exact>
           <q-item-section avatar>
-            <q-icon name="school" />
+            <q-icon name="home" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Docs</q-item-label>
-            <q-item-label caption>quasar.dev</q-item-label>
+            <q-item-label>Dashboard</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://github.quasar.dev">
+        <q-item :to='{name: "login"}' clickable tag="a">
+          <q-item-section avatar>
+            <q-icon name="person" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Login</q-item-label>
+            <q-item-label caption>Login to your account</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item :to='{name: "register"}' clickable tag="a">
+          <q-item-section avatar>
+            <q-icon name="person_add" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Register</q-item-label>
+            <q-item-label caption>Create a user account</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item :to='{name: "help"}' clickable tag="a">
+          <q-item-section avatar>
+            <q-icon name="help" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Help</q-item-label>
+            <q-item-label caption>Find help on how to get started!</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable tag="a" target="_blank" href="https://github.com/CS-UCY-EPL343/winter19.team12">
           <q-item-section avatar>
             <q-icon name="code" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Github</q-item-label>
-            <q-item-label caption>github.com/quasarframework</q-item-label>
+            <q-item-label caption>EPL343 - winter19.team12</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://chat.quasar.dev">
+        <q-item clickable tag="a" target="_blank" href="https://quasar.dev">
           <q-item-section avatar>
-            <q-icon name="chat" />
+            <q-icon name="school" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Discord Chat Channel</q-item-label>
-            <q-item-label caption>chat.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://forum.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="record_voice_over" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Forum</q-item-label>
-            <q-item-label caption>forum.quasar.dev</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://twitter.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="rss_feed" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Twitter</q-item-label>
-            <q-item-label caption>@quasarframework</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable tag="a" target="_blank" href="https://facebook.quasar.dev">
-          <q-item-section avatar>
-            <q-icon name="public" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Facebook</q-item-label>
-            <q-item-label caption>@QuasarFramework</q-item-label>
+            <q-item-label>Quasar Docs</q-item-label>
+            <q-item-label caption>quasar.dev</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -91,12 +91,17 @@
 </template>
 
 <script>
+import UserInfo from 'src/components/UserInfo'
+
 export default {
   name: 'MyLayout',
 
+  components: {
+    'user-info': UserInfo
+  },
   data () {
     return {
-      leftDrawerOpen: false
+      leftSidebar: false
     }
   }
 }
