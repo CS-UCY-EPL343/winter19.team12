@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
 
 # Create your views here.
 def index(request):
@@ -24,5 +25,6 @@ def register(request):
 	return render(request, 'registration/register.html', context)
 
 def insert_metrics(request):
-    import pdb;pdb.set_trace()
-    pass
+	print(request.GET)
+	print(request.POST)
+	return JsonResponse({'rate':request.GET.get('rate'))
