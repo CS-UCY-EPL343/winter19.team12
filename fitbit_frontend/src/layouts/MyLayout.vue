@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR lfr">
+  <q-layout view="hHh lpR lfr" class='bg-blue-grey-1'>
     <q-header reveal elevated class='bg-indigo'>
       <q-toolbar>
         <q-btn
@@ -24,7 +24,6 @@
       ref='sidebar'
       show-if-above
       bordered
-      content-class="bg-grey-11"
     >
       <q-list padding>
         <!--<q-item-label header>Essential Links</q-item-label>-->
