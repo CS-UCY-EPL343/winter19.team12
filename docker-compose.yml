@@ -5,11 +5,15 @@ services:
     image: postgres
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: apache2ctl -D FOREGROUND
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      #- "9000:80"
+      - "80:80"
+      - "6899-6950:6899-6950"
+    stdin_open: true
+    tty: true
     depends_on:
       - db
 

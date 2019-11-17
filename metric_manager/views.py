@@ -22,3 +22,7 @@ def register(request):
 	
 	context = {'form' : form}
 	return render(request, 'registration/register.html', context)
+
+def insert_metrics(request):
+    import pdb;pdb.set_trace()
+    pass
