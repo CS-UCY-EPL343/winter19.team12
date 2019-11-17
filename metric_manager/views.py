@@ -27,4 +27,4 @@ def register(request):
 def insert_metrics(request):
 	print(request.GET)
 	print(request.POST)
-	return JsonResponse({'rate':request.GET.get('rate'))
+	return JsonResponse({'rate':request.GET.get('rate')})
