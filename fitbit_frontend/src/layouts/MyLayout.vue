@@ -53,6 +53,15 @@
             <q-item-label caption>Create a user account</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item :to='{name: "edit"}' clickable tag="a">
+          <q-item-section avatar>
+            <q-icon name="edit_profile" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>EditProfile</q-item-label>
+            <q-item-label caption>Edit a user profile account</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item :to='{name: "help"}' clickable tag="a">
           <q-item-section avatar>
             <q-icon name="help" />
