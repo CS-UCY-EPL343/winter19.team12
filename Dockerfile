@@ -2,7 +2,7 @@ FROM python:3.7
 ENV PYTHONUNBUFFERED 1
 RUN apt-get update
 RUN apt-get install -y apt-utils vim curl apache2 apache2-utils
-RUN apt-get install certbot python-certbot-apache
+RUN apt-get -y install certbot python-certbot-apache
 RUN apt-get -y install python3 libapache2-mod-wsgi-py3
 RUN apt-get -y install python3-pip
 RUN ln /usr/bin/pip3 /usr/bin/pip
