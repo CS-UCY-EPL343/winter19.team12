@@ -8,6 +8,7 @@
       <q-card-section class='q-col-gutter-xl q-py-lg'>
       <q-input :label="$t('username')"
                  :hint="$t('username_hint')"
+                 :rules='usernameRules'
                  type='text'
                  v-model='username'
                  ref='username'
@@ -19,8 +20,37 @@
             <q-icon name='face' />
           </template>
         </q-input>
+        <q-input :label="$t('Name')"
+                 :hint="$t('name_hint')"
+                 :rules='nameRules'
+                 type='text'
+                 v-model='name'
+                 ref='name'
+                 autofocus
+                 spellcheck='false'
+                 outlined bottom-slots
+        >
+          <template v-slot:prepend>
+            <q-icon name='perm_identity' />
+          </template>
+        </q-input>
+        <q-input :label="$t('Surname')"
+                 :hint="$t('surname_hint')"
+                 :rules='nameRules'
+                 type='text'
+                 v-model='surname'
+                 ref='surname'
+                 autofocus
+                 spellcheck='false'
+                 outlined bottom-slots
+        >
+          <template v-slot:prepend>
+            <q-icon name='perm_identity' />
+          </template>
+        </q-input>
         <q-input :label="$t('Email')"
-                 :hint="$t('Enter your email.')"
+                 :hint="$t('email_hint')"
+                 :rules='emailRules'
                  type='text'
                  v-model='email'
                  ref='email'
@@ -34,6 +64,7 @@
         </q-input>
         <q-input :label="$t('password')"
                  :hint="$t('password_hint')"
+                 :rules='passwordRules'
                  type='password'
                  v-model='password'
                  ref='password'
@@ -46,6 +77,7 @@
         </q-input>
         <q-input :label="$t('retype_password')"
                  :hint="$t('retype_password_hint')"
+                 :rules='passwordRules'
                  type='password'
                  v-model='retype_password'
                  ref='retype_password'
@@ -97,6 +129,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'Register',
   data () {
@@ -111,7 +144,7 @@ export default {
   },
   methods: {
     submit () {
-      if (this.username === '' || this.password === '' || this.email === '' || this.retype_password === '') {
+      if (this.username === '' || this.name === '' || this.surname === '' || this.password === '' || this.email === '' || this.retype_password === '') {
         this.$q.notify('Please fill in all the fields in the form.')
       } else if (this.password !== this.retype_password) {
         this.$q.notify('Passwords not match.')
@@ -119,8 +152,14 @@ export default {
         this.$q.notify('Please enter Fitbit Device Serial Number.')
       } else {
         this.$q.notify(`${this.username} submitted the form.`)
-      }
-      console.log(this.$route)
+        axios.post('http://104.214.238.252/register', {
+          username: this.username,
+          passwrod1: this.password
+        }).then((response) => {})
+          .catch((e) => {
+            console.error(e)
+          })        
+      }      
     }
   }
 }
