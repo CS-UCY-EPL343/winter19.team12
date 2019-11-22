@@ -12,6 +12,7 @@ services:
       - "443:443"
       - "80:80"
       - "6899-6950:6899-6950"
+      - "8080:8080"
     stdin_open: true
     tty: true
     depends_on:

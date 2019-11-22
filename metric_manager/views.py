@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 import sys
 from .models import *
+from .forms import *
 
 # Create your views here.
 def index(request):
@@ -11,7 +12,7 @@ def index(request):
 
 def register(request):
 	if request.method == 'POST':
-		form = UserCreationForm(request.POST)
+		form = MyRegistrationForm(request.POST)
 
 		if form.is_valid():
 			form.save()
@@ -21,7 +22,7 @@ def register(request):
 			login(request, user)
 			return redirect('index')
 	else:
-		form = UserCreationForm()
+		form = MyRegistrationForm()
 
 	context = {'form' : form}
 	return render(request, 'registration/register.html', context)
