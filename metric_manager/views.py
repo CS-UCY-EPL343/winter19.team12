@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login , logout
 from django.http import JsonResponse
 import sys
 from .models import *
 from .forms import *
-
+import json
 # Create your views here.
 def index(request):
 	return render(request, 'static/index.html')
@@ -26,6 +26,46 @@ def register(request):
 
 	context = {'form' : form}
 	return render(request, 'registration/register.html', context)
+
+
+
+def register_api(request):
+	body = str(request.body.decode('utf-8').replace("\'", "\""))
+	body = json.loads(body)
+	username = body.get('username')
+	password = body.get('password')
+	password_r = body.get('repeat_password')
+	if not username:
+		return JsonResponse({'required':'username'})
+	if not password:
+		return JsonResponse({'required':'password'})
+	if not password_r:
+		return JsonResponse({'required':'repeat_password'})
+	if password!=password_r:
+		return JsonResponse({'error':'password not equal repeat password'})
+	if len(FitbitUser.objects.filter(username=username))>0:
+		return JsonResponse({'error':'username already exists'})
+	user = FitbitUser.objects.create_user(username,'testmail@test.com',password)
+	login(request,user)
+	return JsonResponse({'status':1})
+
+def login_api(request):
+	if request.method == "POST":
+		body = str(request.body.decode('utf-8').replace("\'", "\""))
+		body = json.loads(body)
+		username = body.get('username')
+		password = body.get('password')
+		if username is None or password is None:
+			return JsonResponse({'required_fields':'username , password'})
+		sys.stderr.write(username+" "+password)
+		user = authenticate(username=username, password=password)
+		if user:
+			return JsonResponse({'status':1})
+	return JsonResponse({'status':0})
+
+def logout_api(request):
+	logout(request)
+	return JsonResponse({'status':1})
 
 def get_latest_value(request):
 	sys.stderr.write(str(request.GET.get('type')))
