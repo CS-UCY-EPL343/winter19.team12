@@ -5,7 +5,7 @@
         <div class='text-h6'>{{$t('Register')}}</div>
       </q-card-section>
       <q-separator />
-      <q-card-section class='q-col-gutter-xl q-py-lg'>
+      <q-card-section class='q-col-gutter-sm q-py-lg'>
       <q-input :label="$t('username')"
                  :hint="$t('username_hint')"
                  type='text'
@@ -90,9 +90,9 @@ export default {
       } else {
         this.$q.notify(`${this.username} submitted the register form.`)
         axios.post('http://52.186.12.191/register_api', {
-          name: this.name,
-          password: this.password,
-          repeat_password: this.retype_password
+          'username': this.username,
+          'password': this.password,
+          'repeat_password': this.retype_password
         }).then(response => {
           this.info = response
         })
