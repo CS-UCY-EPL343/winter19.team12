@@ -15,6 +15,7 @@
     "build:pwa": "quasar build -m pwa"
   },
   "dependencies": {
+    "@quasar/cli": "^1.0.2",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.19.0",
     "quasar": "^1.0.0",
