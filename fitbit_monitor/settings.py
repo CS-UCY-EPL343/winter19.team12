@@ -126,4 +126,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL)
 
 #this redirect to the index html
 LOGIN_REDIRECT_URL = '/'
-
+AUTH_USER_MODEL = "metric_manager.FitbitUser" 

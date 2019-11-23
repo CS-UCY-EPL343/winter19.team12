@@ -9,7 +9,7 @@ import { OrientationSensor } from "orientation";
 import * as messaging from "messaging";
 messaging.peerSocket.onopen = function() {
   // Ready to send messages
-  sendMessage();
+  //sendMessage();
 }
 messaging.peerSocket.onerror = function(err) {
   // Handle any errors
@@ -115,7 +115,7 @@ if (HeartRateSensor) {
     });
     sendMessage({
       'type':'heart',
-      'rate':hrm.heartRate
+      'value':hrm.heartRate
     });
   });
   sensors.push(hrm);

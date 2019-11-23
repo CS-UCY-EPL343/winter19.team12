@@ -19,19 +19,6 @@
             <q-icon name='face' />
           </template>
         </q-input>
-        <q-input :label="$t('Email')"
-                 :hint="$t('Enter your email.')"
-                 type='text'
-                 v-model='email'
-                 ref='email'
-                 autofocus
-                 spellcheck='false'
-                 outlined bottom-slots
-        >
-          <template v-slot:prepend>
-            <q-icon name='email' />
-          </template>
-        </q-input>
         <q-input :label="$t('password')"
                  :hint="$t('password_hint')"
                  type='password'
@@ -62,22 +49,6 @@
              <q-radio dense v-model="type" val="specialist_select" label="Specialist" />
           </div>
        </div>
-       <q-slide-transition>
-       <div v-show="type === 'user_select'">
-       <q-input :label="$t('serial_number')"
-                 :hint="$t('serial_number_hint')"
-                 type='serial_number'
-                 v-model='serial_number'
-                 ref='serial_number'
-                 spellcheck='false'
-                 outlined bottom-slots
-        >
-          <template v-slot:prepend>
-            <q-icon name='watch' />
-          </template>
-        </q-input>   
-       </div>
-       </q-slide-transition>
       </q-card-section>
       <q-separator />
       <q-card-actions class='bg-grey-1 q-pl-none'>
@@ -97,6 +68,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'Register',
   data () {
@@ -111,18 +83,21 @@ export default {
   },
   methods: {
     submit () {
-      if (this.username === '' || this.password === '' || this.email === '' || this.retype_password === '') {
+      if (this.username === '' || this.password === '' || this.retype_password === '') {
         this.$q.notify('Please fill in all the fields in the form.')
       } else if (this.password !== this.retype_password) {
         this.$q.notify('Passwords not match.')
-      } else if (this.type === 'user_select' && this.serial_number === '') {
-        this.$q.notify('Please enter Fitbit Device Serial Number.')
       } else {
-        this.$q.notify(`${this.username} submitted the form.`)
+        this.$q.notify(`${this.username} submitted the register form.`)
+        axios.post('http://52.186.12.191/register_api', {
+          name: this.name,
+          password: this.password,
+          repeat_password: this.retype_password
+        }).then(response => {
+          this.info = response
+        })
       }
-      console.log(this.$route)
     }
-  }
+  }  
 }
-
 </script>
