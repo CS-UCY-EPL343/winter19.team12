@@ -8,6 +8,7 @@
       <q-card-section class='q-col-gutter-sm q-py-lg'>
       <q-input :label="$t('username')"
                  :hint="$t('username_hint')"
+                 :rules='usernameRules'
                  type='text'
                  v-model='username'
                  ref='username'
@@ -21,24 +22,40 @@
         </q-input>
         <q-input :label="$t('password')"
                  :hint="$t('password_hint')"
-                 type='password'
+                 :rules='passwordRules'
                  v-model='password'
+                 :type="isPwd1 ? 'password' : 'text'"
                  ref='password'
                  spellcheck='false'
                  outlined bottom-slots
         >
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd1 ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd1 = !isPwd1"
+            />
+          </template>
           <template v-slot:prepend>
             <q-icon name='vpn_key' />
           </template>
         </q-input>
         <q-input :label="$t('retype_password')"
                  :hint="$t('retype_password_hint')"
-                 type='password'
+                 :rules='passwordRules'
                  v-model='retype_password'
+                 :type="isPwd2 ? 'password' : 'text'"
                  ref='retype_password'
                  spellcheck='false'
                  outlined bottom-slots
         >
+          <template v-slot:append>
+            <q-icon
+              :name="isPwd2 ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd2 = !isPwd2"
+            />
+          </template>
           <template v-slot:prepend>
             <q-icon name='vpn_key' />
           </template>
@@ -53,14 +70,22 @@
       <q-separator />
       <q-card-actions class='bg-grey-1 q-pl-none'>
         <div class='row full-width q-col-gutter-sm'>
-          <div class='col-xs-12 col-sm-12'>
+          <div class='col-xs-12 col-sm-6'>
             <q-btn
               @click='submit'
               :label='$t("Register")'
-              icon='exit_to_app' color='primary' no-caps v-ripple
+              icon='add_box' color='primary' no-caps v-ripple
               class='full-width'
             />
           </div>
+          <div class='col-xs-12 col-sm-6'>
+              <q-btn
+                :to='{name: "login"}'
+                :label='$t("Already have an account? Login")'
+                icon='exit_to_app' color='secondary' no-caps v-ripple
+                class='full-width'
+              />
+            </div>
         </div>
       </q-card-actions>
     </q-card>
@@ -77,24 +102,35 @@ export default {
       email: '',
       password: '',
       retype_password: '',
+      isPwd1: true,
+      isPwd2: true,
       type: 'user_select',
-      serial_number: ''
+      serial_number: '',
+      usernameRules: [
+        val => !!val || this.$t('field_required')
+      ],
+      passwordRules: [
+        val => !!val || this.$t('field_required')
+      ]
     }
   },
   methods: {
     submit () {
       if (this.username === '' || this.password === '' || this.retype_password === '') {
-        this.$q.notify('Please fill in all the fields in the form.')
+        this.$q.notify('Some fields are empty!')
       } else if (this.password !== this.retype_password) {
         this.$q.notify('Passwords not match.')
       } else {
-        this.$q.notify(`${this.username} submitted the register form.`)
-        axios.post('http://52.186.12.191/register_api', {
+        axios.post('http://' + this.$t('domain') + '/register_api', {
           'username': this.username,
           'password': this.password,
           'repeat_password': this.retype_password
         }).then(response => {
-          this.info = response
+          if (response.data.error === 'username already exists') {
+            this.$q.notify(`Username '${this.username}' already exists! Enter a new one.`)
+          } else {
+            this.$q.notify(`User '${this.username}' created!`)
+          }
         })
       }
     }

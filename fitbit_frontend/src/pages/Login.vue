@@ -23,11 +23,18 @@
           <q-input :label="$t('password')"
                    :hint="$t('password_hint')"
                    :rules='passwordRules'
-                   type='password'
                    v-model='password'
+                   :type="isPwd ? 'password' : 'text'"
                    ref='password'
                    outlined bottom-slots
           >
+            <template v-slot:append>
+              <q-icon
+                :name="isPwd ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+              />
+            </template>  
             <template v-slot:prepend>
               <q-icon name='vpn_key' />
             </template>
@@ -36,7 +43,7 @@
         <q-separator />
         <q-card-actions class='bg-grey-1 q-pl-none'>
           <div class='row full-width q-col-gutter-sm'>
-            <div class='col-xs-12 col-sm-7'>
+            <div class='col-xs-12 col-sm-6'>
               <q-btn
                 type='submit'
                 :label='$t("login")'
@@ -44,7 +51,7 @@
                 class='full-width'
               />
             </div>
-            <div class='col-xs-12 col-sm-5'>
+            <div class='col-xs-12 col-sm-6'>
               <q-btn
                 :to='{name: "register"}'
                 :label='$t("create_account")'
@@ -60,12 +67,14 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'Login',
   data () {
     return {
       username: '',
       password: '',
+      isPwd: true,
       usernameRules: [
         val => !!val || this.$t('field_required')
       ],
@@ -76,10 +85,17 @@ export default {
   },
   methods: {
     submit () {
-      console.log(this.username)
-      console.log(this.password)
-
-      this.$q.notify(`${this.username} submitted the form.`)
+      axios.post('http://' + this.$t('domain') + '/login_api', {
+        'username': this.username,
+        'password': this.password
+      }).then(response => {
+        if (response.data.status === 1) {
+          this.$q.notify(`You have logged in successfully.`)
+          this.$router.push({ name: 'dashboard' })
+        } else {
+          this.$q.notify(`Wrong username or password!`)
+        }
+      })
     }
   }
 }

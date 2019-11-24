@@ -1,4 +1,5 @@
 export default {
+  domain: '52.186.12.191',
   login: 'Login',
   register: 'Register',
   create_account: 'Create account',
