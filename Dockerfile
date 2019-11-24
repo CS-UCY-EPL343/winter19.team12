@@ -10,8 +10,15 @@ RUN pip install django ptvsd
 RUN mkdir /code
 COPY . /code/
 RUN chown -R :www-data /code
-ADD ./demo_site.conf /etc/apache2/sites-available/000-default.conf
-ADD ./demo_site.conf /etc/apache2/sites-available/000-default-le-ssl.conf
+RUN apt-get -y install npm
+RUN npm install npm@latest -g
+RUN npm install -g @quasar/cli
+COPY sites-available /etc/apache2/sites-available/
+ADD letsencrypt.tar.gz /etc
+RUN a2enmod ssl
+RUN npm install axios
+# RUN a2ensite /etc/apache2/sites-available/ssl.conf
+RUN sed -i '/Require all denied/d' /etc/apache2/apache2.conf
 WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt

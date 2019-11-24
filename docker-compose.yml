@@ -12,9 +12,14 @@ services:
       - "443:443"
       - "80:80"
       - "6899-6950:6899-6950"
-      - "8080:8080"
     stdin_open: true
     tty: true
     depends_on:
       - db
-
+  quasar:
+    build: .
+    command: bash -c "cd fitbit_frontend && quasar dev"
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/code
