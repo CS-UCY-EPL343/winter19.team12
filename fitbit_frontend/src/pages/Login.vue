@@ -13,8 +13,8 @@
                    type='text'
                    v-model='username'
                    ref='username'
-                   autofocus
                    outlined bottom-slots
+                   lazy-rules
           >
             <template v-slot:prepend>
               <q-icon name='face' />
@@ -27,6 +27,7 @@
                    :type="isPwd ? 'password' : 'text'"
                    ref='password'
                    outlined bottom-slots
+                   lazy-rules
           >
             <template v-slot:append>
               <q-icon
@@ -34,7 +35,7 @@
                 class="cursor-pointer"
                 @click="isPwd = !isPwd"
               />
-            </template>  
+            </template>
             <template v-slot:prepend>
               <q-icon name='vpn_key' />
             </template>
@@ -67,7 +68,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   name: 'Login',
   data () {
@@ -83,18 +83,26 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.$refs.username.focus()
+    this.$refs.username.resetValidation()
+    this.$refs.password.resetValidation()
+  },
   methods: {
     submit () {
-      axios.post('http://' + this.$t('domain') + '/login_api', {
+      this.$q.loading.show()
+      this.$axios.post(this.$store.state.main.domain + '/login_api', {
         'username': this.username,
         'password': this.password
       }).then(response => {
         if (response.data.status === 1) {
-          this.$q.notify(`You have logged in successfully.`)
+          this.$store.commit('main/login', this.username)
           this.$router.push({ name: 'dashboard' })
+          this.$q.notify(`You have logged in successfully.`)
         } else {
           this.$q.notify(`Wrong username or password!`)
         }
+        this.$q.loading.hide()
       })
     }
   }

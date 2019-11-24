@@ -1,5 +1,7 @@
 <template>
-  <div>User info</div>
+  <span>
+    {{$store.state.main.username}}
+  </span>
 </template>
 
 <script>

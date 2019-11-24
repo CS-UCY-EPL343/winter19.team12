@@ -6,6 +6,11 @@
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  created () {
+    if (this.$q.localStorage.has('username')) {
+      this.$store.commit('main/login', this.$q.localStorage.getItem('username'))
+    }
+  }
 }
 </script>

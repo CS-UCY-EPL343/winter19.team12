@@ -29,5 +29,7 @@ export default {
   phone_hint: 'Enter your Telephone.',
   address: 'Address',
   address_hint: 'Enter your Address.',
-  field_required: 'This field is required.'
+  field_required: 'This field is required.',
+  edit_profile: 'Edit profile',
+  update_profile: 'Update profile'
 }
