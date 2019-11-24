@@ -133,11 +133,12 @@ def get_latest_value(request):
 	if len(request.GET)==0 or not 'type' in request.GET:
 		return JsonResponse({'msg':'invalid request'})
 	metric = Metrics.objects.filter(type=request.GET.get('type')).latest('timestamp')
+	if not metric:
+		return JsonResponse({'type':request.GET.get('type'),'value':0})
 	return JsonResponse({'type':metric.type,'value':metric.amount})
 
 def insert_metrics(request):
-	sys.stderr.write("lenntff:"+str(len(request.GET)))
-	sys.stderr.write(str(request.GET.get('value')))
+	sys.stderr.write("data_insert::"+str(len(request.GET)))
 	#check if params are valid
 	if len(request.GET)>0 and 'type' in request.GET and 'value' in request.GET:
 		sys.stderr.write("testt")

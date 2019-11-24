@@ -22,4 +22,6 @@ RUN sed -i '/Require all denied/d' /etc/apache2/apache2.conf
 WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
+WORKDIR /etc/apache2/sites-available
+RUN a2ensite ssl.conf
 CMD ["apache2ctl", "-D", "FOREGROUND"]

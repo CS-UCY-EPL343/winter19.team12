@@ -1,5 +1,5 @@
 export default {
-  domain: '52.186.12.191',
+  domain: 'fitbit.eastus.cloudapp.azure.com',
   login: 'Login',
   register: 'Register',
   create_account: 'Create account',
