@@ -1,5 +1,5 @@
 import * as messaging from "messaging";
-const SERVER_URL = "http://localhost";
+const SERVER_URL = "https://fitbit.eastus.cloudapp.azure.com/insert_metrics";//insert_metrics url
 messaging.peerSocket.onopen = () => {
   console.log("startt");
   sendMessage();
@@ -11,10 +11,24 @@ messaging.peerSocket.onerror = (err) => {
 
 messaging.peerSocket.onmessage = (evt) => {
   console.log("got metric "+JSON.stringify(evt.data));
-  fetch(SERVER_URL).then(function(response) {
-      return response.text();
-    }).then(function(text) {
-      console.log("Got JSON response from server: " + text); });
+  var dest_url = SERVER_URL+"?type="+evt.data.type+"&value="+evt.data.value;
+  console.log(dest_url);
+  fetch(dest_url, {
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    mode:'text/plain',
+  }).then(function(text) {
+      if (text.ok) {
+        text.json().then(json => {
+          console.log(json);
+        });
+      }
+      console.log("Got JSON response from server: " + JSON.stringify(text)); }
+  ).catch(function(err) {
+      console.log('ERROR: ' + err)
+  });
 }
 
 function sendMessage() {
