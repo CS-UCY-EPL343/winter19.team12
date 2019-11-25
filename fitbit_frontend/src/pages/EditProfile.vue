@@ -155,6 +155,8 @@
 </template>
 
 <script>
+import store from 'src/store/index'
+
 export default {
   name: 'Register',
   data () {
@@ -221,11 +223,13 @@ export default {
     this.fetchUserData()
   },
   beforeRouteEnter (to, from, next) {
-    next(component => {
-      if (component.$store.state.main.username === '') {
-        component.$router.push({ name: 'login' })
+    if (store().state.main.username === '') {
+      if (from.path === '/login') {
+        next('/ulogin')
       }
-    })
+      next('/login')
+    }
+    next()
   }
 }
 </script>

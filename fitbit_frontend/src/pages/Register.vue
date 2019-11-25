@@ -94,6 +94,8 @@
 </template>
 
 <script>
+import store from 'src/store/index'
+
 export default {
   name: 'Register',
   data () {
@@ -147,6 +149,15 @@ export default {
         this.$q.loading.hide()
       })
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    if (store().state.main.username !== '') {
+      if (from.path === '/') {
+        next('/index')
+      }
+      next('/')
+    }
+    next()
   }
 }
 </script>

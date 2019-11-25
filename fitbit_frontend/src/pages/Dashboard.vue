@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import store from 'src/store/index'
 import AddNote from 'src/components/AddNote'
 import NotesList from 'src/components/NotesList'
 import Graph from 'src/components/Graph'
@@ -27,11 +28,13 @@ export default {
     'graph': Graph
   },
   beforeRouteEnter (to, from, next) {
-    next(component => {
-      if (component.$store.state.main.username === '') {
-        component.$router.push({ name: 'login' })
+    if (store().state.main.username === '') {
+      if (from.path === '/login') {
+        next('/ulogin')
       }
-    })
+      next('/login')
+    }
+    next()
   }
 }
 </script>

@@ -119,9 +119,7 @@ export default {
       this.$axios.post(this.$store.state.main.domain + '/logout_api').then(response => {
         if (response.data.status === 1) {
           this.$store.commit('main/logout')
-          if (this.$route.name !== 'dashboard') {
-            this.$router.push({ name: 'dashboard' })
-          }
+          this.$router.push({ name: 'login' })
           this.$q.notify(`You have logged out successfully.`)
         }
         this.$q.loading.hide()

@@ -22,6 +22,10 @@
                class='q-px-md'
       />
     </q-card-section>
+    <q-separator />
+    <q-card-actions>
+      <q-btn label='Save' icon='save' outline no-caps />
+    </q-card-actions>
   </q-card>
 </template>
 
