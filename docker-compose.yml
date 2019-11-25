@@ -18,7 +18,7 @@ services:
       - db
   quasar:
     build: .
-    command: bash -c "cd fitbit_frontend && quasar dev"
+    command: bash -c "cd /code/fitbit_frontend && quasar dev"
     ports:
       - "8080:8080"
     volumes:
