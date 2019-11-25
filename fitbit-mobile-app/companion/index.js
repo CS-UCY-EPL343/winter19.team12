@@ -17,8 +17,7 @@ messaging.peerSocket.onmessage = (evt) => {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
-    },
-    mode:'text/plain',
+    }
   }).then(function(text) {
       if (text.ok) {
         text.json().then(json => {
