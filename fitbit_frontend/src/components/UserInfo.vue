@@ -1,6 +1,6 @@
 <template>
-  <span>
-    {{$store.state.main.username}}
+  <span v-if='$store.state.main.username !== ""'>
+    Welcome {{$store.state.main.username}}!
   </span>
 </template>
 

@@ -26,15 +26,15 @@
       bordered
     >
       <q-list padding>
-        <q-item :to='{name: "dashboard"}' clickable tag="a" exact>
-          <q-item-section avatar>
-            <q-icon name="home" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Dashboard</q-item-label>
-          </q-item-section>
-        </q-item>
         <template v-if='$store.state.main.loggedIn'>
+          <q-item :to='{name: "dashboard"}' clickable tag="a" exact>
+            <q-item-section avatar>
+              <q-icon name="home" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Dashboard</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item :to='{name: "edit"}' clickable tag="a">
             <q-item-section avatar>
               <q-icon name="edit" />

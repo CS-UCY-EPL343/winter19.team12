@@ -15,12 +15,13 @@
     "build:pwa": "quasar build -m pwa"
   },
   "dependencies": {
+    "@amcharts/amcharts4": "^4.7.10",
     "@quasar/cli": "^1.0.2",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.19.0",
     "quasar": "^1.0.0",
-    "vue-i18n": "^8.0.0",
     "vue": "latest",
+    "vue-i18n": "^8.0.0",
     "vuex": "latest"
   },
   "devDependencies": {
