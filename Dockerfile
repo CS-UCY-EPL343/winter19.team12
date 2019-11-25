@@ -13,6 +13,7 @@ RUN chown -R :www-data /code
 RUN apt-get -y install npm
 RUN npm install npm@latest -g
 RUN npm install -g @quasar/cli
+RUN npm install @amcharts/amcharts4
 COPY sites-available /etc/apache2/sites-available/
 ADD letsencrypt.tar.gz /etc
 RUN a2enmod ssl
@@ -24,4 +25,5 @@ COPY requirements.txt /code/
 RUN pip install -r requirements.txt
 WORKDIR /etc/apache2/sites-available
 RUN a2ensite ssl.conf
+WORKDIR /code
 CMD ["apache2ctl", "-D", "FOREGROUND"]
