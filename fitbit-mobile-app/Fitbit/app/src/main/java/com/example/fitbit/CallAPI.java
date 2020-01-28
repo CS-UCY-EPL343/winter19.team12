@@ -1,18 +1,29 @@
 package com.example.fitbit;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+import java.util.jar.Attributes;
 
 public class CallAPI extends AsyncTask<String, String, String> {
-
-    public CallAPI(){
+    AsyncResponse responseFunction;
+    public CallAPI(AsyncResponse responseFunction){
+        this.responseFunction=responseFunction;
         //set context variables if required
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        responseFunction.processFinish(result);
     }
 
     @Override
@@ -25,10 +36,15 @@ public class CallAPI extends AsyncTask<String, String, String> {
         String urlString = params[0]; // URL to call
         String data = params[1]; //data to post
         OutputStream out = null;
-
+        String response=null;
         try {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.setRequestProperty("Content-Type", "application/json; utf-8");
+            urlConnection.setRequestProperty("Accept", "application/json");
             out = new BufferedOutputStream(urlConnection.getOutputStream());
 
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
@@ -38,9 +54,17 @@ public class CallAPI extends AsyncTask<String, String, String> {
             out.close();
 
             urlConnection.connect();
+            StringBuilder sb = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader((urlConnection.getInputStream())));
+            String output=null;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            response=sb.toString();
+            Log.d("TEST","response_code:"+urlConnection.getResponseCode());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return response;
     }
 }

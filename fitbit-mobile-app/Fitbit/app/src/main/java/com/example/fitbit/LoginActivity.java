@@ -7,8 +7,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.app.AlertDialog;
-public class LoginActivity extends Activity {
-    public static final String LOGIN_ENDPOINT="/login";
+import org.json.*;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class LoginActivity extends Activity{
+    public static final String LOGIN_ENDPOINT="/login_api";
     private Button mLoginBtn;
     private EditText mPasswordInput,mUsernameInput;
     @Override
@@ -42,8 +49,35 @@ public class LoginActivity extends Activity {
                     .show();
             return;
         }
-        CallAPI request = new CallAPI();
-        request.execute(Urls.SERVER_URL+LOGIN_ENDPOINT);
+        String params = String.format("{'username':'%s','password':'%s'}",username,password);
+        CallAPI request = new CallAPI(new AsyncResponse() {
+            @Override
+            public void processFinish(String output) {
+                Log.d("TEST","output:"+output);
+                try {
+                    JSONObject obj = new JSONObject(output);
+                    String title=null;
+                    String message = null;
+                    if(obj.getString("status").equals("0")){
+                        title="Wrong credentials";
+                        message="Wrong username or password entered";
+                    }
+                    else{
+                        title="Login success";
+                        message = "Correct credentials";
+                    }
+                    new AlertDialog.Builder(LoginActivity.this)
+                            .setTitle(title)
+                            .setMessage(message)
+                            .show();
+
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        request.execute(Urls.SERVER_URL+LOGIN_ENDPOINT,params);
 
     }
 
