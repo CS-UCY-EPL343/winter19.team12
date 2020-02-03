@@ -1,3 +1,21 @@
+/*
+Fitbit Monitoring is a free software that helps you interact with your 
+Fitbit device and keep track of all your daily activity.
+Copyright (C) 2020  Christodoulos Constantinides, Kristian Litsis, Paris Constantinides, Giannis Alexandrou, Leonidas Vokos
+	
+Fitbit Monitoring System is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Fitbit Monitoring System is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 import { Accelerometer } from "accelerometer";
 import { Barometer } from "barometer";
 import { BodyPresenceSensor } from "body-presence";
@@ -6,6 +24,8 @@ import document from "document";
 import { Gyroscope } from "gyroscope";
 import { HeartRateSensor } from "heart-rate";
 import { OrientationSensor } from "orientation";
+import { me as appbit} from "appbit";
+import { today } from "user-activity";
 import * as messaging from "messaging";
 messaging.peerSocket.onopen = function() {
   // Ready to send messages
@@ -24,6 +44,21 @@ function sendMessage(msg) {
 const accelLabel = document.getElementById("accel-label");
 const accelData = document.getElementById("accel-data");
 
+const stepsLabel = document.getElementById("steps-label");
+const stepsData = document.getElementById("steps-data");
+
+const caloriesLabel = document.getElementById("calories-label");
+const caloriesData = document.getElementById("calories-data");
+
+const activeMinutesLabel = document.getElementById("activeMinutes-label");
+const activeMinutesData = document.getElementById("activeMinutes-data");
+
+const distanceLabel = document.getElementById("distance-label");
+const distanceData = document.getElementById("distance-data");
+
+const elevationGainLabel = document.getElementById("elevationGain-label");
+const elevationGainData = document.getElementById("elevationGain-data");
+
 const barLabel = document.getElementById("bar-label");
 const barData = document.getElementById("bar-data");
 
@@ -40,6 +75,109 @@ const orientationLabel = document.getElementById("orientation-label");
 const orientationData = document.getElementById("orientation-data");
 
 const sensors = [];
+
+if(appbit.permissions.granted("access_activity")){
+  console.log(`${today.adjusted.steps} Steps`);
+  const steps = new Barometer({ frequency: 0.5 });
+  steps.addEventListener("reading", () => {
+        stepsData.text = JSON.stringify({
+        steps: today.adjusted.steps
+      });
+      sendMessage({
+        'type':'steps',
+        'steps': today.adjusted.steps
+      })
+  });
+  sensors.push(steps);
+  steps.start();
+} else {
+  stepsLabel.style.display = "none";
+  stepsLabel.style.display = "none";
+  console.log(`No steps metrics were recorded`);
+}
+
+
+if (today.local.calories != undefined) {
+  console.log(`${today.adjusted.calories} Calories`);
+  const calories = new Barometer({ frequency: 0.5 });
+    calories.addEventListener("reading", () => {
+          caloriesData.text = JSON.stringify({
+          calories: today.adjusted.calories
+        });
+        sendMessage({
+          'type':'calories',
+          'calories': today.adjusted.calories
+        })
+    });
+    sensors.push(calories);
+    calories.start();
+} else {
+  caloriesLabel.style.display = "none";
+  caloriesLabel.style.display = "none";
+  console.log(`No calories metrics were recorded`);
+}
+  
+if (today.local.activeMinutes != undefined) {
+   console.log(`${today.adjusted.activeMinutes} Active Minutes`);
+   const activeMinutes = new Barometer({ frequency: 0.5 });
+    activeMinutes.addEventListener("reading", () => {
+          activeMinutesData.text = JSON.stringify({
+          activeMinutes: today.adjusted.activeMinutes
+        });
+        sendMessage({
+          'type':'activeMinutes',
+          'activeMinutes': today.adjusted.activeMinutes
+        })
+    });
+    sensors.push(activeMinutes);
+    activeMinutes.start();
+} else {
+  activeMinutesLabel.style.display = "none";
+  activeMinutesLabel.style.display = "none";
+  console.log(`No activeMinutes metrics were recorded`);
+}
+
+
+if (today.local.distance != undefined) {
+   console.log(`${today.adjusted.distance} Distance`);
+   const distance = new Barometer({ frequency: 0.5 });
+    distance.addEventListener("reading", () => {
+          distanceData.text = JSON.stringify({
+          distance: today.adjusted.distance
+        });
+        sendMessage({
+          'type':'distance',
+          'distance': today.adjusted.distance
+        })
+    });
+    sensors.push(distance);
+    distance.start();
+} else {
+  distanceLabel.style.display = "none";
+  distanceLabel.style.display = "none";
+  console.log(`No distance metrics were recorded`);
+}
+
+if (today.local.elevationGain != undefined) {
+  console.log(`${today.adjusted.elevationGain} Elevation Gain`);
+  const elevationGain = new Barometer({ frequency: 0.5 });
+    elevationGain.addEventListener("reading", () => {
+          elevationGainData.text = JSON.stringify({
+          elevationGain: today.adjusted.elevationGain
+        });
+        sendMessage({
+          'type':'elevationGain',
+          'elevationGain': today.adjusted.elevationGain
+        })
+    });
+    sensors.push(elevationGain);
+    elevationGain.start();
+} else {
+  elevationGainLabel.style.display = "none";
+  elevationGainLabel.style.display = "none";
+  console.log(`No elevationGain metrics were recorded`);
+}
+
 
 if (Accelerometer) {
   const accel = new Accelerometer({ frequency: 0.5 });
