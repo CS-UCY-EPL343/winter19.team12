@@ -51,6 +51,16 @@
               <q-item-label>Log out</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-item @click='' clickable tag="a">
+            <q-item-section avatar>
+              <q-icon name="accessibility" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Top 10 users</q-item-label>
+            </q-item-section>
+          </q-item>
+
         </template>
         <template v-else>
           <q-item :to='{name: "login"}' clickable tag="a">

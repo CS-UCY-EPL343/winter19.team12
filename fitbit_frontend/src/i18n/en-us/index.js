@@ -1,5 +1,5 @@
 export default {
-  domain: 'fitbit.eastus.cloudapp.azure.com',
+  domain: 'fitbit1.eastus.cloudapp.azure.com',
   login: 'Login',
   register: 'Register',
   create_account: 'Create account',
@@ -17,7 +17,7 @@ export default {
   retype_change_password: 'Retype New Password',
   retype_change_password_hint: 'Retype your account\'s new password.',
   name: 'Name',
-  surname: 'Surame',
+  surname: 'Surname',
   email: 'Email',
   birth: 'Date of Birth',
   birth_hint: 'Enter your Date of Birth.',
