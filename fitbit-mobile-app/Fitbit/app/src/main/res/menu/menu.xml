@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content">
+    <item android:id="@+id/file"
+        android:title="@string/file" >
+        <!-- "file" submenu -->
+        <menu>
+            <item android:id="@+id/create_new"
+                android:title="@string/create_new" />
+            <item android:id="@+id/open"
+                android:title="@string/open" />
+        </menu>
+    </item>
+</menu>

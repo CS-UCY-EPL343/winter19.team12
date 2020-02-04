@@ -1,6 +1,7 @@
 package com.example.fitbit;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.util.List;
 public class LoginActivity extends Activity{
     public static final String LOGIN_ENDPOINT="/login_api";
     private Button mLoginBtn;
+    private boolean loginSuccess=false;
     private EditText mPasswordInput,mUsernameInput;
     @Override
     public void onCreate(Bundle bundle){
@@ -61,15 +63,18 @@ public class LoginActivity extends Activity{
                     if(obj.getString("status").equals("0")){
                         title="Wrong credentials";
                         message="Wrong username or password entered";
+                        new AlertDialog.Builder(LoginActivity.this)
+                                .setTitle(title)
+                                .setMessage(message)
+                                .show();
                     }
-                    else{
+                    else if (obj.getString("status").equals("1")){
                         title="Login success";
                         message = "Correct credentials";
+                        Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(myIntent);
                     }
-                    new AlertDialog.Builder(LoginActivity.this)
-                            .setTitle(title)
-                            .setMessage(message)
-                            .show();
+
 
                 }
                 catch(Exception e){
