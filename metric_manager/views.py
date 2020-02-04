@@ -7,6 +7,9 @@ from .models import *
 from .forms import *
 import json
 from django.core import serializers
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 def index(request):
 	return render(request, 'static/index.html')
@@ -132,20 +135,37 @@ def get_latest_value(request):
 	sys.stderr.write(str(request.GET.get('type')))
 	if len(request.GET)==0 or not 'type' in request.GET:
 		return JsonResponse({'msg':'invalid request'})
-	metric = Metrics.objects.filter(type=request.GET.get('type')).latest('timestamp')
+	metric_desc = MetricsDescription.objects.filter(metric_name=request.GET.get('type'))
+	user_row = FitbitUser.objects.first()#change with user name
+	if not user_row:
+		return JsonResponse({'msg':'missing user'})
+	if not metric_desc:
+		return JsonResponse({'msg':'Wrong type'})
+	metric = Metrics.objects.filter(type=metric_desc[0]).latest('timestamp')
 	if not metric:
 		return JsonResponse({'type':request.GET.get('type'),'value':0})
 	return JsonResponse({'type':metric.type,'value':metric.amount})
 
 def insert_metrics(request):
-	sys.stderr.write("data_insert::"+str(len(request.GET)))
 	#check if params are valid
 	if len(request.GET)>0 and 'type' in request.GET and 'value' in request.GET:
-		sys.stderr.write("testt")
-		sys.stderr.write('valid request')
-		metric = Metrics(type=request.GET.get('type'),amount=request.GET.get('value'))
+		metric_desc = MetricsDescription.objects.filter(metric_name=request.GET.get('type'))
+		if not metric_desc:
+			return JsonResponse({'msg':'Wrong type'})
+		metric = Metrics(type=metric_desc[0],amount=request.GET.get('value'))
 		metric.save()
 	return JsonResponse({'test':request.GET})
 
 def live_graph(request):
 	return render(request,'livegraph/graph.html')
+
+def get_token(request):
+	pass
+
+
+class AuthView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        content = {'message': 'Authenticated'}
+        return Response(content)
