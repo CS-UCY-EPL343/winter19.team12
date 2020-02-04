@@ -1,27 +1,60 @@
 <template>
   <q-page class='q-pa-md'>
-    <div class='row q-mb-md'>
 
     <div class=" row">
       <div class="col">
-        <q-btn-toggle
-          v-model="model"
-          toggle-color="primary"
-          :options="[
-            {label: 'Live graph Heartbeat', value: 'Heartbeat'},
-            {label: 'Calories', value: 'Calories'},
-            {label: 'Activity', value: 'Activity'},
-            {label: 'Distance Covered', value: 'Distance'}
-          ]"
-        />
+        <template >
+          <q-tabs
+           v-model="tab"
+           inline-label
+           class="bg-primary text-white shadow-2"
+           >
+           <q-tab name="Live graph Heartbeat"  label="Heartbeat" />
+           <q-tab name="Calories"  label="Calories" />
+           <q-tab name="Activity" label="Activity" />
+           <q-tab name="Distance Covered" label="Distance" />
+         </q-tabs>
+        </template>
       </div>
+
       <div class="col fit row wrap justify-end items-start content-start">
         <calendar/>
       </div>
     </div>
-    
-      <graph />
-    </div>
+
+      <template >
+              <q-tab-panels
+                v-model="tab"
+                animated
+                transition-prev="jump-up"
+                transition-next="jump-up"
+              >
+                  <q-tab-panel name="Live graph Heartbeat">
+                    <div>
+                    <graph />
+                    </div>
+                  </q-tab-panel>
+
+                  <q-tab-panel name="Calories">
+                    <div>
+                    <graphC />
+                  </div>
+                  </q-tab-panel>
+
+                  <q-tab-panel name="Activity">
+                    <div>
+                      Activity
+                    </div>
+                  </q-tab-panel>
+
+                <q-tab-panel name="Distance Covered">
+                  <div>
+                    Distance
+                  </div>
+                </q-tab-panel>
+            </q-tab-panels>
+      </template>
+
     <div class='row q-col-gutter-md'>
       <div class='col'>
         <notes-list />
@@ -31,6 +64,7 @@
       </div>
     </div>
   </q-page>
+
 </template>
 
 <script>
@@ -39,14 +73,21 @@ import AddNote from 'src/components/AddNote'
 import NotesList from 'src/components/NotesList'
 import Graph from 'src/components/Graph'
 import FunctionalCalendar from 'src/components/FunctionalCalendar'
+import Calories_graph from 'src/components/Calories_graph'
 
 export default {
   name: 'Dashboard',
-  components: {
+  data () {
+   return {
+    tab: 'Live graph Heartbeat'
+   }
+ },
+ components: {
     'add-note': AddNote,
     'notes-list': NotesList,
     'graph': Graph,
-    'calendar': FunctionalCalendar
+    'calendar': FunctionalCalendar,
+    'graphC': Calories_graph
   },
   beforeRouteEnter (to, from, next) {
     if (store().state.main.username === '') {
