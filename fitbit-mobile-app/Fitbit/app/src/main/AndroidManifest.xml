@@ -13,9 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".ui.login.LoginActivity2"
-            android:label="@string/title_activity_login2"></activity>
+        <meta-data android:name="DATABASE" android:value="fitbit_mobile.db" />
+        <meta-data android:name="VERSION" android:value="2" />
+        <meta-data android:name="QUERY_LOG" android:value="true" />
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.example.fitbit.model" />
 
         <meta-data
             android:name="com.google.wandroid.actions"
