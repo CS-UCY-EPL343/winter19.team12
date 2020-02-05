@@ -1,0 +1,23 @@
+[
+  {
+    "model": "metric_manager.MetricsDescription",
+    "pk": 1,
+    "fields": {
+      "metric_name": "heart"
+    }
+  },
+  {
+    "model": "metric_manager.MetricsDescription",
+    "pk": 2,
+    "fields": {
+      "metric_name": "calories"
+    }
+  },
+  {
+    "model": "metric_manager.MetricsDescription",
+    "pk": 3,
+    "fields": {
+      "metric_name": "distance"
+    }
+  }
+]
