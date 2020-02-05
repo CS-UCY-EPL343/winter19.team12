@@ -27,6 +27,80 @@ import { OrientationSensor } from "orientation";
 import { me as appbit} from "appbit";
 import { today } from "user-activity";
 import * as messaging from "messaging";
+
+import { me as appbit } from "appbit";
+import { dayHistory } from "user-activity";
+
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_heart_rate")){
+  const dayRecordsAverageHeartRate = dayHistory.query();
+  dayRecordsAverageHeartRate.forEach((day,index) => {
+    console.log(`${day.averageHeartRate || 0} averageHeartRate. ${index + 1} day(s) ago.`);
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_activity")){
+  const dayRecordsSteps = dayHistory.query();
+  dayRecordsSteps.forEach((day,index) => {
+    console.log(`${day.steps || 0} steps. ${index + 1} day(s) ago.`);
+  });
+}
+console.log("------------------------------------------------------------------");
+ if(appbit.permissions.granted("access_activity")){
+  const dayRecordsCalories = dayHistory.query();
+  dayRecordsCalories.forEach((day,index) => {
+    console.log(`${day.calories || 0} calories. ${index + 1} day(s) ago.`);
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_activity")){
+  const dayRecordsActiveMinutes = dayHistory.query();
+  dayRecordsActiveMinutes.forEach((day,index) => {
+    console.log(`${day.activeMinutes || 0} activeMinutes. ${index + 1} day(s) ago.`);
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_activity")){
+  const dayRecordsDistance = dayHistory.query();
+  dayRecordsDistance.forEach((day,index) => {
+    console.log(`${day.distance || 0} distance. ${index + 1} day(s) ago.`);
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_activity")){
+  const dayRecordsElevationGain = dayHistory.query();
+  dayRecordsElevationGain.forEach((day,index) => {
+    console.log(`${day.elevationGain || 0} elevationGain. ${index + 1} day(s) ago.`);
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_heart_rate")){
+  const dayRecordsRestingHeartRate = dayHistory.query();
+  dayRecordsRestingHeartRate.forEach((day,index) => {
+    console.log(`${day.restingHeartRate || 0} restingHeartRate. ${index + 1} day(s) ago.`);
+  });
+}
+console.log("------------------------------------------------------------------");
+//Trying to find a way to get user-id ot even specific device-id but not model
+/*
+console.log("------------------------------------------------------------------");
+import { me as device } from "device";
+console.log("ID that I get, supposing it's the model so always static: " + device.modelId);
+import { me } from "appbit";
+console.log("Application ID:" + me.applicationId);
+console.log("Build ID:" + me.buildId);
+import { user } from "user-profile";
+console.log("------------------------------------------------------------------");
+console.log("User's age:" + user.age);
+console.log("User's bmr:" + user.bmr);
+console.log("User's gender:" + user.gender);
+console.log("User's height:" + user.height);
+console.log("User's restingHeartRate:" + user.restingHeartRate);
+console.log("User's weight:" + user.weight);
+console.log("Maybe we can create a id with all the data: " + user.age+user.bmr+user.gender+user.height+user.restingHeartRate+user.weight);
+console.log("------------------------------------------------------------------");
+*/
+
 messaging.peerSocket.onopen = function() {
   // Ready to send messages
   //sendMessage();
@@ -41,6 +115,7 @@ function sendMessage(msg) {
     messaging.peerSocket.send(msg);
   }
 }
+
 const accelLabel = document.getElementById("accel-label");
 const accelData = document.getElementById("accel-data");
 
