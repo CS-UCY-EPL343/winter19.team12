@@ -10,6 +10,7 @@ from django.core import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def index(request):
 	return render(request, 'static/index.html')
@@ -31,7 +32,21 @@ def register(request):
 	context = {'form' : form}
 	return render(request, 'registration/register.html', context)
 
-
+@csrf_exempt
+def save_note(request):
+	# import pdb;pdb.set_trace()
+	if request.method == "POST":
+		body = str(request.body.decode('utf-8').replace("\'", "\""))
+		body = json.loads(body)
+		owner = body.get('owner')
+		reader = body.get('reader')
+		description = body.get('description')
+		# note = (owner,reader,description)
+		writer_id = FitbitUser.objects.filter(username=reader)[0]
+		note_row = Notes(id_writer=writer_id,id_reader=writer_id,text=description)
+		note_row.save()
+		return JsonResponse({'status':1})
+	return JsonResponse({'status':0})
 
 def register_api(request):
 	body = str(request.body.decode('utf-8').replace("\'", "\""))
@@ -141,9 +156,10 @@ def get_latest_value(request):
 		return JsonResponse({'msg':'missing user'})
 	if not metric_desc:
 		return JsonResponse({'msg':'Wrong type'})
-	metric = Metrics.objects.filter(type=metric_desc[0]).latest('timestamp')
-	if not metric:
+	metric = Metrics.objects.filter(type=metric_desc[0])
+	if len(metric)==0:
 		return JsonResponse({'type':request.GET.get('type'),'value':0})
+	metric = metric.latest('timestamp')
 	return JsonResponse({'type':metric.type,'value':metric.amount})
 
 def insert_metrics(request):
