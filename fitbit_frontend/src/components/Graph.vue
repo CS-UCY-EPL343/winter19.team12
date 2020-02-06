@@ -92,7 +92,7 @@ export default {
     }, false)
 
     function updateGraph () {
-      axios.get(domain + '/get_latest_metric?type=heart').then(response => {
+      axios.get(domain + 'get_latest_metric?type=heart').then(response => {
         let lastdataItem = series.dataItems.getIndex(series.dataItems.length - 1)
         chart.addData(
           { date: new Date(lastdataItem.dateX.getTime() + 2000), value: response.data.value },

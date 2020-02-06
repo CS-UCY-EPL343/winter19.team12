@@ -120,6 +120,7 @@ export default {
       return chart.colors.getIndex(target.dataItem.index);
     });
 
+
     // Cursor
     chart.cursor = new am4charts.XYCursor();
 
