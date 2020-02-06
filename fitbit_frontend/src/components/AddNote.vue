@@ -12,6 +12,7 @@
                class='q-px-md'
       />
     </q-card-section>
+
     <q-separator />
     <q-card-section class='no-padding'>
       <q-input v-model='noteContent'
@@ -24,7 +25,8 @@
     </q-card-section>
     <q-separator />
     <q-card-actions>
-      <q-btn label='Save' icon='save' outline no-caps />
+      <q-btn label='Save' icon='save' @click='clickSave'/>
+      <q-btn label='Clear' icon='clear' @click='clearButton' />
     </q-card-actions>
   </q-card>
 </template>
@@ -37,6 +39,33 @@ export default {
       noteTitle: '',
       noteContent: ''
     }
+  },
+  methods: {
+      clearButton(){
+        this.noteTitle = '';
+        this.noteContent = '';
+      },
+
+      clickSave(){
+        if (this.noteTitle==='' || this.noteContent === '') {
+          alert("Please fill all the gaps to the Note List");
+        }
+        else {
+          this.$q.loading.show()
+          this.$axios.post(this.$store.state.main.domain + '/save_note', {
+            'owner': this.$store.state.main.username,
+            'reader' : this.$store.state.main.username,
+            'description': this.noteTitle + "\n" + this.noteContent,
+          }).then(response => {
+            if (response.data.error === '0') {
+
+            }
+          })
+          this.$q.loading.hide()
+        }
+      }
+
   }
 }
+
 </script>

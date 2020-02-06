@@ -18,8 +18,10 @@ import java.util.jar.Attributes;
 
 public class CallAPI extends AsyncTask<String, String, String> {
     AsyncResponse responseFunction;
-    public CallAPI(AsyncResponse responseFunction){
+    String method;
+    public CallAPI(String method,AsyncResponse responseFunction){
         this.responseFunction=responseFunction;
+        this.method=method;
         //set context variables if required
     }
 
@@ -42,7 +44,7 @@ public class CallAPI extends AsyncTask<String, String, String> {
         try {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestMethod(method);
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
             urlConnection.setRequestProperty("Content-Type", "application/json; utf-8");
