@@ -20,7 +20,7 @@ public class CollectDataService extends Service {
         // do your jobs here
         Log.d("service","started service");
         try {
-            mNano = new Nano(80);
+            mNano = new Nano(5000);
         }
         catch(Exception e){
             e.printStackTrace();
