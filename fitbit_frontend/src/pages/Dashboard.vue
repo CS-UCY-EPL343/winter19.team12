@@ -11,6 +11,7 @@
            >
            <q-tab name="Live graph Heartbeat"  label="Heartbeat" />
            <q-tab name="Calories"  label="Calories" />
+           <q-tab name="Compare Metrics" label="Compare" />
            <q-tab name="Activity" label="Activity" />
            <q-tab name="Distance Covered" label="Distance" />
          </q-tabs>
@@ -41,6 +42,12 @@
                   </div>
                   </q-tab-panel>
 
+                  <q-tab-panel name="Compare Metrics">
+                    <div>
+                    <graphCom />
+                  </div>
+                  </q-tab-panel>
+
                   <q-tab-panel name="Activity">
                     <div>
                       Activity
@@ -55,7 +62,6 @@
             </q-tab-panels>
       </template>
 
-
     <div class='row q-col-gutter-md'>
       <div class='col'>
         <notes-list />
@@ -64,12 +70,6 @@
         <add-note />
       </div>
     </div>
-
-    <!-- place QPageScroller at end of page -->
-    <q-page-scroller position="bottom-right" :scroll-offset="150" :offset="[18, 18]">
-      <q-btn fab icon="keyboard_arrow_up" color="blue" />
-    </q-page-scroller>
-
   </q-page>
 
 </template>
@@ -81,6 +81,8 @@ import NotesList from 'src/components/NotesList'
 import Graph from 'src/components/Graph'
 import FunctionalCalendar from 'src/components/FunctionalCalendar'
 import Calories_graph from 'src/components/Calories_graph'
+import Compare_metrics from 'src/components/Compare_metrics'
+
 
 export default {
   name: 'Dashboard',
@@ -94,7 +96,8 @@ export default {
     'notes-list': NotesList,
     'graph': Graph,
     'calendar': FunctionalCalendar,
-    'graphC': Calories_graph
+    'graphC': Calories_graph,
+    'graphCom': Compare_metrics
   },
   beforeRouteEnter (to, from, next) {
     if (store().state.main.username === '') {
