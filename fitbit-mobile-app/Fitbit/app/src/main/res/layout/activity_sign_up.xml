@@ -1,73 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:fitsSystemWindows="true">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
-    <LinearLayout
-            android:orientation="vertical"
+
+    <ScrollView
+            android:id="@+id/scrollView2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="56dp"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp">
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp">
 
-        <android.support.design.widget.TextInputLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/input_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textCapWords"
-                    android:hint="@string/username" />
-        </android.support.design.widget.TextInputLayout>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Email Label -->
-        <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/input_email"
-                    android:layout_width="match_parent"
+            <EditText
+                    android:id="@+id/editTextUsernameSignUp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:hint="@string/email" />
-        </android.support.design.widget.TextInputLayout>
+                    android:layout_marginTop="32dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/username"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHighlight="@color/colorPrimaryDark"
+                    android:textColorLink="@color/colorPrimaryDark"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-        <!-- Password Label -->
-        <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/input_password"
-                    android:layout_width="match_parent"
+            <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="@string/register"
+                    android:textColorHighlight="@color/colorPrimaryDark"
+                    android:textSize="24sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                    android:id="@+id/editTextPasswordSignUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/password"
                     android:inputType="textPassword"
-                    android:hint="@string/password"/>
-        </android.support.design.widget.TextInputLayout>
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHighlight="@color/colorPrimaryDark"
+                    android:textColorLink="@color/colorPrimaryDark"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextUsernameSignUp" />
 
-        <!-- Signup Button -->
-        <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btn_signup"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
-                android:padding="12dp"
-                android:text="@string/create_account"/>
+            <EditText
+                    android:id="@+id/editTextRePasswordSignUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:ems="10"
+                    android:hint="@string/retype_password"
+                    android:importantForAutofill="no"
+                    android:inputType="textPassword"
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHighlight="@color/colorPrimaryDark"
+                    android:textColorLink="@color/colorPrimaryDark"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextPasswordSignUp" />
 
-        <TextView android:id="@+id/link_login"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:text="@string/already_member"
-                android:gravity="center"
-                android:textSize="16dip"/>
+            <Button
+                    android:id="@+id/buttonSignUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/create_account"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    </LinearLayout>
-</ScrollView>
+            <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="199dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextRePasswordSignUp">
+
+                <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/already_member"
+                        android:textColor="@color/colorPrimary" />
+
+                <TextView
+                        android:id="@+id/textViewLogin"
+                        android:layout_width="138dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="true"
+                        android:text="@string/login_submit"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold"
+                        android:focusable="true" />
+            </LinearLayout>
+
+            <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:contentDescription="@string/password"
+                    app:layout_constraintEnd_toStartOf="@+id/editTextPasswordSignUp"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextUsernameSignUp"
+                    app:srcCompat="@drawable/ic_lock" />
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:contentDescription="@string/retype_password"
+                    app:layout_constraintEnd_toStartOf="@+id/editTextRePasswordSignUp"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextPasswordSignUp"
+                    app:srcCompat="@drawable/ic_lock" />
+
+            <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp"
+                    android:contentDescription="@string/username"
+                    app:layout_constraintBottom_toTopOf="@+id/imageView"
+                    app:layout_constraintEnd_toStartOf="@+id/editTextUsernameSignUp"
+                    app:srcCompat="@drawable/ic_person" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
