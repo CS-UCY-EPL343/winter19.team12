@@ -27,7 +27,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    android:autofillHints=""
                     android:ems="10"
                     android:hint="@string/username"
                     android:inputType="textPersonName"
@@ -36,7 +35,8 @@
                     android:textColorLink="@color/colorPrimaryDark"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView3"
+                    android:importantForAutofill="no" />
 
             <TextView
                     android:id="@+id/textView3"
@@ -55,7 +55,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:autofillHints=""
                     android:ems="10"
                     android:hint="@string/password"
                     android:inputType="textPassword"
@@ -64,7 +63,8 @@
                     android:textColorLink="@color/colorPrimaryDark"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextUsernameSignUp" />
+                    app:layout_constraintTop_toBottomOf="@+id/editTextUsernameSignUp"
+                    android:importantForAutofill="no" />
 
             <EditText
                     android:id="@+id/editTextRePasswordSignUp"
@@ -117,11 +117,11 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:clickable="true"
+                        android:focusable="true"
                         android:text="@string/login_submit"
-                        android:textAllCaps="true"
+                        android:textAllCaps="false"
                         android:textColor="@color/colorPrimary"
-                        android:textStyle="bold"
-                        android:focusable="true" />
+                        android:textStyle="bold" />
             </LinearLayout>
 
             <ImageView
