@@ -6,6 +6,7 @@
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
+    <string name="register_text">No account? Sign up now!</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
@@ -13,6 +14,7 @@
     <string name="create_new">"Create new"</string>
     <string name="open">"Open"</string>
     <string name="login_submit">"Login"</string>
+    <string name="logout_submit">"Logout"</string>
     <string name="username">"Username"</string>
     <string name="password">"Password"</string>
     <string name="retype_password">"Retype Password"</string>

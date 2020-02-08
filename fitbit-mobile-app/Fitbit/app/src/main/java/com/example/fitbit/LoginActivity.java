@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.app.AlertDialog;
 import org.json.*;
+import com.example.fitbit.model.User;
+import com.orm.SugarRecord;
 
 import org.json.JSONObject;
 
@@ -17,13 +19,19 @@ import java.util.List;
 
 public class LoginActivity extends Activity{
     public static final String LOGIN_ENDPOINT="/get_token";
+    private static String jwt,username;
     private Button mLoginBtn;
     private boolean loginSuccess=false;
     private EditText mPasswordInput,mUsernameInput;
+
     @Override
     public void onCreate(Bundle bundle){
         super.onCreate(bundle);
         setContentView(R.layout.login);
+        if(User.count(User.class,null,null)>=1){
+            Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(myIntent);
+        }
         mLoginBtn = (Button)findViewById(R.id.login_button);
         mUsernameInput = (EditText)findViewById(R.id.username_field);
         mPasswordInput = (EditText)findViewById(R.id.password_field);
@@ -51,7 +59,8 @@ public class LoginActivity extends Activity{
                     .show();
             return;
         }
-        User.getUser().setUsername(username);//sets the username in the singleton User class
+
+        LoginActivity.username=username;
         String params = String.format("{\"username\":\"%s\",\"password\":\"%s\"}",username,password);
         CallAPI request = new CallAPI("GET",new AsyncResponse() {
             @Override
@@ -70,8 +79,8 @@ public class LoginActivity extends Activity{
                                 .show();
                     }
                     else{
-
-                        User.getUser().setJWT(obj.getString("access"));
+                        User user = new User(LoginActivity.username,obj.getString("access"));
+                        user.save();
                         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(myIntent);
                     }

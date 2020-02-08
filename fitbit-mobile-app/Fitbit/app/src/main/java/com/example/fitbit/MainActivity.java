@@ -13,17 +13,26 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Button;
+
+import com.example.fitbit.model.User;
 
 public class MainActivity extends AppCompatActivity {
-
+    private Button mLogoutButton;
     private NetworkChangeReceiver mNetworkReceiver;
-
+    private void logout(){
+        User.deleteAll(User.class);
+        Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(myIntent);
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mNetworkReceiver);
+        stopService(new Intent(this, CollectDataService.class));
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +42,14 @@ public class MainActivity extends AppCompatActivity {
         mNetworkReceiver = new NetworkChangeReceiver();
         registerReceiver(mNetworkReceiver, intentFilter);
         setContentView(R.layout.activity_main);
+        mLogoutButton = (Button)findViewById(R.id.logout_button);
+        mLogoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
         startService(new Intent(this, CollectDataService.class));
-//        WebView myWebView = (WebView) findViewById(R.id.webview);
-//        WebSettings webSettings = myWebView.getSettings();
-//        webSettings.setJavaScriptEnabled(true);
-//        myWebView.loadUrl(Urls.CLIENT_URL);
-
     }
 
     @Override

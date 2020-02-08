@@ -26,7 +26,7 @@ public class Nano extends NanoHTTPD {
 
     @Override
     public NanoHTTPD.Response serve(IHTTPSession session) {
-
+        Log.d("server_test","Server received!");
         JSONObject object = new JSONObject();
         try {
             Map<String, String> files = new HashMap<String, String>();

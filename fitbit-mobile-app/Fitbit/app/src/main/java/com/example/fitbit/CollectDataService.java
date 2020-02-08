@@ -25,6 +25,7 @@ public class CollectDataService extends Service {
         catch(Exception e){
             e.printStackTrace();
         }
-        return super.onStartCommand(intent, flags, startId);
+        super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 }

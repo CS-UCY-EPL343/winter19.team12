@@ -10,7 +10,7 @@ public class User extends SugarRecord {
         this.username = username;
         this.token = token;
     }
-
+    public User(){}
     public String getUsername() {
         return username;
     }
