@@ -41,7 +41,9 @@
                 android:name="com.google.wandroid.actions"
                 android:resource="@xml/network_security_config" />
 
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity">
+
+        </activity>
         <activity
                 android:name=".MainActivity"
                 android:screenOrientation="portrait" />

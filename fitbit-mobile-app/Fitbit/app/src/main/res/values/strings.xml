@@ -20,4 +20,16 @@
     <string name="create_account">"Create an Account"</string>
     <string name="already_member">"Already a member?"</string>
     <string name="register">"Register to Fitbit"</string>
+    <string name="edit_profile">"Edit your profile"</string>
+    <string name="name">"Name"</string>
+    <string name="surname">"Surname"</string>
+    <string name="birthday">"Birthday"</string>
+    <string name="height">"Height"</string>
+    <string name="gender">"Gender"</string>
+    <string name="telephone">"Telephone"</string>
+    <string name="address">"Address"</string>
+    <string name="meters">"m"</string>
+    <string name="male">"Male"</string>
+    <string name="female">"Female"</string>
+    <string name="submit">"Submit"</string>
 </resources>
