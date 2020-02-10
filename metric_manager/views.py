@@ -97,7 +97,7 @@ def edit_profile_api(request):
 	if surname:
 		userRow.last_name=surname
 	if birthday:
-		userRow.birthday=birthday
+		userRow.birthdate=birthday
 	if height:
 		userRow.height=height
 	if gender:

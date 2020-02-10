@@ -190,7 +190,7 @@ export default {
         this.name = response.data.first_name
         this.surname = response.data.last_name
         this.email = response.data.email
-        // this.birth = response.data.birthday
+        this.birth = response.data.birthdate
         this.height = response.data.height
         this.gender = response.data.gender
         this.phone = response.data.telephone
@@ -202,7 +202,7 @@ export default {
       this.$q.loading.show()
       this.$axios.post(this.$store.state.main.domain + '/edit_profile_api', {
         'username': this.$store.state.main.username,
-        'password': this.change_password,
+        'password': this.password,
         'name': this.name,
         'surname': this.surname,
         'birthday': this.birth,
