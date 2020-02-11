@@ -48,6 +48,30 @@ def save_note(request):
 		return JsonResponse({'status':1})
 	return JsonResponse({'status':0})
 
+def delete_note(request):
+	if request.method == "POST":
+		body = str(request.body.decode('utf-8').replace("\'", "\""))
+		body = json.loads(body)
+		username = body.get("username")
+		text = body.get("text")
+		timestamp = body.get("timestamp")
+		note_id = body.get("note_id")
+		reader_id = FitbitUser.objects.filter(username=username)[0]
+		note_row = Notes(id=note_id,id_reader=reader_id,text=text)
+		note_row.delete()
+		return JsonResponse({'status':1})
+	return JsonResponse({'status':0})
+
+def retrieve_notes(request):
+	if request.method == "POST":
+		body = str(request.body.decode('utf-8').replace("\'", "\""))
+		body = json.loads(body)
+		username = body.get("username")
+		reader_id = FitbitUser.objects.filter(username=username)[0]
+		note_list = Notes.objects.filter(id_reader=reader_id).values()
+		return JsonResponse({'note_list':list(note_list)})
+	return JsonResponse({'status':0})
+
 def register_api(request):
 	body = str(request.body.decode('utf-8').replace("\'", "\""))
 	body = json.loads(body)

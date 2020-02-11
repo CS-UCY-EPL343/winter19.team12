@@ -156,7 +156,6 @@
 
 <script>
 import store from 'src/store/index'
-
 export default {
   name: 'Register',
   data () {
