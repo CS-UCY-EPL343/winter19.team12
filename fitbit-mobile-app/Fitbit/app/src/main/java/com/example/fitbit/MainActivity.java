@@ -2,6 +2,7 @@ package com.example.fitbit;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,9 +21,15 @@ import android.widget.Button;
 
 import com.example.fitbit.model.User;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends AppCompatActivity {
     private Button mLogoutButton;
+    public static final String GRAPH_ENDPOINT="/live_graph";
     private NetworkChangeReceiver mNetworkReceiver;
+    private WebView mWebView;
     private void logout(){
         User.deleteAll(User.class);
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
@@ -49,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
                 logout();
             }
         });
+        mWebView = (WebView)findViewById(R.id.graph_webview);
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        Map<String, String> headers = new HashMap<String, String>();
+        Log.d("TOKEN",User.first(User.class).getToken());
+        headers.put("Authorization","Bearer "+User.first(User.class).getToken());
+        mWebView.loadUrl(Urls.SERVER_URL+GRAPH_ENDPOINT,headers);
         startService(new Intent(this, CollectDataService.class));
     }
 

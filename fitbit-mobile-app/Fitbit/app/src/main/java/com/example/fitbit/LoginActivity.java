@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.app.AlertDialog;
+import android.widget.TextView;
+
 import org.json.*;
 import com.example.fitbit.model.User;
 import com.orm.SugarRecord;
@@ -23,6 +25,7 @@ public class LoginActivity extends Activity{
     private Button mLoginBtn;
     private boolean loginSuccess=false;
     private EditText mPasswordInput,mUsernameInput;
+    private TextView registerText;
 
     @Override
     public void onCreate(Bundle bundle){
@@ -35,6 +38,14 @@ public class LoginActivity extends Activity{
         mLoginBtn = (Button)findViewById(R.id.login_button);
         mUsernameInput = (EditText)findViewById(R.id.username_field);
         mPasswordInput = (EditText)findViewById(R.id.password_field);
+        registerText = (TextView)findViewById(R.id.textView5);
+        registerText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(LoginActivity.this, SignUpActivity.class);
+                startActivity(myIntent);
+            }
+        });
         Log.d("TEST","mLoginBtn:"+mLoginBtn);
         mLoginBtn.setOnClickListener(new View.OnClickListener(){
             @Override
