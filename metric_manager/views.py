@@ -11,7 +11,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
+from django.template import loader
+from django.http import HttpResponse
 # Create your views here.
+
 def index(request):
 	return render(request, 'static/index.html')
 
@@ -34,7 +37,6 @@ def register(request):
 
 @csrf_exempt
 def save_note(request):
-	# import pdb;pdb.set_trace()
 	if request.method == "POST":
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
@@ -196,16 +198,26 @@ def insert_metrics(request):
 		metric.save()
 	return JsonResponse({'test':request.GET})
 
-def live_graph(request):
-	return render(request,'livegraph/graph.html')
 
-def get_token(request):
-	pass
+class GraphView(APIView):
+	permission_classes = (IsAuthenticated,)
+	def get(self,request):
+		if request.GET.get('type')==1:#type param will specify which graph will be returned
+			print("type 1")
+			template = loader.get_template('livegraph/graph1.html')
+		elif request.GET.get('type')==2:
+			print("type 2")
+			template = loader.get_template('livegraph/graph2.html')
+		else:
+			template = loader.get_template('livegraph/graph.html')
+		context = {}
+		return HttpResponse(template.render(context, request))
+
+
 
 
 class AuthView(APIView):
     permission_classes = (IsAuthenticated,)
-
     def get(self, request):
         content = {'message': 'Authenticated'}
         return Response(content)
