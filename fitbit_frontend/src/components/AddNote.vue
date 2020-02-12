@@ -58,7 +58,13 @@ export default {
             'description': this.noteTitle + "\n" + this.noteContent,
           }).then(response => {
             if (response.data.error === '0') {
-
+              alert("Error")
+            }
+            else {
+              alert("You successfully save your note");
+              location.reload();
+              this.noteTitle = '';
+              this.noteContent = '';
             }
           })
           this.$q.loading.hide()
