@@ -39,20 +39,12 @@ public class LoginActivity extends Activity{
         mUsernameInput = (EditText)findViewById(R.id.username_field);
         mPasswordInput = (EditText)findViewById(R.id.password_field);
         registerText = (TextView)findViewById(R.id.textView5);
-        registerText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(LoginActivity.this, SignUpActivity.class);
-                startActivity(myIntent);
-            }
+        registerText.setOnClickListener(v -> {
+            Intent myIntent = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(myIntent);
         });
         Log.d("TEST","mLoginBtn:"+mLoginBtn);
-        mLoginBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void  onClick(View v){
-                handleLogin(mUsernameInput.getText().toString(),mPasswordInput.getText().toString());
-            }
-        });
+        mLoginBtn.setOnClickListener(v -> handleLogin(mUsernameInput.getText().toString(),mPasswordInput.getText().toString()));
     }
 
     /**
@@ -70,40 +62,37 @@ public class LoginActivity extends Activity{
                     .show();
             return;
         }
-
+        //TODO WRONG TO GET WITH PASSWORD ONLY POST
         LoginActivity.username=username;
-        String params = String.format("{\"username\":\"%s\",\"password\":\"%s\"}",username,password);
-        CallAPI request = new CallAPI("GET",new AsyncResponse() {
-            @Override
-            public void processFinish(String output) {
-                Log.d("TEST","output:"+output);
-                try {
-                    JSONObject obj = new JSONObject(output);
-                    String title=null;
-                    String message = null;
-                    if(!obj.has("access")){
-                        title="Wrong credentials";
-                        message="Wrong username or password entered";
-                        new AlertDialog.Builder(LoginActivity.this)
-                                .setTitle(title)
-                                .setMessage(message)
-                                .show();
-                    }
-                    else{
-                        User user = new User(LoginActivity.username,obj.getString("access"));
-                        user.save();
-                        Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(myIntent);
-                    }
+        //String params = String.format("{\"username\":\"%s\",\"password\":\"%s\"}",username,password);
+        CallAPI request = new CallAPI("GET", output -> {
+            Log.d("TEST","output:"+output);
+            try {
+                JSONObject obj = new JSONObject(output);
+                String title=null;
+                String message = null;
+                if(!obj.has("access")){
+                    title="Wrong credentials";
+                    message="Wrong username or password entered";
+                    new AlertDialog.Builder(LoginActivity.this)
+                            .setTitle(title)
+                            .setMessage(message)
+                            .show();
+                }
+                else{
+                    User user = new User(LoginActivity.username,obj.getString("access"));
+                    user.save();
+                    Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(myIntent);
+                }
 
 
-                }
-                catch(Exception e){
-                    e.printStackTrace();
-                }
+            }
+            catch(Exception e){
+                e.printStackTrace();
             }
         });
-        request.execute(Urls.SERVER_URL+LOGIN_ENDPOINT,params);
+        request.execute(Urls.SERVER_URL+LOGIN_ENDPOINT,"username",username,"password",password);
 
     }
 
