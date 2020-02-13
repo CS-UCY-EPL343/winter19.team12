@@ -15,45 +15,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                    android:id="@+id/imageView11"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:contentDescription="@string/retype_password"
-                    app:layout_constraintEnd_toStartOf="@+id/editTextRePasswordEditProfile"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextPasswordEditProfile"
-                    app:srcCompat="@drawable/ic_lock" />
-
-            <EditText
-                    android:id="@+id/editTextRePasswordEditProfile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:ems="10"
-                    android:hint="@string/retype_password"
-                    android:importantForAutofill="no"
-                    android:inputType="textPassword"
-                    android:textColor="@color/colorPrimary"
-                    android:textColorHighlight="@color/colorPrimaryDark"
-                    android:textColorLink="@color/colorPrimaryDark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.497"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextPasswordEditProfile" />
-
-            <ImageView
-                    android:id="@+id/imageView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:contentDescription="@string/retype_password"
-                    app:layout_constraintEnd_toStartOf="@+id/editTextPasswordEditProfile"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3"
-                    app:srcCompat="@drawable/ic_lock" />
-
             <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/textViewEditProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
@@ -64,21 +27,39 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-            <EditText
-                    android:id="@+id/editTextPasswordEditProfile"
+            <ImageView
+                    android:id="@+id/imageView14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
+                    android:contentDescription="@string/height"
+                    app:layout_constraintEnd_toStartOf="@+id/editTextHeightEditProfile"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextBirthdayEditProfile"
+                    app:srcCompat="@drawable/ic_weight" />
+
+            <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/kilos"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toEndOf="@+id/editTextHeightEditProfile"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextBirthdayEditProfile" />
+
+            <EditText
+                    android:id="@+id/editTextWeightEditProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:ems="10"
-                    android:hint="@string/password"
+                    android:hint="@string/weight"
                     android:importantForAutofill="no"
-                    android:inputType="textPassword"
-                    android:textColor="@color/colorPrimary"
-                    android:textColorHighlight="@color/colorPrimaryDark"
-                    android:textColorLink="@color/colorPrimaryDark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                    android:inputType="numberDecimal"
+                    app:layout_constraintStart_toStartOf="@+id/editTextBirthdayEditProfile"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextBirthdayEditProfile" />
+
+
 
             <EditText
                     android:id="@+id/editTextNameEditProfile"
@@ -91,7 +72,7 @@
                     android:inputType="textPersonName"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextRePasswordEditProfile" />
+                    app:layout_constraintTop_toBottomOf="@+id/textViewEditProfile" />
 
             <EditText
                     android:id="@+id/editTextSurnameEditProfile"
@@ -129,8 +110,8 @@
                     android:hint="@string/height"
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
-                    app:layout_constraintStart_toStartOf="@+id/editTextBirthdayEditProfile"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextBirthdayEditProfile" />
+                    app:layout_constraintStart_toStartOf="@+id/editTextWeightEditProfile"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextWeightEditProfile" />
 
             <TextView
                     android:id="@+id/textView"
@@ -140,7 +121,7 @@
                     android:text="@string/meters"
                     android:textSize="18sp"
                     app:layout_constraintStart_toEndOf="@+id/editTextHeightEditProfile"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextBirthdayEditProfile" />
+                    app:layout_constraintTop_toBottomOf="@+id/editTextWeightEditProfile" />
 
             <ImageView
                     android:id="@+id/imageView2"
@@ -150,7 +131,7 @@
                     android:contentDescription="@string/name"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toStartOf="@+id/editTextNameEditProfile"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextRePasswordEditProfile"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewEditProfile"
                     app:srcCompat="@drawable/ic_person" />
 
             <ImageView
@@ -180,7 +161,7 @@
                     android:layout_marginTop="24dp"
                     android:contentDescription="@string/height"
                     app:layout_constraintEnd_toStartOf="@+id/editTextHeightEditProfile"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextBirthdayEditProfile"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextWeightEditProfile"
                     app:srcCompat="@drawable/ic_height" />
 
             <RadioGroup

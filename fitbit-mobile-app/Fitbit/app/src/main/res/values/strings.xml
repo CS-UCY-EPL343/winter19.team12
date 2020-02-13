@@ -34,4 +34,10 @@
     <string name="male">"Male"</string>
     <string name="female">"Female"</string>
     <string name="submit">"Submit"</string>
+    <string name="change_password">"Change Password"</string>
+    <string name="new_password">"New Password"</string>
+    <string name="old_password">"Old Password"</string>
+    <string name="weight">"Weight"</string>
+    <string name="kilos">"Kg"</string>
+    <string name="save">"Save"</string>
 </resources>

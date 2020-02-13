@@ -19,6 +19,7 @@ urlpatterns = [
     path('get_token', jwt_views.TokenObtainPairView.as_view(), name='get_token'),
     path('refresh_token', jwt_views.TokenRefreshView.as_view(), name='refresh_token'),
     path('auth_token', views.AuthView.as_view(), name='auth_token'),
+    path('change_password', views.change_password, name='change_password')
 ]
 try:
     fixture_manager.load_fixtures()

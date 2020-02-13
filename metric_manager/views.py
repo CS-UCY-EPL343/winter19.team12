@@ -117,6 +117,7 @@ def edit_profile_api(request):
 	password = body.get('password')
 	telephone = body.get('telephone')
 	address = body.get('address')
+	weight = body.get('weight');
 
 	if name:
 		userRow.first_name=name
@@ -136,9 +137,39 @@ def edit_profile_api(request):
 		userRow.telephone=telephone
 	if address:
 		userRow.address=address
+	if weight:
+		userRow.weight=weight
 
 	userRow.save()
 	return JsonResponse({'status':'1'})
+
+def change_password(request):
+	if request.method != 'POST':
+		return JsonResponse({'error':'method not permitted'})
+	body = str(request.body.decode('utf-8').replace("\'", "\""))
+	body = json.loads(body)
+
+	username = body.get('username')
+	password_old = body.get('old_password')
+	password_new = body.get('password_new')
+	password_r = body.get('repeat_password')
+	if not username:
+		return JsonResponse({'required': 'username'})
+	if not password_new:
+		return JsonResponse({'required': 'password'})
+	if not password_r:
+		return JsonResponse({'required': 'repeat_password'})
+	if password_new != password_r:
+		return JsonResponse({'error': 'password not equal repeat password'})
+
+	user = authenticate(username=username, password=password_old)
+	if not user:
+		return JsonResponse({'error': 'user not found'})
+
+	user.set_password(password_new)
+	user.save()
+	return JsonResponse({'status': '1'})
+
 
 def login_api(request):
 	if request.method == "POST":

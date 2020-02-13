@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -26,7 +27,6 @@ import java.util.Map;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends AppCompatActivity {
-    private Button mLogoutButton;
     public static final String GRAPH_ENDPOINT="/live_graph";
     private NetworkChangeReceiver mNetworkReceiver;
     private WebView mWebView;
@@ -49,13 +49,6 @@ public class MainActivity extends AppCompatActivity {
         mNetworkReceiver = new NetworkChangeReceiver();
         registerReceiver(mNetworkReceiver, intentFilter);
         setContentView(R.layout.activity_main);
-        mLogoutButton = (Button)findViewById(R.id.logout_button);
-        mLogoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logout();
-            }
-        });
         mWebView = (WebView)findViewById(R.id.graph_webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
         Map<String, String> headers = new HashMap<String, String>();
@@ -70,6 +63,24 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.edit_profile_menu:
+                startActivity(new Intent(MainActivity.this,EditProfile.class));
+                return true;
+            case R.id.logout_menu:
+                logout();
+                return true;
+            case R.id.change_password:
+                startActivity(new Intent(MainActivity.this,ChangePasswordActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

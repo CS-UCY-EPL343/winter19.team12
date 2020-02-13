@@ -58,9 +58,9 @@ public class SignUpActivity extends AppCompatActivity {
                 }
 
             });
-            String params = String.format("{\"username\":\"%s\",\"password\":\"%s\",\"repeat_password\":\"%s\"}",username.getText().toString(),password.getText().toString(),rePassword.getText().toString());
+            //String params = String.format("{\"username\":\"%s\",\"password\":\"%s\",\"repeat_password\":\"%s\"}",username.getText().toString(),password.getText().toString(),rePassword.getText().toString());
 
-            request.execute(Urls.SERVER_URL+SIGNUPENDPOINT,params);
+            request.execute(Urls.SERVER_URL+SIGNUPENDPOINT,"username",username.getText().toString(),"password",password.getText().toString(),"repeat_password",rePassword.getText().toString());
         });
 
         findViewById(R.id.textViewLogin).setOnClickListener((view)->{
