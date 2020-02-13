@@ -2,14 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       android:layout_height="wrap_content"
       android:layout_width="wrap_content">
-    <item android:id="@+id/file"
-        android:title="@string/file" >
-        <!-- "file" submenu -->
-        <menu>
-            <item android:id="@+id/create_new"
-                android:title="@string/create_new" />
-            <item android:id="@+id/open"
-                android:title="@string/open" />
-        </menu>
-    </item>
+    <item android:id="@+id/edit_profile_menu"
+        android:title="@string/edit_profile" />
+
+    <item android:id="@+id/change_password"
+            android:title="@string/change_password" />
+
+    <item android:id="@+id/logout_menu"
+            android:title="@string/logout_submit" />
+
 </menu>

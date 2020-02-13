@@ -26,20 +26,20 @@
                     android:id="@+id/editTextUsernameSignUp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="16dp"
                     android:ems="10"
                     android:hint="@string/username"
+                    android:importantForAutofill="no"
                     android:inputType="textPersonName"
                     android:textColor="@color/colorPrimary"
                     android:textColorHighlight="@color/colorPrimaryDark"
                     android:textColorLink="@color/colorPrimaryDark"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3"
-                    android:importantForAutofill="no" />
+                    app:layout_constraintTop_toBottomOf="@+id/textViewEditProfile" />
 
             <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/textViewEditProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"

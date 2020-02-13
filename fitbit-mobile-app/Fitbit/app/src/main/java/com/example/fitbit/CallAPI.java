@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,8 +19,8 @@ import java.util.List;
 import java.util.jar.Attributes;
 
 public class CallAPI extends AsyncTask<String, String, String> {
-    AsyncResponse responseFunction;
-    String method;
+    private AsyncResponse responseFunction;
+    private String method;
     public CallAPI(String method,AsyncResponse responseFunction){
         this.responseFunction=responseFunction;
         this.method=method;
@@ -35,13 +37,20 @@ public class CallAPI extends AsyncTask<String, String, String> {
         super.onPreExecute();
     }
 
+
     @Override
     protected String doInBackground(String... params) {
         String urlString = params[0]; // URL to call
-        String data = params[1]; //data to post
+
+        //String data = params[1]; //data to post
         OutputStream out = null;
         String response=null;
         try {
+            JSONObject data= new JSONObject();
+            for(int i=1;i<params.length;i+=2){
+                data.put(params[i],params[i+1]);
+            }
+
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod(method);
@@ -52,7 +61,7 @@ public class CallAPI extends AsyncTask<String, String, String> {
             out = new BufferedOutputStream(urlConnection.getOutputStream());
 
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.write(data);
+            writer.write(data.toString());
             writer.flush();
             writer.close();
             out.close();
