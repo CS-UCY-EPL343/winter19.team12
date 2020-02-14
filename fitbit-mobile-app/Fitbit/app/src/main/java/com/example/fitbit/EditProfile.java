@@ -15,7 +15,12 @@ import com.example.fitbit.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.sql.Date;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
 public class EditProfile extends AppCompatActivity {
     private final String EDIT_PROFILE_ENDPOINT="/edit_profile_api";
@@ -32,7 +37,7 @@ public class EditProfile extends AppCompatActivity {
     private EditText address;
     private EditText weight;
 
-    private int mYear, mMonth, mDay;
+    private int mYear=0,mMonth=0, mDay=0;
 
 
 
@@ -44,12 +49,19 @@ public class EditProfile extends AppCompatActivity {
         surname=findViewById(R.id.editTextSurnameEditProfile);
         birthday=findViewById(R.id.editTextBirthdayEditProfile);
         birthday.setOnClickListener((l)->{
-            final Calendar c = Calendar.getInstance();
-            mYear = c.get(Calendar.YEAR);
-            mMonth = c.get(Calendar.MONTH);
-            mDay = c.get(Calendar.DAY_OF_MONTH);
+            if(mYear==0&&mDay==0&&mMonth==0){
+                Calendar calendar=Calendar.getInstance();
+                mYear=calendar.get(Calendar.YEAR);
+                mMonth=calendar.get(Calendar.MONTH);
+                mDay=calendar.get(Calendar.DAY_OF_MONTH);
+            }
             DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                    (view, year, monthOfYear, dayOfMonth) -> birthday.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year), mYear, mMonth, mDay);
+                    (view, year, monthOfYear, dayOfMonth) -> {
+                        birthday.setText(String.format(Locale.UK," %d-%d-%4d",dayOfMonth,(monthOfYear + 1),year));
+                        mYear=year;
+                        mMonth=monthOfYear+1;
+                        mDay=dayOfMonth;
+                    }, mYear, mMonth, mDay);
             datePickerDialog.show();
         });
         height=findViewById(R.id.editTextHeightEditProfile);
@@ -65,7 +77,16 @@ public class EditProfile extends AppCompatActivity {
             try {
                 JSONObject results=new JSONObject(r);
                 height.setText(results.getString("height").equals("null")?"":results.getString("height"));
-                birthday.setText(results.getString("birthdate").equals("null")?"":results.getString("birthdate"));
+                if(!results.getString("birthdate").equals("null")){
+                    StringTokenizer stringTokenizer= new StringTokenizer(results.getString("birthdate"),"-");
+                    mYear=Integer.parseInt(stringTokenizer.nextToken());
+                    mMonth=Integer.parseInt(stringTokenizer.nextToken());
+                    mDay =Integer.parseInt(stringTokenizer.nextToken());
+                    String res=mDay+"-"+mMonth+"-"+mYear;
+                    birthday.setText(res);
+                }else{
+                    birthday.setText("");
+                }
                 name.setText(results.getString("first_name").equals("null")?"":results.getString("first_name"));
                 surname.setText(results.getString("last_name").equals("null")?"":results.getString("last_name"));
                 email.setText(results.getString("email").equals("null")?"":results.getString("email"));
@@ -97,17 +118,23 @@ public class EditProfile extends AppCompatActivity {
                         Intent myIntent = new Intent(EditProfile.this, MainActivity.class);
                         startActivity(myIntent);
                     }
-                }catch (JSONException e){
+                }catch (JSONException|NullPointerException e){
                     e.printStackTrace();
                     Toast.makeText(EditProfile.this,"Something went wrong: "+e.getMessage(),Toast.LENGTH_SHORT).show();
+                    Intent myIntent = new Intent(EditProfile.this, MainActivity.class);
+                    startActivity(myIntent);
                 }
             });
+            String birthDate=null;
+            if(mDay!=0&&mMonth!=0&&mYear!=0){
+                birthDate=mYear+"-"+mMonth+"-"+mDay;
+            }
 
             userDataChange.execute(Urls.SERVER_URL+EDIT_PROFILE_ENDPOINT,
                     "username",currentUser.getUsername(),
-                    "first_name",name.getText().toString(),
-                    "last_name",surname.getText().toString(),
-                    "birthday",mDay+"/"+mMonth+"/"+mYear,
+                    "name",name.getText().toString(),
+                    "surname",surname.getText().toString(),
+                    "birthday",birthDate,
                     "height",height.getText().toString(),
                     "gender",isMale.isChecked()?"Male":"Female",
                     "email",email.getText().toString(),
