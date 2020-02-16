@@ -12,14 +12,9 @@ import java.util.Map;
 import fi.iki.elonen.NanoHTTPD;
 
 public class Nano extends NanoHTTPD {
-
     private static final String TAG = "Nano";
-
-
     public Nano(int port) throws IOException {
         super(port);
-
-
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, true);
         System.out.println("\nRunning! Point your browsers to http://localhost:" + port + "/ \n");
     }
