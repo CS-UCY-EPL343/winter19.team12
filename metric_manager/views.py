@@ -204,7 +204,6 @@ def get_user_info(request):
 		return JsonResponse(res_dict,safe=False)
 
 def get_latest_value(request):
-	sys.stderr.write(str(request.GET.get('type')))
 	if len(request.GET)==0 or not 'type' in request.GET:
 		return JsonResponse({'msg':'invalid request'})
 	metric_desc = MetricsDescription.objects.filter(metric_name=request.GET.get('type'))
@@ -217,17 +216,22 @@ def get_latest_value(request):
 	if len(metric)==0:
 		return JsonResponse({'type':request.GET.get('type'),'value':0})
 	metric = metric.latest('timestamp')
-	return JsonResponse({'type':metric.type,'value':metric.amount})
+	return JsonResponse({'type':metric.type.metric_name,'value':metric.amount})
 
 def insert_metrics(request):
 	#check if params are valid
-	if len(request.GET)>0 and 'type' in request.GET and 'value' in request.GET:
-		metric_desc = MetricsDescription.objects.filter(metric_name=request.GET.get('type'))
-		if not metric_desc:
-			return JsonResponse({'msg':'Wrong type'})
-		metric = Metrics(type=metric_desc[0],amount=request.GET.get('value'))
-		metric.save()
-	return JsonResponse({'test':request.GET})
+	body = str(request.body.decode('utf-8').replace("\'", "\""))
+	body = json.loads(body)
+	if request.method!='POST':
+		return JsonResponse({'msg':'Wrong method'})
+	elif not 'type' in body or not 'value' in body:
+		return JsonResponse({'msg':'Missing params'})
+	metric_desc = MetricsDescription.objects.filter(metric_name=body.get('type'))
+	if not metric_desc:
+		return JsonResponse({'msg':'Wrong type'})
+	metric = Metrics(type=metric_desc[0],amount=body.get('value'))
+	metric.save()
+	return JsonResponse({'status':'1'})
 
 
 class GraphView(APIView):
