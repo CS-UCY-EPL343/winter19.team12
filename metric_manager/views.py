@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
 from django.template import loader
 from django.http import HttpResponse
+import datetime
 # Create your views here.
 
 def index(request):
@@ -224,13 +225,17 @@ def insert_metrics(request):
 	body = json.loads(body)
 	if request.method!='POST':
 		return JsonResponse({'msg':'Wrong method'})
-	elif not 'type' in body or not 'value' in body:
+	elif not 'metrics' in body or not 'username' in body:
 		return JsonResponse({'msg':'Missing params'})
-	metric_desc = MetricsDescription.objects.filter(metric_name=body.get('type'))
-	if not metric_desc:
-		return JsonResponse({'msg':'Wrong type'})
-	metric = Metrics(type=metric_desc[0],amount=body.get('value'))
-	metric.save()
+	username = body['username']
+	user_row = FitbitUser.objects.filter(username=username).first()
+	for item in json.loads(body['metrics']):
+		if MetricsDescription.objects.filter(metric_name=item['metricsDescription']).count()==0:
+			continue
+		metric_desc = MetricsDescription.objects.filter(metric_name=item['metricsDescription']).first()
+		timestamp = datetime.datetime.fromtimestamp(item['timestamp']/1000)
+		record = Metrics(user_fk=user_row,amount=item['amount'],type=metric_desc,timestamp=timestamp)
+		record.save()
 	return JsonResponse({'status':'1'})
 
 
