@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginActivity extends Activity{
-    public static final String LOGIN_ENDPOINT="/get_token";
     private static String jwt,username;
     private Button mLoginBtn;
     private boolean loginSuccess=false;
@@ -92,7 +91,7 @@ public class LoginActivity extends Activity{
                 e.printStackTrace();
             }
         });
-        request.execute(Urls.SERVER_URL+LOGIN_ENDPOINT,"username",username,"password",password);
+        request.execute(Urls.SERVER_URL+Urls.LOGIN_ENDPOINT,"username",username,"password",password);
 
     }
 

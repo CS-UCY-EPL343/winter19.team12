@@ -1,7 +1,5 @@
 package com.example.fitbit;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -15,8 +13,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-import java.util.jar.Attributes;
+
 
 public class CallAPI extends AsyncTask<String, String, String> {
     private AsyncResponse responseFunction;

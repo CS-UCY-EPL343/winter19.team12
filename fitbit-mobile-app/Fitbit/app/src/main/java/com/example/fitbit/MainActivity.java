@@ -34,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private WebView mWebView;
     private void logout(){
         User.deleteAll(User.class);
-        dummyLooper.stop();
+        if(GENERATE_DUMMY_VALUES){
+            dummyLooper.stop();
+        }
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(myIntent);
     }

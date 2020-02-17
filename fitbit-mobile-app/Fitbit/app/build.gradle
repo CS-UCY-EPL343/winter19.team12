@@ -41,4 +41,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.github.satyan:sugar:1.5'
     implementation 'com.jakewharton:butterknife:6.1.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

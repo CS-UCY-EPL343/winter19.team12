@@ -22,4 +22,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
             }
         }
     }
+    public static boolean hasInternetConnectivity(){
+        return isConnected;
+    }
 }

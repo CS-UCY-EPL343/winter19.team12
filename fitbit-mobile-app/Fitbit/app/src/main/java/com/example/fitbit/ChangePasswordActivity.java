@@ -13,7 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ChangePasswordActivity extends AppCompatActivity {
-    private final String CHANGE_PASSWORD_ENDPOINT="/change_password";
     private EditText oldPassword;
     private EditText newPassword;
     private EditText rePassword;
@@ -53,7 +52,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 return;
             }
             User user= User.first(User.class);
-            changePass.execute(Urls.SERVER_URL+CHANGE_PASSWORD_ENDPOINT,
+            changePass.execute(Urls.SERVER_URL+Urls.CHANGE_PASSWORD_ENDPOINT,
                     "username",user.getUsername(),
                     "old_password",oldPassword.getText().toString(),
                     "password_new",newPassword.getText().toString(),

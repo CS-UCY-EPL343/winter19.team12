@@ -1,37 +1,38 @@
 package com.example.fitbit.model;
 
+import com.google.gson.Gson;
 import com.orm.SugarRecord;
 
 import java.util.Date;
 
 public class Metrics extends SugarRecord {
-    private MetricsDescription metricsDescription;
-    private Date timestamp;
+    private String metricsDescription;
+    private long timestamp;
     private double amount;
 
     public Metrics(){
 
     }
 
-    public Metrics(MetricsDescription metricsDescription, Date timestamp, double amount) {
+    public Metrics(String metricsDescription, long timestamp, double amount) {
         this.metricsDescription = metricsDescription;
         this.timestamp = timestamp;
         this.amount = amount;
     }
 
-    public MetricsDescription getMetricsDescription() {
+    public String getMetricsDescription() {
         return metricsDescription;
     }
 
-    public void setMetricsDescription(MetricsDescription metricsDescription) {
+    public void setMetricsDescription(String metricsDescription) {
         this.metricsDescription = metricsDescription;
     }
 
-    public Date getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -41,5 +42,9 @@ public class Metrics extends SugarRecord {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+    public String toString(){
+        String result = new Gson().toJson(this);
+        return result;
     }
 }

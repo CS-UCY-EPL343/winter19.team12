@@ -4,11 +4,14 @@ import android.os.Looper;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import com.example.fitbit.model.Metrics;
+import com.example.fitbit.model.User;
 
 import org.json.JSONObject;
+import java.util.Date;
+import java.util.ArrayList;
 
 class DummyLooper{
-    private static final String INSERT_METRICS_ENDPOINT = "/insert_metrics";
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override
@@ -33,7 +36,13 @@ class DummyLooper{
                 e.printStackTrace();
             }
         });
-        String value = String.valueOf((int) (Math.random() * 30) + 80);
-        request.execute(Urls.SERVER_URL + INSERT_METRICS_ENDPOINT, "type", "heart", "value", value);
+        ArrayList<Metrics> metrics= new ArrayList();
+        metrics.add(new Metrics("heart",new Date().getTime(),(Math.random() * 30) + 80));
+        metrics.add(new Metrics("calories",new Date().getTime(),(Math.random() * 20) + 10));
+        Log.d("metrics",metrics.toString());
+        String username = User.findAll(User.class).next().getUsername();
+        request.execute(Urls.SERVER_URL + Urls.INSERT_METRICS_ENDPOINT,
+                        "metrics", metrics.toString(),
+                        "username", username);
     }
 }

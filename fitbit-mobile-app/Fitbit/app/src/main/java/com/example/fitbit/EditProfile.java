@@ -23,9 +23,6 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 
 public class EditProfile extends AppCompatActivity {
-    private final String EDIT_PROFILE_ENDPOINT="/edit_profile_api";
-    private final String VIEW_PROFILE_DETAILS="/get_user_info";
-
     private EditText name;
     private EditText surname;
     private EditText birthday;
@@ -107,7 +104,7 @@ public class EditProfile extends AppCompatActivity {
 
         });
         User currentUser=User.first(User.class);
-        userInfo.execute(Urls.SERVER_URL+VIEW_PROFILE_DETAILS,"username",currentUser.getUsername());
+        userInfo.execute(Urls.SERVER_URL+Urls.VIEW_PROFILE_DETAILS,"username",currentUser.getUsername());
 
         findViewById(R.id.buttonEditProfileSubmit).setOnClickListener((l)->{
             CallAPI userDataChange = new CallAPI("POST",(r)->{
@@ -130,7 +127,7 @@ public class EditProfile extends AppCompatActivity {
                 birthDate=mYear+"-"+mMonth+"-"+mDay;
             }
 
-            userDataChange.execute(Urls.SERVER_URL+EDIT_PROFILE_ENDPOINT,
+            userDataChange.execute(Urls.SERVER_URL+Urls.EDIT_PROFILE_ENDPOINT,
                     "username",currentUser.getUsername(),
                     "name",name.getText().toString(),
                     "surname",surname.getText().toString(),

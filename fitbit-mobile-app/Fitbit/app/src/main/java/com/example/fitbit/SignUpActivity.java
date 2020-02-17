@@ -14,8 +14,6 @@ import org.json.JSONObject;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
-    private static final String SIGNUPENDPOINT="/register_api";
-
     EditText username;
     EditText password;
     EditText rePassword;
@@ -60,7 +58,7 @@ public class SignUpActivity extends AppCompatActivity {
             });
             //String params = String.format("{\"username\":\"%s\",\"password\":\"%s\",\"repeat_password\":\"%s\"}",username.getText().toString(),password.getText().toString(),rePassword.getText().toString());
 
-            request.execute(Urls.SERVER_URL+SIGNUPENDPOINT,"username",username.getText().toString(),"password",password.getText().toString(),"repeat_password",rePassword.getText().toString());
+            request.execute(Urls.SERVER_URL+Urls.SIGNUP_ENDPOINT,"username",username.getText().toString(),"password",password.getText().toString(),"repeat_password",rePassword.getText().toString());
         });
 
         findViewById(R.id.textViewLogin).setOnClickListener((view)->{
