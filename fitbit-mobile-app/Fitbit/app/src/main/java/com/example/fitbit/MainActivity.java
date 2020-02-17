@@ -28,10 +28,13 @@ import java.util.Map;
 @SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends AppCompatActivity {
     public static final String GRAPH_ENDPOINT="/live_graph";
+    public static final boolean GENERATE_DUMMY_VALUES=true;//if true,dummy metrics are sent to the server
     private NetworkChangeReceiver mNetworkReceiver;
+    private static DummyLooper dummyLooper;
     private WebView mWebView;
     private void logout(){
         User.deleteAll(User.class);
+        dummyLooper.stop();
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(myIntent);
     }
@@ -55,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d("TOKEN",User.first(User.class).getToken());
         headers.put("Authorization","Bearer "+User.first(User.class).getToken());
         mWebView.loadUrl(Urls.SERVER_URL+GRAPH_ENDPOINT,headers);
+        if(GENERATE_DUMMY_VALUES){
+            dummyLooper = new DummyLooper();
+            dummyLooper.start();
+        }
         startService(new Intent(this, CollectDataService.class));
     }
 
