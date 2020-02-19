@@ -36,13 +36,7 @@ class DummyLooper{
                 e.printStackTrace();
             }
         });
-        ArrayList<Metrics> metrics= new ArrayList();
-        metrics.add(new Metrics("heart",new Date().getTime(),(Math.random() * 30) + 80));
-        metrics.add(new Metrics("calories",new Date().getTime(),(Math.random() * 20) + 10));
-        Log.d("metrics",metrics.toString());
-        String username = User.findAll(User.class).next().getUsername();
-        request.execute(Urls.SERVER_URL + Urls.INSERT_METRICS_ENDPOINT,
-                        "metrics", metrics.toString(),
-                        "username", username);
+        MetricStorageManager.storeMetrics("heart",new Date().getTime(),(Math.random() * 30) + 80);
+        MetricStorageManager.storeMetrics("calories",new Date().getTime(),(Math.random() * 20) + 10);
     }
 }

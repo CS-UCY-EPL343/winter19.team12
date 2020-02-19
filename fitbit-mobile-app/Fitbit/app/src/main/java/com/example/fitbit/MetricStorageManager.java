@@ -13,6 +13,7 @@ import java.util.List;
 
 public class MetricStorageManager {
     private Handler mHandler = new Handler();
+    public static final int DB_CHECK_TIME=2000;
     public static final int BATCH_SIZE=200;//how many metrics can be sent simultaneously
     private Runnable runnable = new Runnable() {
         @Override
@@ -20,58 +21,48 @@ public class MetricStorageManager {
             if(NetworkChangeReceiver.hasInternetConnectivity()){
                 sendMetrics();
             }
-            mHandler.postDelayed(this, 5000);
+            mHandler.postDelayed(this, DB_CHECK_TIME);
         }
     };
-    public void storeMetrics(List<Metrics> metrics){
-        if(!NetworkChangeReceiver.hasInternetConnectivity()){
-            for(Metrics item:metrics){
-                item.save();
-            }
-        }
-        else{
-            CallAPI request = new CallAPI("POST", output -> {
-                try {
-                    JSONObject obj = new JSONObject(output);
-                    Log.d("DUMMY", obj.toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            request.execute(Urls.SERVER_URL + Urls.INSERT_METRICS_ENDPOINT,
-                            "metrics",metrics.toString(),
-                            "username", User.findAll(User.class).next().getUsername());
-        }
+    public static void storeMetrics(String type,long timestamp,double amount){
+        Metrics metric = new Metrics(type,timestamp,amount);
+        metric.save();
     }
     public void start(){
-        mHandler.postDelayed(runnable,5000);
+        Log.d("handler_started","handler_start");
+        mHandler.postDelayed(runnable,DB_CHECK_TIME);
     }
     public void stop(){
         mHandler.removeCallbacks(runnable);
     }
     public void sendMetrics() {
+        Log.d("METRICS","Metrics remaining:"+String.valueOf(Metrics.count(Metrics.class)));
         //while there are metrics waiting to be sent and there is internet connection
-        while(Metrics.count(Metrics.class)>0 && NetworkChangeReceiver.hasInternetConnectivity()){
-            List<Metrics> metricRecords = Select.from(Metrics.class)
-                                                .orderBy("timestamp DESC")
-                                                .limit(String.valueOf(BATCH_SIZE))
-                                                .list();
-            CallAPI request = new CallAPI("POST", output -> {
-                try {
-                    JSONObject obj = new JSONObject(output);
-                    if(obj.has("status") && obj.get("status").equals("1")){
-                        //metrics successfuly sent to server,delete the batch android SQLite
-                        for(Metrics item:metricRecords){
-                            Metrics.delete(item);
-                        }
+        List<Metrics> metricRecords = Select.from(Metrics.class)
+                                            .orderBy("timestamp DESC")
+                                            .limit(String.valueOf(BATCH_SIZE))
+                                            .list();
+        CallAPI request = new CallAPI("POST", output -> {
+            try {
+                JSONObject obj = new JSONObject(output);
+                Log.d("res",obj.toString());
+                if(obj.has("status") && obj.get("status").equals("1")){
+                    //metrics successfuly sent to server,delete the batch android SQLite
+                    for(Metrics item:metricRecords){
+                        item.delete();
                     }
-                    Log.d("DUMMY", obj.toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    //We call again send metric function if there are still data to be sent
+                    if(Metrics.count(Metrics.class)>0 && NetworkChangeReceiver.hasInternetConnectivity()){
+                        sendMetrics();
+                    }
                 }
-            });
-            request.execute(Urls.SERVER_URL + Urls.INSERT_METRICS_ENDPOINT, "metrics",metricRecords.toString());
-        }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        request.execute(Urls.SERVER_URL + Urls.INSERT_METRICS_ENDPOINT, "metrics",metricRecords.toString(),
+                        "username",User.first(User.class).getUsername());
+
 
     }
 }
