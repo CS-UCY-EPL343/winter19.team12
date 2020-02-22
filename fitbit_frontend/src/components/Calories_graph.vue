@@ -82,6 +82,8 @@ export default {
       "visits": 441
     }];
 
+    console.log(chart.data);
+
     // Create axes
     let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     categoryAxis.dataFields.category = "country";

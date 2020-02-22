@@ -75,6 +75,18 @@ def retrieve_notes(request):
 		return JsonResponse({'note_list':list(note_list)})
 	return JsonResponse({'status':0})
 
+def retrieve_history_metrics(request):
+	if request.method == "POST":
+		body = str(request.body.decode('utf-8').replace("\'", "\""))
+		body = json.loads(body)
+		username = body.get("username")
+		type_metric = body.get("type_metric")
+		user_id = FitbitUser.objects.filter(username=username)[0]
+		id_metric = MetricsDescription.objects.filter(metric_name=type_metric)[0]
+		metric_list = Metrics.objects.filter(user_fk=user_id,type=id_metric).values()
+		return JsonResponse({'metric_list':list(metric_list)})
+	return JsonResponse({'status':1})
+
 def register_api(request):
 	body = str(request.body.decode('utf-8').replace("\'", "\""))
 	body = json.loads(body)

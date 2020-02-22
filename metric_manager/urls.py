@@ -9,6 +9,7 @@ urlpatterns = [
     path('get_user_info',views.get_user_info,name='get_user_info'),
     path('login_api',views.login_api,name='login_api'),
     path('retrieve_notes',views.retrieve_notes,name='retrieve_notes'),
+    path('retrieve_history_metrics',views.retrieve_history_metrics,name='retrieve_history_metrics'),
     path('save_note',views.save_note,name='save_note'),
     path('delete_note',views.delete_note,name='delete_note'),
     path('logout_api',views.logout_api,name='logout_api'),

@@ -35,6 +35,16 @@
               <q-item-label>Dashboard</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-item :to='{name: "history"}' clickable tag="a">
+            <q-item-section avatar>
+              <q-icon name="history" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>History Dashboard</q-item-label>
+            </q-item-section>
+          </q-item>
+
           <q-item :to='{name: "edit"}' clickable tag="a">
             <q-item-section avatar>
               <q-icon name="edit" />
@@ -43,6 +53,7 @@
               <q-item-label>Edit Profile</q-item-label>
             </q-item-section>
           </q-item>
+
           <q-item @click='logout' clickable tag="a">
             <q-item-section avatar>
               <q-icon name="exit_to_app" />

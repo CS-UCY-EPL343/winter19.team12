@@ -35,7 +35,7 @@ export default {
       this.$q.loading.show();
       let idx = this.messages.indexOf(item)
       this.messages.splice(idx,1)
-      this.$axios.post(this.$store.state.main.domain + '/delete_note', {
+      this.$axios.post(this.$store.state.m.ain.domain + '/delete_note', {
         'username': this.$store.state.main.username,
         'text' : item["title"] + "\n" + item ["text"],
         'timestamp' : item["timestamp"],

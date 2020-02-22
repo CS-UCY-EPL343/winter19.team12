@@ -5,6 +5,7 @@ const routes = [
     component: () => import('layouts/MyLayout.vue'),
     children: [
       { name: 'dashboard', path: '', alias: 'index', component: () => import('pages/Dashboard.vue') },
+      { name: 'history', path: 'history', alias: 'uhistory', component: () => import('pages/History.vue') },
       { name: 'login', path: 'login', alias: 'ulogin', component: () => import('pages/Login.vue') },
       { name: 'register', path: 'register', alias: 'uregister', component: () => import('pages/Register.vue') },
       { name: 'help', path: 'help', component: () => import('pages/Help.vue') },
