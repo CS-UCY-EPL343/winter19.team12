@@ -16,6 +16,8 @@ from django.http import HttpResponse
 import datetime
 # Create your views here.
 
+
+
 def index(request):
 	return render(request, 'static/index.html')
 
@@ -72,7 +74,14 @@ def retrieve_notes(request):
 		username = body.get("username")
 		reader_id = FitbitUser.objects.filter(username=username)[0]
 		note_list = Notes.objects.filter(id_reader=reader_id).values()
-		return JsonResponse({'note_list':list(note_list)})
+		specialist_list = []
+		patient_list = []
+		for i in range(len(note_list)):
+			if (note_list[i]['id_writer_id']==note_list[0]['id_reader_id']):
+				patient_list.append(note_list[i])
+			else:
+				specialist_list.append(note_list[i])
+		return JsonResponse({'patient_list':patient_list,'specialist_list':specialist_list})
 	return JsonResponse({'status':0})
 
 def retrieve_history_metrics(request):
@@ -81,10 +90,22 @@ def retrieve_history_metrics(request):
 		body = json.loads(body)
 		username = body.get("username")
 		type_metric = body.get("type_metric")
+		startDate = body.get("startDate")
+		endDate = body.get("endDate")
+		start_list = startDate.split("-")
+		end_list = endDate.split("-")
+
 		user_id = FitbitUser.objects.filter(username=username)[0]
 		id_metric = MetricsDescription.objects.filter(metric_name=type_metric)[0]
+		final_list = []
 		metric_list = Metrics.objects.filter(user_fk=user_id,type=id_metric).values()
-		return JsonResponse({'metric_list':list(metric_list)})
+		for i in range(len(metric_list)):
+			current_date = metric_list[i]["timestamp"]
+			if ((current_date.year>=int(start_list[0]) and current_date.year<=int(end_list[0])) and
+				(current_date.month>=int(start_list[1]) and current_date.month<=int(end_list[1])) and
+				(current_date.day>int(start_list[2]) and current_date.day<=int(end_list[2]))):
+				final_list.append(metric_list[i])
+		return JsonResponse({'metric_list':final_list})
 	return JsonResponse({'status':1})
 
 def register_api(request):
