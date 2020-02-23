@@ -4,6 +4,17 @@
       <div class="text-h6">History Heartbeat data for {{$store.state.main.username}}</div>
     </q-card-section>
     <q-separator />
+
+    <div id="controls" style="width: 100%; overflow: hidden;">
+    <div style="float: left; margin-left: 15px;">
+      From: <input type="date" id="fromfield"class="amcharts-input" />
+      To: <input type="date" id="tofield" class="amcharts-input" />
+    </div>
+    <div style="float: left; margin-left: 15px;">
+      <q-btn color="primary" label="Search"  @click='clickSearch()'/>
+    </div>
+    </div>
+
     <q-card-section class='no-padding'>
       <div class='graph' ref='chartdiv' />
     </q-card-section>
@@ -11,168 +22,187 @@
 </template>
 
 <script>
-import * as am4core from '@amcharts/amcharts4/core'
-import * as am4charts from '@amcharts/amcharts4/charts'
-// eslint-disable-next-line camelcase
-import am4themes_animated from '@amcharts/amcharts4/themes/animated'
+
+/* Imports */
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
 import axios from 'axios'
 
+/* Chart code */
+// Themes begin
+import am4themes_animated from '@amcharts/amcharts4/themes/animated'
 am4core.useTheme(am4themes_animated)
+// Themes end
 
 export default {
-  name: 'History_Graph',
+  name: 'Graph',
   data () {
     return {
-      graph: ''
+      graph: '',
+      graph_list: [],
+    }
+  },
+  methods: {
+    clickSearch(){
+      const domain = this.$store.state.main.domain
+      const user = this.$store.state.main.username
+
+      let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
+      chart.hiddenState.properties.opacity = 0
+
+      chart.padding(0, 0, 0, 0)
+
+      chart.zoomOutButton.disabled = true
+
+      // Create chart instance
+      chart.scrollbarX = new am4core.Scrollbar();
+
+      chart.data = []
+
+      let inputFieldFormat = "yyyy-MM-dd";
+      let start = document.getElementById("fromfield").value;
+      let end = document.getElementById("tofield").value;
+      console.log(start);
+      if ((start.length < inputFieldFormat.length) || (end.length < inputFieldFormat.length)) {
+        alert("Please set correct dates")
+        return;
+      }
+
+      if (start>end){
+        alert("Please set the dates correctly")
+        return;
+      }
+
+      this.$axios.post(this.$store.state.main.domain + '/retrieve_history_metrics', {
+        'username': this.$store.state.main.username,
+        'type_metric' : 'heart',
+        'startDate' : start,
+        'endDate' : end,
+      }).then(response => {
+        if (response.data.error === '0') {
+          alert("Error")
+        }
+        else {
+          var data = response.data.metric_list;
+          console.log(data);
+          for (var i=0;i<data.length;i++){
+            var timestamp = data[i].timestamp;
+            timestamp = timestamp.split("T");
+            var date = timestamp[0];
+
+            var amount = data[i].amount;
+            chart.data.push({"Heartbeat":amount,"Date":date});
+
+          }
+          console.log(document.getElementById("fromfield").value);
+          console.log(chart.data);
+          update();
+        }
+      })
+
+      function update(){
+        // Create axes
+        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.renderer.minGridDistance = 50;
+        dateAxis.renderer.grid.template.location = 0.5;
+        dateAxis.startLocation = 0.5;
+        dateAxis.endLocation = 0.5;
+
+
+        var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis.title.text = "Metrics";
+
+        // Create series
+        var series = chart.series.push(new am4charts.LineSeries());
+        series.dataFields.valueY = "Heartbeat";
+        series.dataFields.dateX = "Date";
+        series.name = "Average Heartbeat (bpm)";
+        series.tooltipText = "{name}: [bold]{valueY}[/]";
+        series.strokeWidth = 3;
+        series.stroke = am4core.color("#FF6F91");
+        series.tooltip.fill = am4core.color("#FF6F91");
+        series.tooltip.getFillFromObject = false;
+        series.tooltip.background.fill = am4core.color("#FF6F91");
+
+        // Add legend
+        chart.legend = new am4charts.Legend();
+
+        // Add cursor
+        chart.cursor = new am4charts.XYCursor();
+
+        // Add simple vertical scrollbar
+        chart.scrollbarY = new am4core.Scrollbar();
+
+        // Add horizotal scrollbar with preview
+        var scrollbarX = new am4charts.XYChartScrollbar();
+        scrollbarX.series.push(series);
+        chart.scrollbarX = scrollbarX;
+
+        /**
+         * Set up external controls
+         */
+
+        // Date format to be used in input fields
+        let inputFieldFormat = "yyyy-MM-dd";
+
+        dateAxis.events.on("selectionextremeschanged", function() {
+          updateFields();
+        });
+
+        dateAxis.events.on("extremeschanged", updateFields);
+
+        function updateFields() {
+          let minZoomed = dateAxis.minZoomed + am4core.time.getDuration(dateAxis.mainBaseInterval.timeUnit, dateAxis.mainBaseInterval.count) * 0.5;
+          document.getElementById("fromfield").value = chart.dateFormatter.format(minZoomed, inputFieldFormat);
+          document.getElementById("tofield").value = chart.dateFormatter.format(new Date(dateAxis.maxZoomed), inputFieldFormat);
+        }
+
+        document.getElementById("fromfield").addEventListener("keyup", updateZoom);
+        document.getElementById("tofield").addEventListener("keyup", updateZoom);
+
+
+        let zoomTimeout;
+        function updateZoom() {
+          if (zoomTimeout) {
+            clearTimeout(zoomTimeout);
+          }
+          zoomTimeout = setTimeout(function() {
+            let start = document.getElementById("fromfield").value;
+            let end = document.getElementById("tofield").value;
+
+            if ((start.length < inputFieldFormat.length) || (end.length < inputFieldFormat.length)) {
+              alert("Please set correct dates")
+              return;
+            }
+
+            if (start>end){
+              alert("Please set the dates correctly")
+              return;
+            }
+
+
+            let startDate = chart.dateFormatter.parse(start, inputFieldFormat);
+            let endDate = chart.dateFormatter.parse(end, inputFieldFormat);
+
+            if (startDate && endDate) {
+              dateAxis.zoomToDates(startDate, endDate);
+            }
+          }, 500);
+        }
+
+      }
     }
   },
   mounted () {
-    const domain = this.$store.state.main.domain
-    let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
-    chart.hiddenState.properties.opacity = 0
 
-    chart.padding(0, 0, 0, 0)
-
-    chart.zoomOutButton.disabled = true
-
-    let data = []
-    let visits = 10
-    let i = 0
-
-    for (i = 0; i <= 30; i++) {
-      visits -= Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10)
-      data.push({ date: new Date().setSeconds(i - 30), value: visits })
-    }
-
-    chart.data = data
-
-    let dateAxis = chart.xAxes.push(new am4charts.DateAxis())
-    dateAxis.renderer.grid.template.location = 0
-    dateAxis.renderer.minGridDistance = 30
-    dateAxis.dateFormats.setKey('second', 'ss')
-    dateAxis.periodChangeDateFormats.setKey('second', '[bold]h:mm a')
-    dateAxis.periodChangeDateFormats.setKey('minute', '[bold]h:mm a')
-    dateAxis.periodChangeDateFormats.setKey('hour', '[bold]h:mm a')
-    dateAxis.renderer.inside = true
-    dateAxis.renderer.axisFills.template.disabled = true
-    dateAxis.renderer.ticks.template.disabled = true
-
-    let valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
-    valueAxis.tooltip.disabled = true
-    valueAxis.interpolationDuration = 500
-    valueAxis.rangeChangeDuration = 500
-    valueAxis.renderer.inside = true
-    valueAxis.renderer.minLabelPosition = 0.05
-    valueAxis.renderer.maxLabelPosition = 0.95
-    valueAxis.renderer.axisFills.template.disabled = true
-    valueAxis.renderer.ticks.template.disabled = true
-
-    let series = chart.series.push(new am4charts.LineSeries())
-    series.dataFields.dateX = 'date'
-    series.dataFields.valueY = 'value'
-    series.interpolationDuration = 500
-    series.defaultState.transitionDuration = 0
-    series.tensionX = 0.8
-
-    chart.events.on('datavalidated', function () {
-      dateAxis.zoom({ start: 1 / 15, end: 1.2 }, false, true)
-    })
-
-    dateAxis.interpolationDuration = 500
-    dateAxis.rangeChangeDuration = 500
-
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) {
-        if (interval) {
-          clearInterval(interval)
-        }
-      } else {
-        startInterval()
-      }
-    }, false)
-
-    function updateGraph () {
-      axios.get(domain + '/get_latest_metric?type=heart').then(response => {
-        let lastdataItem = series.dataItems.getIndex(series.dataItems.length - 1)
-        chart.addData(
-          { date: new Date(lastdataItem.dateX.getTime() + 2000), value: response.data.value },
-          1
-        )
-      })
-    }
-
-    // add data
-    let interval
-    function startInterval () {
-      interval = setInterval(function () {
-        updateGraph()
-      }, 2000)
-    }
-
-    startInterval()
-
-    // all the below is optional, makes some fancy effects
-    // gradient fill of the series
-    series.fillOpacity = 1
-    let gradient = new am4core.LinearGradient()
-    gradient.addColor(chart.colors.getIndex(0), 0.2)
-    gradient.addColor(chart.colors.getIndex(0), 0)
-    series.fill = gradient
-
-    // this makes date axis labels to fade out
-    dateAxis.renderer.labels.template.adapter.add('fillOpacity', function (fillOpacity, target) {
-      let dataItem = target.dataItem
-      return dataItem.position
-    })
-
-    // need to set this, otherwise fillOpacity is not changed and not set
-    dateAxis.events.on('validated', function () {
-      am4core.iter.each(dateAxis.renderer.labels.iterator(), function (label) {
-        // eslint-disable-next-line no-self-assign
-        label.fillOpacity = label.fillOpacity
-      })
-    })
-
-    // this makes date axis labels which are at equal minutes to be rotated
-    dateAxis.renderer.labels.template.adapter.add('rotation', function (rotation, target) {
-      let dataItem = target.dataItem
-      // eslint-disable-next-line eqeqeq
-      if (dataItem.date && dataItem.date.getTime() == am4core.time.round(new Date(dataItem.date.getTime()), 'minute').getTime()) {
-        target.verticalCenter = 'middle'
-        target.horizontalCenter = 'left'
-        return -90
-      } else {
-        target.verticalCenter = 'bottom'
-        target.horizontalCenter = 'middle'
-        return 0
-      }
-    })
-
-    // bullet at the front of the line
-    let bullet = series.createChild(am4charts.CircleBullet)
-    bullet.circle.radius = 5
-    bullet.fillOpacity = 1
-    bullet.fill = chart.colors.getIndex(0)
-    bullet.isMeasured = false
-
-    series.events.on('validated', function () {
-      bullet.moveTo(series.dataItems.last.point)
-      bullet.validatePosition()
-    })
-
-    this.graph = chart
-  },
-  beforeDestroy () {
-    if (this.graph) {
-      this.graph.dispose()
-    }
-  }
+    },
 }
+
 </script>
 
 <style scoped>
-.graph {
-  height: 350px;
-  width: 100%;
-}
+    .graph {
+      height: 350px;
+      width: 100%;
+    }
 </style>
