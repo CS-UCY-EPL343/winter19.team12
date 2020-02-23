@@ -18,7 +18,7 @@
       </div>
 
       <div class="col fit row wrap justify-end items-start content-start">
-        
+
       </div>
     </div>
 
@@ -50,7 +50,7 @@
 
                 <q-tab-panel name="Distance Covered">
                   <div>
-                    Distance
+                    <graphDistance />
                   </div>
                 </q-tab-panel>
             </q-tab-panels>
@@ -74,6 +74,7 @@ import AddNote from 'src/components/AddNote'
 import NotesList from 'src/components/NotesList'
 import History_Graph from 'src/components/History_Graph'
 import History_Calories_Graph from 'src/components/History_Calories_Graph'
+import History_Distance_Graph from 'src/components/History_Distance_Graph'
 
 
 export default {
@@ -88,6 +89,7 @@ export default {
     'notes-list': NotesList,
     'graph': History_Graph,
     'graphC': History_Calories_Graph,
+    'graphDistance': History_Distance_Graph,
   },
   beforeRouteEnter (to, from, next) {
     if (store().state.main.username === '') {
