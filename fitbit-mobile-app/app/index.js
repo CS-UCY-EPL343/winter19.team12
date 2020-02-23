@@ -27,61 +27,162 @@ import { OrientationSensor } from "orientation";
 import { me as appbit} from "appbit";
 import { today } from "user-activity";
 import * as messaging from "messaging";
+import { HeartRateSensor } from "heart-rate";
 
 import { me as appbit } from "appbit";
-import { dayHistory } from "user-activity";
+import { minuteHistory, dayHistory } from "user-activity";
+import userActivity from "user-activity";
 
+//console.log("Minute history metrics are undefined and the reason is explained: https://dev.fitbit.com/blog/2019-10-29-announcing-fitbit-os-sdk-4.0/");
+/*
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_heart_rate")){
+  const minuteRecordsAverageHeartRate = minuteHistory.query({limit: 10});
+  minuteRecordsAverageHeartRate.forEach((minute,index) => {
+    if(minute.averageHeartRate!=undefined)
+      console.log(`${minute.averageHeartRate} averageHeartRate. ${index + 1} minute(s) ago.`);
+    else
+      console.log("Per minute averageHeartRate is undefined");
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_activity")){
+  const minuteRecordsSteps = minuteHistory.query({limit: 10});
+  minuteRecordsSteps.forEach((minute,index) => {
+    if(minute.steps!=undefined)
+      console.log(`${minute.steps} steps. ${index + 1} minute(s) ago.`);
+    else
+      console.log("Per minute steps are undefined");
+  });
+}
+console.log("------------------------------------------------------------------");
+ if(appbit.permissions.granted("access_activity")){
+  const minuteRecordsCalories = minuteHistory.query({limit: 10});
+  minuteRecordsCalories.forEach((minute,index) => {
+    if(minute.calories!=undefined)
+      console.log(`${minute.calories} calories. ${index + 1} minute(s) ago.`);
+    else
+      console.log("Per minute calories are undefined");
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_activity")){
+  const minuteRecordsActiveMinutes = minuteHistory.query({limit: 10});
+  minuteRecordsActiveMinutes.forEach((minute,index) => {
+    if(minute.activeMinutes!=undefined)
+      console.log(`${minute.activeMinutes} activeMinutes. ${index + 1} minute(s) ago.`);
+    else
+      console.log("Per minute activeMinutes are undefined");
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_activity")){
+  const minuteRecordsDistance = minuteHistory.query({limit: 10});
+  minuteRecordsDistance.forEach((minute,index) => {
+    if(minute.distance!=undefined)
+      console.log(`${minute.distance} distance. ${index + 1} minute(s) ago.`);
+    else
+      console.log("Per minute distance is undefined");
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_activity")){
+  const minuteRecordsElevationGain = minuteHistory.query({limit: 10});
+  minuteRecordsElevationGain.forEach((minute,index) => {
+    if(minute.elevationGain!=undefined)
+      console.log(`${minute.elevationGain} elevationGain. ${index + 1} minute(s) ago.`);
+    else
+      console.log("Per minute elevationGain is undefined");
+  });
+}
+console.log("------------------------------------------------------------------");
+if(appbit.permissions.granted("access_heart_rate")){
+  const minuteRecordsRestingHeartRate = minuteHistory.query({limit: 10});
+  minuteRecordsRestingHeartRate.forEach((minute,index) => {
+    if(minute.restingHeartRate!=undefined)
+      console.log(`${minute.restingHeartRate} restingHeartRate. ${index + 1} minute(s) ago.`);
+    else
+      console.log("Per minute restingHeartRate is undefined");
+  });
+}
+
+*/
+//console.log("AverageHeartRate and active minutes are undefined and the reason is explained: https://community.fitbit.com/t5/SDK-Development/Interface-ActivityHistoryRecord-Example/td-p/3991847");
+
+/*
 console.log("------------------------------------------------------------------");
 if(appbit.permissions.granted("access_heart_rate")){
   const dayRecordsAverageHeartRate = dayHistory.query();
   dayRecordsAverageHeartRate.forEach((day,index) => {
-    console.log(`${day.averageHeartRate || 0} averageHeartRate. ${index + 1} day(s) ago.`);
+    if(day.averageHeartRate!=undefined)
+      console.log(`${day.averageHeartRate} averageHeartRate. ${index + 1} day(s) ago.`);
+    else
+      console.log("Daily averageHeartRate is undefined");
   });
 }
 console.log("------------------------------------------------------------------");
 if(appbit.permissions.granted("access_activity")){
   const dayRecordsSteps = dayHistory.query();
   dayRecordsSteps.forEach((day,index) => {
-    console.log(`${day.steps || 0} steps. ${index + 1} day(s) ago.`);
+    if(day.steps!=undefined) 
+      console.log(`${day.steps} steps. ${index + 1} day(s) ago.`);
+    else
+      console.log("Daily steps are undefined");
   });
 }
 console.log("------------------------------------------------------------------");
  if(appbit.permissions.granted("access_activity")){
   const dayRecordsCalories = dayHistory.query();
   dayRecordsCalories.forEach((day,index) => {
-    console.log(`${day.calories || 0} calories. ${index + 1} day(s) ago.`);
+    if(day.calories!=undefined)
+      console.log(`${day.calories} calories. ${index + 1} day(s) ago.`);
+    else
+      console.log("Daily calories are undefined");
   });
 }
 console.log("------------------------------------------------------------------");
 if(appbit.permissions.granted("access_activity")){
   const dayRecordsActiveMinutes = dayHistory.query();
   dayRecordsActiveMinutes.forEach((day,index) => {
-    console.log(`${day.activeMinutes || 0} activeMinutes. ${index + 1} day(s) ago.`);
+    if(day.activeMinutes!=undefined)
+      console.log(`${day.activeMinutes} activeMinutes. ${index + 1} day(s) ago.`);
+    else
+      console.log("Daily activeMinutes are undefined")
   });
 }
 console.log("------------------------------------------------------------------");
 if(appbit.permissions.granted("access_activity")){
   const dayRecordsDistance = dayHistory.query();
   dayRecordsDistance.forEach((day,index) => {
-    console.log(`${day.distance || 0} distance. ${index + 1} day(s) ago.`);
+    if(day.distance!=undefined)
+      console.log(`${day.distance} distance. ${index + 1} day(s) ago.`);
+    else
+      console.log("Daily distance is undefined")
   });
 }
 console.log("------------------------------------------------------------------");
 if(appbit.permissions.granted("access_activity")){
   const dayRecordsElevationGain = dayHistory.query();
   dayRecordsElevationGain.forEach((day,index) => {
-    console.log(`${day.elevationGain || 0} elevationGain. ${index + 1} day(s) ago.`);
+    if(day.elevationGain!=undefined)
+      console.log(`${day.elevationGain} elevationGain. ${index + 1} day(s) ago.`);
+    else
+      console.log("Daily elevationGain is undefined")
   });
 }
 console.log("------------------------------------------------------------------");
 if(appbit.permissions.granted("access_heart_rate")){
   const dayRecordsRestingHeartRate = dayHistory.query();
   dayRecordsRestingHeartRate.forEach((day,index) => {
-    console.log(`${day.restingHeartRate || 0} restingHeartRate. ${index + 1} day(s) ago.`);
+    if(day.restingHeartRate!=undefined)
+      console.log(`${day.restingHeartRate} restingHeartRate. ${index + 1} day(s) ago.`);
+    else
+      console.log("Daily restingHeartRate is undefined")
   });
 }
 console.log("------------------------------------------------------------------");
 //Trying to find a way to get user-id ot even specific device-id but not model
+*/
 /*
 console.log("------------------------------------------------------------------");
 import { me as device } from "device";
@@ -150,7 +251,31 @@ const orientationLabel = document.getElementById("orientation-label");
 const orientationData = document.getElementById("orientation-data");
 
 const sensors = [];
-
+if (HeartRateSensor) {
+   const hrm = new HeartRateSensor({ frequency: 0.5 });
+   hrm.addEventListener("reading", () => {
+     console.log(`Current heart rate: ${hrm.heartRate}`);
+   });
+   hrm.start();
+   const maxHeartRate=200;
+  if (hrm.heartRate<((60/100)*maxHeartRate)) {
+    console.log(`Very light exercise or not at all.`);
+  }
+  else if (hrm.heartRate>((60/100)*maxHeartRate) && hrm.heartRate<((70/100)*maxHeartRate) ) {
+    console.log(`Light exercise.`);
+  }
+  else if (hrm.heartRate>((70/100)*maxHeartRate) && hrm.heartRate<((80/100)*maxHeartRate) ) {
+    console.log(`Moderate exercise.`);
+  }
+  else if (hrm.heartRate>((80/100)*maxHeartRate) && hrm.heartRate<((90/100)*maxHeartRate) ) {
+    console.log(`Hard exercise.`);
+  }
+  else if (hrm.heartRate>((90/100)*maxHeartRate) && hrm.heartRate<((100/100)*maxHeartRate) ) {
+    console.log(`Extreme exercise.`);
+  }
+} else {
+   console.log("This device does NOT have a HeartRateSensor!");
+}
 if(appbit.permissions.granted("access_activity")){
   console.log(`${today.adjusted.steps} Steps`);
   const steps = new Barometer({ frequency: 0.5 });
