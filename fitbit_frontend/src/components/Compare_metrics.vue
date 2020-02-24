@@ -45,8 +45,10 @@ export default {
   mounted () {
 
     const domain = this.$store.state.main.domain
+    const user = this.$store.state.main.username
     let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
     am4core.useTheme(am4themes_animated);
+
 
     chart.paddingRight = 20;
 
@@ -94,6 +96,24 @@ export default {
       "activity" : 102,
       "distance" : 403
     }];
+
+
+    function updateGraph (start,end) {
+      console.log(start +" "+end);
+
+      var request = {
+      params: {
+        from: start,
+        to: end,
+        username: user
+      }
+    }
+
+  axios.get(domain + '/get_all_metrics', request).then(response => {
+      console.log(response);
+
+    })
+  }
 
 
     // Create axes
@@ -226,6 +246,7 @@ export default {
     document.getElementById("fromfield").addEventListener("keyup", updateZoom);
     document.getElementById("tofield").addEventListener("keyup", updateZoom);
 
+
     let zoomTimeout;
     function updateZoom() {
       if (zoomTimeout) {
@@ -234,6 +255,10 @@ export default {
       zoomTimeout = setTimeout(function() {
         let start = document.getElementById("fromfield").value;
         let end = document.getElementById("tofield").value;
+
+        //call the function with dates
+        updateGraph(start,end);
+
         if ((start.length < inputFieldFormat.length) || (end.length < inputFieldFormat.length)) {
           return;
         }
@@ -245,6 +270,8 @@ export default {
         }
       }, 500);
     }
+
+
 
     function zoomToDates(date) {
       let min = dateAxis.groupMin["day1"];

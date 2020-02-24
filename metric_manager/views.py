@@ -15,8 +15,10 @@ from django.template import loader
 from django.http import HttpResponse
 import datetime
 from pytz import timezone
-# Create your views here.
+from datetime import date
+import pytz
 
+# Create your views here.
 
 
 def index(request):
@@ -237,6 +239,47 @@ def get_user_info(request):
 		res_dict = json.loads(serializers.serialize('json', userRow))[0]['fields']
 		res_dict.pop('password')
 		return JsonResponse(res_dict,safe=False)
+
+
+def get_metrics(request):
+	if len(request.GET)==0 or not 'type' in request.GET or not 'username' in request.GET  :
+		return JsonResponse({'msg':'invalid request'})
+
+	metric_desc = MetricsDescription.objects.filter(metric_name=request.GET.get('type')).first()
+	user = FitbitUser.objects.filter(username=request.GET.get('username')).first()
+	user_metrics = Metrics.objects.filter(user_fk=user, type=metric_desc).values('timestamp','amount')
+
+	if not user_metrics:
+		return JsonResponse({'msg':'missing metrics'})
+	if not metric_desc:
+		return JsonResponse({'msg':'Wrong type'})
+	if not user:
+		return JsonResponse({'msg':'missing user'})
+
+	if len(user_metrics)==0:
+		return JsonResponse({'type':request.GET.get('type'),'value':0})
+
+	return JsonResponse({'metrics': list(user_metrics)})
+
+def get_all_metrics(request):
+	import pdb; pdb.set_trace()
+
+	if len(request.GET)==0 or not 'from' in request.GET or not 'username' in request.GET or not 'to' in request.GET  :
+		return JsonResponse({'msg':'invalid request'})
+
+	fromDate = request.GET.get('from')
+	toDate = request.GET.get('to')
+	local_timezone = timezone('Europe/Athens')
+	fromDate = datetime.datetime.strptime(fromDate,'%Y-%m-%d').astimezone(local_timezone)
+	toDate =datetime.datetime.strptime(toDate,'%Y-%m-%d').astimezone(local_timezone)
+
+	user = FitbitUser.objects.filter(username=request.GET.get('username')).first()
+
+	user_metrics = Metrics.objects.filter(user_fk=user , timestamp__range=(fromDate,toDate)).values('timestamp','amount','type')
+	if len(user_metrics)==0:
+		return JsonResponse({'type':request.GET.get('type'),'value':0})
+	return JsonResponse({'metrics': list(user_metrics)})
+
 
 def get_latest_value(request):
 	if len(request.GET)==0 or not 'type' in request.GET:

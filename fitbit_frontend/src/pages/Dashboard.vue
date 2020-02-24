@@ -17,10 +17,6 @@
          </q-tabs>
         </template>
       </div>
-
-      <div class="col fit row wrap justify-end items-start content-start">
-        <calendar/>
-      </div>
     </div>
 
       <template >
@@ -95,7 +91,6 @@ export default {
     'add-note': AddNote,
     'notes-list': NotesList,
     'graph': Graph,
-    'calendar': FunctionalCalendar,
     'graphC': Calories_graph,
     'graphCom': Compare_metrics
   },
