@@ -137,15 +137,15 @@ export default {
         series1.tooltip.background.fill = am4core.color("#FF6F91");
 
 
-        var series3 = chart.series.push(new am4charts.LineSeries());
-        series3.dataFields.valueY = 'distance'
-        series3.dataFields.dateX = "timestamp";
-        series3.name = "distance";
-        series3.tooltipText = "{name}: [bold]{valueY}[/]";
-        series3.strokeWidth = 3;
-        series3.stroke = am4core.color("#845EC2");
-        series3.tooltip.getFillFromObject = false;
-        series3.tooltip.background.fill = am4core.color("#845EC2");
+        var series2 = chart.series.push(new am4charts.LineSeries());
+        series2.dataFields.valueY = 'distance'
+        series2.dataFields.dateX = "timestamp";
+        series2.name = "distance";
+        series2.tooltipText = "{name}: [bold]{valueY}[/]";
+        series2.strokeWidth = 3;
+        series2.stroke = am4core.color("#845EC2");
+        series2.tooltip.getFillFromObject = false;
+        series2.tooltip.background.fill = am4core.color("#845EC2");
 
 
         // Add legend
