@@ -38,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
         if(GENERATE_DUMMY_VALUES){
             dummyLooper.stop();
         }
-        metricMgr.stop();
+        if(metricMgr!=null) {
+            metricMgr.stop();
+        }
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(myIntent);
     }
