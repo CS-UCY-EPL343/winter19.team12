@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template import loader
 from django.http import HttpResponse
 import datetime
+from pytz import timezone
 # Create your views here.
 
 
@@ -254,6 +255,7 @@ def get_latest_value(request):
 
 def insert_metrics(request):
 	#check if params are valid
+	# import pdb;pdb.set_trace()
 	body = str(request.body.decode('utf-8').replace("\'", "\""))
 	body = json.loads(body)
 	if request.method!='POST':
@@ -266,7 +268,10 @@ def insert_metrics(request):
 		if MetricsDescription.objects.filter(metric_name=item['metricsDescription']).count()==0:
 			continue
 		metric_desc = MetricsDescription.objects.filter(metric_name=item['metricsDescription']).first()
-		timestamp = datetime.datetime.fromtimestamp(item['timestamp']/1000)
+		local_timezone = timezone('Europe/Athens')
+		timestamp = datetime.datetime.fromtimestamp(item['timestamp']/1000).astimezone(local_timezone)
+		# import pdb;pdb.set_trace()
+		# timestamp+=datetime.timedelta(hours=2)
 		record = Metrics(user_fk=user_row,amount=item['amount'],type=metric_desc,timestamp=timestamp)
 		record.save()
 	return JsonResponse({'status':'1'})
