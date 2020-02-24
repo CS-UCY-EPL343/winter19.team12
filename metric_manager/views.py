@@ -17,7 +17,9 @@ import datetime
 from pytz import timezone
 from datetime import date
 import pytz
-
+from django.db.models import Avg
+from django.db.models import Sum
+from datetime import timedelta
 # Create your views here.
 
 
@@ -261,8 +263,21 @@ def get_metrics(request):
 
 	return JsonResponse({'metrics': list(user_metrics)})
 
+def fill_missing_values(start_date,end_date,metric):
+	result = []
+	currDate = start_date.date()
+	curr_idx = 0
+	while(currDate<=end_date.date()):
+		if curr_idx<len(metric) and metric[curr_idx]['day']==currDate:
+			result.append(metric[curr_idx])
+			curr_idx+=1
+		else:
+			result.append({'day':currDate,'amount':0})
+		currDate+=timedelta(days=1)
+	return result
+
 def get_all_metrics(request):
-	import pdb; pdb.set_trace()
+	# import pdb; pdb.set_trace()
 
 	if len(request.GET)==0 or not 'from' in request.GET or not 'username' in request.GET or not 'to' in request.GET  :
 		return JsonResponse({'msg':'invalid request'})
@@ -274,11 +289,19 @@ def get_all_metrics(request):
 	toDate =datetime.datetime.strptime(toDate,'%Y-%m-%d').astimezone(local_timezone)
 
 	user = FitbitUser.objects.filter(username=request.GET.get('username')).first()
-
 	user_metrics = Metrics.objects.filter(user_fk=user , timestamp__range=(fromDate,toDate)).values('timestamp','amount','type')
+	heart=Metrics.objects.filter(type=1, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Avg('amount')).order_by('day')
+
+	calories= Metrics.objects.filter(type=2, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Sum('amount')).order_by('day')
+
+	distance= Metrics.objects.filter(type=3, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Sum('amount')).order_by('day')
+	heart = fill_missing_values(fromDate,toDate,heart)
+	calories = fill_missing_values(fromDate,toDate,calories)
+	distance = fill_missing_values(fromDate,toDate,distance)
 	if len(user_metrics)==0:
 		return JsonResponse({'type':request.GET.get('type'),'value':0})
-	return JsonResponse({'metrics': list(user_metrics)})
+	#return JsonResponse({'metrics': list(user_metrics)})
+	return JsonResponse({'heart':list(heart), 'calories': list(calories), 'distance': list(distance) })
 
 
 def get_latest_value(request):
