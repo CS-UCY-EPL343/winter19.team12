@@ -9,12 +9,9 @@
            inline-label
            class="bg-primary text-white shadow-2"
            >
-           <q-tab name="Live graph Heartbeat"  label="Heartbeat" />
-           <q-tab name="Calories"  label="Calories" />
-           <q-tab name="Compare Metrics" label="Compare" />
-           <q-tab name="Activity" label="Activity" />
-           <q-tab name="Distance Covered" label="Distance" />
-         </q-tabs>
+           <q-tab name="Live graph Heartbeat"  label="Live Heartbeat graph" />
+           <q-tab name="Compare Metrics" label="Compare Metrics graph" />
+           </q-tabs>
         </template>
       </div>
     </div>
@@ -31,30 +28,12 @@
                     </div>
                   </q-tab-panel>
 
-                  <q-tab-panel name="Calories">
-                    <div>
-                    <graphC />
-                  </div>
-                  </q-tab-panel>
-
                   <q-tab-panel name="Compare Metrics">
                     <div>
                     <graphCom />
                   </div>
                   </q-tab-panel>
-
-                  <q-tab-panel name="Activity">
-                    <div>
-                      Activity
-                    </div>
-                  </q-tab-panel>
-
-                <q-tab-panel name="Distance Covered">
-                  <div>
-                    Distance
-                  </div>
-                </q-tab-panel>
-            </q-tab-panels>
+              </q-tab-panels>
       </template>
 
     <div class='row q-col-gutter-md'>
