@@ -18,13 +18,19 @@ import am4themes_animated from '@amcharts/amcharts4/themes/animated'
 import axios from 'axios'
 
 am4core.useTheme(am4themes_animated)
-
+let interval
 export default {
   name: 'Graph',
   data () {
     return {
       graph: ''
     }
+  },
+  destroyed:function(){
+    if (interval) {
+      clearInterval(interval)
+    }
+    console.log("destroyed tab");
   },
   mounted () {
     const domain = this.$store.state.main.domain
@@ -82,6 +88,7 @@ export default {
     dateAxis.rangeChangeDuration = 500
 
     document.addEventListener('visibilitychange', function () {
+      console.log("visibilitychange");
       if (document.hidden) {
         if (interval) {
           clearInterval(interval)
@@ -102,7 +109,6 @@ export default {
     }
 
     // add data
-    let interval
     function startInterval () {
       interval = setInterval(function () {
         updateGraph()

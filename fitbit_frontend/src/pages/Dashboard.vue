@@ -24,8 +24,7 @@
                 v-model="tab"
                 animated
                 transition-prev="jump-up"
-                transition-next="jump-up"
-              >
+                transition-next="jump-up">
                   <q-tab-panel name="Live graph Heartbeat">
                     <div>
                     <graph />
@@ -85,8 +84,11 @@ export default {
   data () {
    return {
     tab: 'Live graph Heartbeat'
-   }
- },
+    }
+  },
+  destroyed:function(){
+    console.log("detroyed dashboard");
+  },
  components: {
     'add-note': AddNote,
     'notes-list': NotesList,
