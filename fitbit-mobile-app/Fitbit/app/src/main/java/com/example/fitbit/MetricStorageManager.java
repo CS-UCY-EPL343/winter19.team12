@@ -12,12 +12,17 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class MetricStorageManager {
+    public static final String TAG = "MetricStorageManager";
     private Handler mHandler = new Handler();
     public static final int DB_CHECK_TIME=2000;
     public static final int BATCH_SIZE=200;//how many metrics can be sent simultaneously
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            if(User.count(User.class)==0){
+                Log.d(TAG,"No user to send metrics");
+                return;
+            }
             if(NetworkChangeReceiver.hasInternetConnectivity()){
                 sendMetrics();
             }
@@ -33,7 +38,10 @@ public class MetricStorageManager {
         mHandler.postDelayed(runnable,DB_CHECK_TIME);
     }
     public void stop(){
-        mHandler.removeCallbacks(runnable);
+        if(mHandler!=null && runnable!=null) {
+            Log.d(TAG,"removed");
+            mHandler.removeCallbacks(runnable);
+        }
     }
     public void sendMetrics() {
         Log.d("METRICS","Metrics remaining:"+String.valueOf(Metrics.count(Metrics.class)));

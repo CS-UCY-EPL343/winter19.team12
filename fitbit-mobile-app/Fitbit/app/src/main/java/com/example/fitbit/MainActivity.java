@@ -35,13 +35,13 @@ public class MainActivity extends AppCompatActivity {
     private WebView mWebView;
 
     private void logout() {
-        User.deleteAll(User.class);
-        if (GENERATE_DUMMY_VALUES) {
+        if (GENERATE_DUMMY_VALUES && dummyLooper!=null) {
             dummyLooper.stop();
         }
         if (metricMgr != null) {
             metricMgr.stop();
         }
+        User.deleteAll(User.class);
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(myIntent);
     }
