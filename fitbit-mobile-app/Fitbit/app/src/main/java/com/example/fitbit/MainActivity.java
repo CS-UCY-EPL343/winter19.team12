@@ -27,29 +27,32 @@ import java.util.Map;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends AppCompatActivity {
-    public static final String GRAPH_ENDPOINT="/live_graph";
-    public static final boolean GENERATE_DUMMY_VALUES=true;//if true,dummy metrics are sent to the server
+    public static final String GRAPH_ENDPOINT = "/live_graph";
+    public static final boolean GENERATE_DUMMY_VALUES = false;//if true,dummy metrics are sent to the server
     private NetworkChangeReceiver mNetworkReceiver;
     private static DummyLooper dummyLooper;
     private static MetricStorageManager metricMgr;
     private WebView mWebView;
-    private void logout(){
+
+    private void logout() {
         User.deleteAll(User.class);
-        if(GENERATE_DUMMY_VALUES){
+        if (GENERATE_DUMMY_VALUES) {
             dummyLooper.stop();
         }
-        if(metricMgr!=null) {
+        if (metricMgr != null) {
             metricMgr.stop();
         }
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(myIntent);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mNetworkReceiver);
         stopService(new Intent(this, CollectDataService.class));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,15 +61,15 @@ public class MainActivity extends AppCompatActivity {
         mNetworkReceiver = new NetworkChangeReceiver();
         registerReceiver(mNetworkReceiver, intentFilter);
         setContentView(R.layout.activity_main);
-        mWebView = (WebView)findViewById(R.id.graph_webview);
+        mWebView = (WebView) findViewById(R.id.graph_webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
         Map<String, String> headers = new HashMap<String, String>();
-        Log.d("TOKEN",User.first(User.class).getToken());
-        headers.put("Authorization","Bearer "+User.first(User.class).getToken());
-        mWebView.loadUrl(Urls.SERVER_URL+GRAPH_ENDPOINT,headers);
+        Log.d("TOKEN", User.first(User.class).getToken());
+        headers.put("Authorization", "Bearer " + User.first(User.class).getToken());
+        mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT, headers);
         MetricStorageManager metricMgr = new MetricStorageManager();
         metricMgr.start();
-        if(GENERATE_DUMMY_VALUES){
+        if (GENERATE_DUMMY_VALUES) {
             dummyLooper = new DummyLooper();
             dummyLooper.start();
         }
@@ -85,13 +88,13 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.edit_profile_menu:
-                startActivity(new Intent(MainActivity.this,EditProfile.class));
+                startActivity(new Intent(MainActivity.this, EditProfile.class));
                 return true;
             case R.id.logout_menu:
                 logout();
                 return true;
             case R.id.change_password:
-                startActivity(new Intent(MainActivity.this,ChangePasswordActivity.class));
+                startActivity(new Intent(MainActivity.this, ChangePasswordActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

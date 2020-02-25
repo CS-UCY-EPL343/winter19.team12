@@ -1,9 +1,8 @@
 package com.example.fitbit.model;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.orm.SugarRecord;
 
-import java.util.Date;
 
 public class Metrics extends SugarRecord {
     private String metricsDescription;

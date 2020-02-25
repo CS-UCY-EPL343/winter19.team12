@@ -1,17 +1,15 @@
 package com.example.fitbit;
 
-import android.os.Looper;
+
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-import com.example.fitbit.model.Metrics;
-import com.example.fitbit.model.User;
+
 
 import org.json.JSONObject;
-import java.util.Date;
-import java.util.ArrayList;
 
-class DummyLooper{
+import java.util.Date;
+
+class DummyLooper {
     private Handler mHandler = new Handler();
     private Runnable runnable = new Runnable() {
         @Override
@@ -20,12 +18,15 @@ class DummyLooper{
             mHandler.postDelayed(this, 2000);
         }
     };
-    public void start(){
-        mHandler.postDelayed(runnable,2000);
+
+    public void start() {
+        mHandler.postDelayed(runnable, 2000);
     }
-    public void stop(){
+
+    public void stop() {
         mHandler.removeCallbacks(runnable);
     }
+
     public void dummyPost() {
 
         CallAPI request = new CallAPI("POST", output -> {
@@ -36,7 +37,7 @@ class DummyLooper{
                 e.printStackTrace();
             }
         });
-        MetricStorageManager.storeMetrics("heart",new Date().getTime(),(Math.random() * 30) + 80);
-        MetricStorageManager.storeMetrics("calories",new Date().getTime(),(Math.random() * 20) + 10);
+        MetricStorageManager.storeMetrics("heart", new Date().getTime(), (Math.random() * 30) + 80);
+        MetricStorageManager.storeMetrics("calories", new Date().getTime(), (Math.random() * 20) + 10);
     }
 }
