@@ -87,21 +87,17 @@ export default {
           }
           var data = response.data.metric_list;
           var unique_dates = response.data.dates_list;
-          for (var i=0;i<data.length;i++){
-            var timestamp = data[i].timestamp;
-            timestamp = timestamp.split("T");
-            var date = timestamp[0];
-            unique_dates.push(date)
-          }
+          var sum = 0;
+          console.log(data);
           for (var j=0;j<unique_dates.length;j++){
-            let sum = 0;
+            sum = 0;
             for (var i=0;i<data.length;i++){
               var timestamp = data[i].timestamp;
               timestamp = timestamp.split("T");
               var date = timestamp[0];
               if (unique_dates[j]===date) {
                 var amount = data[i].amount;
-                sum+=amount;
+                sum = sum + amount;
               }
             }
             chart.data.push({"Calories":sum,"Date":unique_dates[j]});

@@ -87,13 +87,7 @@ export default {
           }
           var unique_dates = response.data.dates_list;
           var data = response.data.metric_list;
-          for (var i=0;i<data.length;i++){
-            var timestamp = data[i].timestamp;
-            timestamp = timestamp.split("T");
-            var date = timestamp[0];
-            unique_dates.push(date)
-          }
-          unique_dates = unique_dates.filter(distinct)
+          console.log(data);
           for (var j=0;j<unique_dates.length;j++){
             let sum = 0;
             let count_sum = 0;
