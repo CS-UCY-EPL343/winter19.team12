@@ -1,21 +1,21 @@
 <template>
   <q-page class='q-pa-md'>
-
-    <div class=" row">
-      <div class="col">
-        <template >
-          <q-tabs
-           v-model="tab"
-           inline-label
-           class="bg-primary text-white shadow-2"
-           >
-           <q-tab name="Live graph Heartbeat"  label="Heartbeat" />
-           <q-tab name="Calories"  label="Calories" />
-           <q-tab name="Activity" label="Activity" />
-           <q-tab name="Distance Covered" label="Distance" />
-         </q-tabs>
-        </template>
+      <div class=" row">
+        <div class="col">
+          <template >
+            <q-tabs
+             v-model="tab"
+             inline-label
+             class="bg-primary text-white shadow-2"
+             >
+             <q-tab name="Live graph Heartbeat"  label="Heartbeat" />
+             <q-tab name="Calories"  label="Calories" />
+             <q-tab name="Distance Covered" label="Distance" />
+             </q-tabs>
+          </template>
+        </div>
       </div>
+
 
       <div class="col fit row wrap justify-end items-start content-start">
 

@@ -20,6 +20,8 @@ import pytz
 from django.db.models import Avg
 from django.db.models import Sum
 from datetime import timedelta
+import datetime
+from datetime import date, timedelta
 # Create your views here.
 
 
@@ -100,6 +102,15 @@ def retrieve_history_metrics(request):
 		start_list = startDate.split("-")
 		end_list = endDate.split("-")
 
+		sdate = date(int(start_list[0]), int(start_list[1]), int(start_list[2]))   # start date
+		edate = date(int(end_list[0]), int(end_list[1]), int(end_list[2]))   # end date
+
+		delta = edate - sdate       # as timedelta
+		dates_list = []
+		for i in range(delta.days + 1):
+		    day = sdate + timedelta(days=i)
+		    dates_list.append(day)
+
 		user_id = FitbitUser.objects.filter(username=username)[0]
 		id_metric = MetricsDescription.objects.filter(metric_name=type_metric)[0]
 		final_list = []
@@ -110,7 +121,7 @@ def retrieve_history_metrics(request):
 				(current_date.month>=int(start_list[1]) and current_date.month<=int(end_list[1])) and
 				(current_date.day>int(start_list[2]) and current_date.day<=int(end_list[2]))):
 				final_list.append(metric_list[i])
-		return JsonResponse({'metric_list':final_list})
+		return JsonResponse({'metric_list':final_list,'dates_list':dates_list})
 	return JsonResponse({'status':1})
 
 def register_api(request):

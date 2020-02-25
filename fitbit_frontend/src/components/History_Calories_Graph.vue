@@ -62,7 +62,6 @@ export default {
       let inputFieldFormat = "yyyy-MM-dd";
       let start = document.getElementById("fromfield").value;
       let end = document.getElementById("tofield").value;
-      console.log(start);
       if ((start.length < inputFieldFormat.length) || (end.length < inputFieldFormat.length)) {
         alert("Please set correct dates")
         return;
@@ -83,18 +82,30 @@ export default {
           alert("Error")
         }
         else {
+          const distinct = (value,index,self) => {
+            return self.indexOf(value) === index;
+          }
           var data = response.data.metric_list;
-          console.log(data);
+          var unique_dates = response.data.dates_list;
           for (var i=0;i<data.length;i++){
             var timestamp = data[i].timestamp;
             timestamp = timestamp.split("T");
             var date = timestamp[0];
-
-            var amount = data[i].amount;
-            chart.data.push({"Calories":amount,"Date":date});
-
+            unique_dates.push(date)
           }
-          console.log(document.getElementById("fromfield").value);
+          for (var j=0;j<unique_dates.length;j++){
+            let sum = 0;
+            for (var i=0;i<data.length;i++){
+              var timestamp = data[i].timestamp;
+              timestamp = timestamp.split("T");
+              var date = timestamp[0];
+              if (unique_dates[j]===date) {
+                var amount = data[i].amount;
+                sum+=amount;
+              }
+            }
+            chart.data.push({"Calories":sum,"Date":unique_dates[j]});
+          }
           console.log(chart.data);
           update();
         }
@@ -195,7 +206,7 @@ export default {
 
 
 
-    
+
 }
 
 </script>
