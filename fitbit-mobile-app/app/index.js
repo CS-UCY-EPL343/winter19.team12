@@ -66,9 +66,6 @@ const activeMinutesData = document.getElementById("activeMinutes-data");
 const distanceLabel = document.getElementById("distance-label");
 const distanceData = document.getElementById("distance-data");
 
-const elevationGainLabel = document.getElementById("elevationGain-label");
-const elevationGainData = document.getElementById("elevationGain-data");
-
 const barLabel = document.getElementById("bar-label");
 const barData = document.getElementById("bar-data");
 
@@ -85,11 +82,20 @@ const orientationLabel = document.getElementById("orientation-label");
 const orientationData = document.getElementById("orientation-data");
 
 const sensors = [];
+
 if (HeartRateSensor) {
    const hrm = new HeartRateSensor({ frequency: 0.5 });
    hrm.addEventListener("reading", () => {
      console.log(`Current heart rate: ${hrm.heartRate}`);
+      hrmData.text = JSON.stringify({
+      heartRate: hrm.heartRate ? hrm.heartRate : 0
+    });
+       sendMessage({
+        'type':'heart',
+        'value':hrm.heartRate
+      });
    });
+  sensors.push(hrm);
    hrm.start();
    const maxHeartRate=200;
   if (hrm.heartRate<((60/100)*maxHeartRate)) {
@@ -108,8 +114,11 @@ if (HeartRateSensor) {
     console.log(`Extreme exercise.`);
   }
 } else {
-   console.log("This device does NOT have a HeartRateSensor!");
+  hrmLabel.style.display = "none";
+  hrmData.style.display = "none";
+  console.log("This device does NOT have a HeartRateSensor!");
 }
+
 if(appbit.permissions.granted("access_activity")){
   console.log(`${today.adjusted.steps} Steps`);
   const steps = new Barometer({ frequency: 0.5 });
@@ -192,37 +201,17 @@ if (today.local.distance != undefined) {
   console.log(`No distance metrics were recorded`);
 }
 
-if (today.local.elevationGain != undefined) {
-  console.log(`${today.adjusted.elevationGain} Elevation Gain`);
-  const elevationGain = new Barometer({ frequency: 0.5 });
-    elevationGain.addEventListener("reading", () => {
-          elevationGainData.text = JSON.stringify({
-          elevationGain: today.adjusted.elevationGain
-        });
-        sendMessage({
-          'type':'elevationGain',
-          'value': today.adjusted.elevationGain
-        })
-    });
-    sensors.push(elevationGain);
-    elevationGain.start();
-} else {
-  elevationGainLabel.style.display = "none";
-  elevationGainLabel.style.display = "none";
-  console.log(`No elevationGain metrics were recorded`);
-}
-
-
 if (Accelerometer) {
   const accel = new Accelerometer({ frequency: 0.5 });
   accel.addEventListener("reading", () => {
+    console.log(`${accel.x},${accel.y},${accel.z} Accelerometer Information`);
     accelData.text = JSON.stringify({
       x: accel.x ? accel.x.toFixed(1) : 0,
       y: accel.y ? accel.y.toFixed(1) : 0,
       z: accel.z ? accel.z.toFixed(1) : 0
     });
     sendMessage({
-      'type':'accel',
+      'type':'accelerometer',
       'x':accel.x,
       'y':accel.y,
       'z':accel.z
@@ -233,20 +222,27 @@ if (Accelerometer) {
 } else {
   accelLabel.style.display = "none";
   accelData.style.display = "none";
+  console.log(`No accelerometer metrics were recorded`);
 }
 
 if (Barometer) {
-  const barometer = new Barometer({ frequency: 0.5 });
+  const barometer = new Barometer({ frequency: 3 });
   barometer.addEventListener("reading", () => {
+     console.log(`${barometer.pressure} Pressure`);
     barData.text = JSON.stringify({
       pressure: barometer.pressure ? parseInt(barometer.pressure) : 0
     });
+    sendMessage({
+      'type':'pressure',
+      'value':barometer.pressure ? parseInt(barometer.pressure) : 0
+    })
   });
   sensors.push(barometer);
   barometer.start();
 } else {
   barLabel.style.display = "none";
   barData.style.display = "none";
+  console.log(`No barometer metrics were recorded`);
 }
 
 if (BodyPresenceSensor) {
@@ -266,6 +262,7 @@ if (BodyPresenceSensor) {
 if (Gyroscope) {
   const gyro = new Gyroscope({ frequency: 0.5 });
   gyro.addEventListener("reading", () => {
+    console.log(`Gyroscope Reading: timestamp=${gyroscope.timestamp}, [${gyroscope.x}, ${gyroscope.y}, ${gyroscope.z}]`);
     gyroData.text = JSON.stringify({
       x: gyro.x ? gyro.x.toFixed(1) : 0,
       y: gyro.y ? gyro.y.toFixed(1) : 0,
@@ -279,28 +276,10 @@ if (Gyroscope) {
   gyroData.style.display = "none";
 }
 
-if (HeartRateSensor) {
-  const hrm = new HeartRateSensor({ frequency: 0.5 });
-  hrm.addEventListener("reading", () => {
-    hrmData.text = JSON.stringify({
-      heartRate: hrm.heartRate ? hrm.heartRate : 0
-    });
-    sendMessage({
-      'type':'heart',
-      'value':hrm.heartRate
-    });
-  });
-  sensors.push(hrm);
-  
-  hrm.start();
-} else {
-  hrmLabel.style.display = "none";
-  hrmData.style.display = "none";
-}
-
 if (OrientationSensor) {
   const orientation = new OrientationSensor({ frequency: 0.5 });
   orientation.addEventListener("reading", () => {
+    console.log(`${orientation.quaternion ? orientation.quaternion.map(n => n.toFixed(1)) : null} Orientation`);
     orientationData.text = JSON.stringify({
       quaternion: orientation.quaternion ? orientation.quaternion.map(n => n.toFixed(1)) : null
     });
@@ -310,6 +289,7 @@ if (OrientationSensor) {
 } else {
   orientationLabel.style.display = "none";
   orientationData.style.display = "none";
+  console.log(`No OrientationSensor metrics were recorded`);
 }
 
 display.addEventListener("change", () => {
