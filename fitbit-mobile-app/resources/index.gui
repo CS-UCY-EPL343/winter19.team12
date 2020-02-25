@@ -8,6 +8,10 @@
       <text id="accel-data" class="sensor-data">{ ... }</text>
     </use>
      <use href="#tile-list-item" class="tile-list-item">
+      <text id="steps-label" class="sensor-label">steps</text>
+      <text id="steps-data" class="sensor-data">{ ... }</text>
+    </use>
+     <use href="#tile-list-item" class="tile-list-item">
       <text id="calories-label" class="sensor-label">calories</text>
       <text id="calories-data" class="sensor-data">{ ... }</text>
     </use>
