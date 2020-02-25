@@ -1,7 +1,49 @@
 <svg>
+  <use href="#tile-list">
+    <use href="#tile-list-header" class="tile-list-item">
+      <text>Metrics</text>
+    </use>
+    <use href="#tile-list-item" class="tile-list-item">
+      <text id="accel-label" class="sensor-label">accelerometer</text>
+      <text id="accel-data" class="sensor-data">{ ... }</text>
+    </use>
+     <use href="#tile-list-item" class="tile-list-item">
+      <text id="calories-label" class="sensor-label">calories</text>
+      <text id="calories-data" class="sensor-data">{ ... }</text>
+    </use>
+    <use href="#tile-list-item" class="tile-list-item">
+      <text id="activeMinutes-label" class="sensor-label">activeMinutes</text>
+      <text id="activeMinutes-data" class="sensor-data">{ ... }</text>
+    </use>
+    <use href="#tile-list-item" class="tile-list-item">
+      <text id="distance-label" class="sensor-label">distance</text>
+      <text id="distance-data" class="sensor-data">{ ... }</text>
+    </use>
+    <use href="#tile-list-item" class="tile-list-item">
+      <text id="bar-label" class="sensor-label">barometer</text>
+      <text id="bar-data" class="sensor-data">{ ... }</text>
+    </use>
+    <use href="#tile-list-item" class="tile-list-item">
+      <text id="bps-label" class="sensor-label">body-presence</text>
+      <text id="bps-data" class="sensor-data">{ ... }</text>
+    </use>
+    <use href="#tile-list-item" class="tile-list-item">
+      <text id="gyro-label" class="sensor-label">gyroscope</text>
+      <text id="gyro-data" class="sensor-data">{ ... }</text>
+    </use>
+    <use href="#tile-list-item" class="tile-list-item">
+      <text id="hrm-label" class="sensor-label">heart rate</text>
+      <text id="hrm-data" class="sensor-data">{ ... }</text>
+    </use>
+     <use href="#tile-list-item" class="tile-list-item">
+      <text id="orientation-label" class="sensor-label">orientation</text>
+      <text id="orientation-data" class="sensor-data">{ ... }</text>
+    </use>
+  </use>
+</svg>
+
+<!--<svg>
   <rect width="100%" height="20" x="0" y="0" />
-  <text id="accel-label" class="sensor-label">accelerometer</text>
-  <text id="accel-data" class="sensor-data">{ ... }</text>
   <text id="steps-label" class="sensor-label">steps</text>
   <text id="steps-data" class="sensor-data">{ ... }</text>
   <text id="calories-label" class="sensor-label">calories</text>
@@ -10,8 +52,6 @@
   <text id="activeMinutes-data" class="sensor-data">{ ... }</text>
   <text id="distance-label" class="sensor-label">distance</text>
   <text id="distance-data" class="sensor-data">{ ... }</text>
-  <text id="elevationGain-label" class="sensor-label">elevationGain</text>
-  <text id="elevationGain-data" class="sensor-data">{ ... }</text>
   <text id="bar-label" class="sensor-label">barometer</text>
   <text id="bar-data" class="sensor-data">{ ... }</text>
   <text id="bps-label" class="sensor-label">body-presence</text>
@@ -22,4 +62,4 @@
   <text id="hrm-data" class="sensor-data">{ ... }</text>
   <text id="orientation-label" class="sensor-label">orientation</text>
   <text id="orientation-data" class="sensor-data">{ ... }</text>
-</svg>
+</svg>-->
