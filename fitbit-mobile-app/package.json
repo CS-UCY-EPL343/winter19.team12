@@ -1,15 +1,18 @@
 {
   "fitbit": {
-    "appUUID": "0894b3ae-ac21-4394-bbf1-4bc13e41e8fc",
+    "appUUID": "a19231a4-d86d-49c8-b250-fa3bc7864335",
     "appType": "app",
-    "appDisplayName": "EPL343",
+    "appDisplayName": "Fitbit_EPL449",
     "iconFile": "resources/icon.png",
     "wipeColor": "#607d8b",
     "requestedPermissions": [
       "access_heart_rate",
       "access_activity",
+      "access_internet",
+      "access_exercise",
       "access_location",
-      "access_internet"
+      "access_user_profile",
+      "run_background"
     ],
     "buildTargets": [
       "higgs",
@@ -19,12 +22,12 @@
     ],
     "i18n": {
       "en": {
-        "name": "EPL343"
+        "name": "Fitbit_EPL449"
       }
     },
     "defaultLanguage": "en-US"
   },
   "devDependencies": {
-    "@fitbit/sdk": "~4.0.0"
+    "@fitbit/sdk": "~4.1.0"
   }
 }
