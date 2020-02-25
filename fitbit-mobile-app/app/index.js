@@ -119,7 +119,7 @@ if(appbit.permissions.granted("access_activity")){
       });
       sendMessage({
         'type':'steps',
-        'steps': today.adjusted.steps
+        'value': today.adjusted.steps
       })
   });
   sensors.push(steps);
@@ -140,7 +140,7 @@ if (today.local.calories != undefined) {
         });
         sendMessage({
           'type':'calories',
-          'calories': today.adjusted.calories
+          'value': today.adjusted.calories
         })
     });
     sensors.push(calories);
@@ -160,7 +160,7 @@ if (today.local.activeMinutes != undefined) {
         });
         sendMessage({
           'type':'activeMinutes',
-          'activeMinutes': today.adjusted.activeMinutes
+          'value': today.adjusted.activeMinutes
         })
     });
     sensors.push(activeMinutes);
@@ -181,7 +181,7 @@ if (today.local.distance != undefined) {
         });
         sendMessage({
           'type':'distance',
-          'distance': today.adjusted.distance
+          'value': today.adjusted.distance
         })
     });
     sensors.push(distance);
@@ -201,7 +201,7 @@ if (today.local.elevationGain != undefined) {
         });
         sendMessage({
           'type':'elevationGain',
-          'elevationGain': today.adjusted.elevationGain
+          'value': today.adjusted.elevationGain
         })
     });
     sensors.push(elevationGain);
