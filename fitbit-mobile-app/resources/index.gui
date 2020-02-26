@@ -31,10 +31,10 @@
       <text id="bps-label" class="sensor-label">body-presence</text>
       <text id="bps-data" class="sensor-data">{ ... }</text>
     </use>
-    <use href="#tile-list-item" class="tile-list-item">
+    <!--<use href="#tile-list-item" class="tile-list-item">
       <text id="gyro-label" class="sensor-label">gyroscope</text>
       <text id="gyro-data" class="sensor-data">{ ... }</text>
-    </use>
+    </use>-->
     <use href="#tile-list-item" class="tile-list-item">
       <text id="hrm-label" class="sensor-label">heart rate</text>
       <text id="hrm-data" class="sensor-data">{ ... }</text>

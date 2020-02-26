@@ -32,6 +32,7 @@ import { HeartRateSensor } from "heart-rate";
 import { me as appbit } from "appbit";
 import { minuteHistory, dayHistory } from "user-activity";
 import userActivity from "user-activity";
+import { display } from "display";
 
 //console.log("Minute history metrics are undefined and the reason is explained: https://dev.fitbit.com/blog/2019-10-29-announcing-fitbit-os-sdk-4.0/");
 //console.log("AverageHeartRate and active minutes are undefined and the reason is explained: https://community.fitbit.com/t5/SDK-Development/Interface-ActivityHistoryRecord-Example/td-p/3991847");
@@ -72,8 +73,8 @@ const barData = document.getElementById("bar-data");
 const bpsLabel = document.getElementById("bps-label");
 const bpsData = document.getElementById("bps-data");
 
-const gyroLabel = document.getElementById("gyro-label");
-const gyroData = document.getElementById("gyro-data");
+//const gyroLabel = document.getElementById("gyro-label");
+//const gyroData = document.getElementById("gyro-data");
 
 const hrmLabel = document.getElementById("hrm-label");
 const hrmData = document.getElementById("hrm-data");
@@ -85,16 +86,22 @@ const sensors = [];
 
 if (HeartRateSensor) {
    const hrm = new HeartRateSensor({ frequency: 0.5 });
+  if(appbit.permissions.granted("access_aod")){
+  display.addEventListener("change", () => {
    hrm.addEventListener("reading", () => {
      console.log(`Current heart rate: ${hrm.heartRate}`);
-      hrmData.text = JSON.stringify({
-      heartRate: hrm.heartRate ? hrm.heartRate : 0
-    });
+     if (display.on){
+        hrmData.text = JSON.stringify({
+        heartRate: hrm.heartRate ? hrm.heartRate : 0
+      });
+     }
        sendMessage({
         'type':'heart',
         'value':hrm.heartRate
       });
    });
+  });
+  }
   sensors.push(hrm);
    hrm.start();
    const maxHeartRate=200;
@@ -122,15 +129,21 @@ if (HeartRateSensor) {
 if(appbit.permissions.granted("access_activity")){
   console.log(`${today.adjusted.steps} Steps`);
   const steps = new Barometer({ frequency: 0.5 });
-  steps.addEventListener("reading", () => {
-        stepsData.text = JSON.stringify({
-        steps: today.adjusted.steps
-      });
-      sendMessage({
-        'type':'steps',
-        'value': today.adjusted.steps
-      })
+  if(appbit.permissions.granted("access_aod")){
+  display.addEventListener("change", () => {
+    steps.addEventListener("reading", () => {
+      if (display.on){
+            stepsData.text = JSON.stringify({
+            steps: today.adjusted.steps
+          });
+      }
+        sendMessage({
+          'type':'steps',
+          'value': today.adjusted.steps
+        })
+    });
   });
+  }
   sensors.push(steps);
   steps.start();
 } else {
@@ -143,15 +156,21 @@ if(appbit.permissions.granted("access_activity")){
 if (today.local.calories != undefined) {
   console.log(`${today.adjusted.calories} Calories`);
   const calories = new Barometer({ frequency: 0.5 });
+  if(appbit.permissions.granted("access_aod")){
+  display.addEventListener("change", () => {
     calories.addEventListener("reading", () => {
-          caloriesData.text = JSON.stringify({
-          calories: today.adjusted.calories
-        });
+      if (display.on){
+            caloriesData.text = JSON.stringify({
+            calories: today.adjusted.calories
+          });
+      }
         sendMessage({
           'type':'calories',
           'value': today.adjusted.calories
         })
     });
+  });
+  }
     sensors.push(calories);
     calories.start();
 } else {
@@ -163,15 +182,21 @@ if (today.local.calories != undefined) {
 if (today.local.activeMinutes != undefined) {
    console.log(`${today.adjusted.activeMinutes} Active Minutes`);
    const activeMinutes = new Barometer({ frequency: 0.5 });
+  if(appbit.permissions.granted("access_aod")){
+  display.addEventListener("change", () => {
     activeMinutes.addEventListener("reading", () => {
-          activeMinutesData.text = JSON.stringify({
-          activeMinutes: today.adjusted.activeMinutes
-        });
+      if (display.on){
+            activeMinutesData.text = JSON.stringify({
+            activeMinutes: today.adjusted.activeMinutes
+          });
+      }
         sendMessage({
           'type':'activeMinutes',
           'value': today.adjusted.activeMinutes
         })
     });
+   });
+  }
     sensors.push(activeMinutes);
     activeMinutes.start();
 } else {
@@ -184,15 +209,21 @@ if (today.local.activeMinutes != undefined) {
 if (today.local.distance != undefined) {
    console.log(`${today.adjusted.distance} Distance`);
    const distance = new Barometer({ frequency: 0.5 });
+  if(appbit.permissions.granted("access_aod")){
+  display.addEventListener("change", () => {
     distance.addEventListener("reading", () => {
+        if (display.on){
           distanceData.text = JSON.stringify({
           distance: today.adjusted.distance
-        });
+          });
+        }
         sendMessage({
           'type':'distance',
           'value': today.adjusted.distance
         })
     });
+  });
+  }
     sensors.push(distance);
     distance.start();
 } else {
@@ -203,20 +234,26 @@ if (today.local.distance != undefined) {
 
 if (Accelerometer) {
   const accel = new Accelerometer({ frequency: 0.5 });
-  accel.addEventListener("reading", () => {
-    console.log(`${accel.x},${accel.y},${accel.z} Accelerometer Information`);
-    accelData.text = JSON.stringify({
-      x: accel.x ? accel.x.toFixed(1) : 0,
-      y: accel.y ? accel.y.toFixed(1) : 0,
-      z: accel.z ? accel.z.toFixed(1) : 0
+  if(appbit.permissions.granted("access_aod")){
+   display.addEventListener("change", () => {
+    accel.addEventListener("reading", () => {
+      console.log(`${accel.x},${accel.y},${accel.z} Accelerometer Information`);
+      if (display.on){
+          accelData.text = JSON.stringify({
+            x: accel.x ? accel.x.toFixed(1) : 0,
+            y: accel.y ? accel.y.toFixed(1) : 0,
+            z: accel.z ? accel.z.toFixed(1) : 0
+          });
+      }
+      sendMessage({
+        'type':'accelerometer',
+        'x':accel.x,
+        'y':accel.y,
+        'z':accel.z
+      })
     });
-    sendMessage({
-      'type':'accelerometer',
-      'x':accel.x,
-      'y':accel.y,
-      'z':accel.z
-    })
   });
+  }
   sensors.push(accel);
   accel.start();
 } else {
@@ -226,17 +263,23 @@ if (Accelerometer) {
 }
 
 if (Barometer) {
-  const barometer = new Barometer({ frequency: 3 });
-  barometer.addEventListener("reading", () => {
-     console.log(`${barometer.pressure} Pressure`);
-    barData.text = JSON.stringify({
-      pressure: barometer.pressure ? parseInt(barometer.pressure) : 0
+  const barometer = new Barometer({ frequency: 0.5 });
+  if(appbit.permissions.granted("access_aod")){
+  display.addEventListener("change", () => {
+    barometer.addEventListener("reading", () => {
+       console.log(`${barometer.pressure} Pressure`);
+      if (display.on){
+        barData.text = JSON.stringify({
+          pressure: barometer.pressure ? parseInt(barometer.pressure) : 0
+        });
+      }
+      sendMessage({
+        'type':'pressure',
+        'value':barometer.pressure ? parseInt(barometer.pressure) : 0
+      })
     });
-    sendMessage({
-      'type':'pressure',
-      'value':barometer.pressure ? parseInt(barometer.pressure) : 0
-    })
   });
+  }
   sensors.push(barometer);
   barometer.start();
 } else {
@@ -247,11 +290,17 @@ if (Barometer) {
 
 if (BodyPresenceSensor) {
   const bps = new BodyPresenceSensor();
-  bps.addEventListener("reading", () => {
-    bpsData.text = JSON.stringify({
-      presence: bps.present
-    })
+  if(appbit.permissions.granted("access_aod")){
+  display.addEventListener("change", () => {
+    bps.addEventListener("reading", () => {
+      if (display.on){
+        bpsData.text = JSON.stringify({
+          presence: bps.present
+        })
+      }
+    });
   });
+  }
   sensors.push(bps);
   bps.start();
 } else {
@@ -259,15 +308,18 @@ if (BodyPresenceSensor) {
   bpsData.style.display = "none";
 }
 
+/*
 if (Gyroscope) {
   const gyro = new Gyroscope({ frequency: 0.5 });
   gyro.addEventListener("reading", () => {
     console.log(`Gyroscope Reading: timestamp=${gyroscope.timestamp}, [${gyroscope.x}, ${gyroscope.y}, ${gyroscope.z}]`);
-    gyroData.text = JSON.stringify({
-      x: gyro.x ? gyro.x.toFixed(1) : 0,
-      y: gyro.y ? gyro.y.toFixed(1) : 0,
-      z: gyro.z ? gyro.z.toFixed(1) : 0,
-    });
+    //if (notlocked){
+      gyroData.text = JSON.stringify({
+        x: gyro.x ? gyro.x.toFixed(1) : 0,
+        y: gyro.y ? gyro.y.toFixed(1) : 0,
+        z: gyro.z ? gyro.z.toFixed(1) : 0,
+      });
+    //}
   });
   sensors.push(gyro);
   gyro.start();
@@ -275,15 +327,21 @@ if (Gyroscope) {
   gyroLabel.style.display = "none";
   gyroData.style.display = "none";
 }
-
+*/
 if (OrientationSensor) {
   const orientation = new OrientationSensor({ frequency: 0.5 });
-  orientation.addEventListener("reading", () => {
-    console.log(`${orientation.quaternion ? orientation.quaternion.map(n => n.toFixed(1)) : null} Orientation`);
-    orientationData.text = JSON.stringify({
-      quaternion: orientation.quaternion ? orientation.quaternion.map(n => n.toFixed(1)) : null
+  if(appbit.permissions.granted("access_aod")){
+  display.addEventListener("change", () => {
+    orientation.addEventListener("reading", () => {
+      console.log(`${orientation.quaternion ? orientation.quaternion.map(n => n.toFixed(1)) : null} Orientation`);
+      if (display.on){
+        orientationData.text = JSON.stringify({
+          quaternion: orientation.quaternion ? orientation.quaternion.map(n => n.toFixed(1)) : null
+        });
+      }
     });
   });
+  }
   sensors.push(orientation);
   orientation.start();
 } else {
