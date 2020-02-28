@@ -121,7 +121,7 @@ export default {
         var series = chart.series.push(new am4charts.ColumnSeries());
         series.dataFields.valueY = 'calories';
         series.dataFields.dateX = "timestamp";
-        series.name = "Calories";
+        series.name = "calories";
         series.tooltipText = "{name}: [bold]{valueY}[/]";
 
 
@@ -132,7 +132,7 @@ export default {
         series1.tooltipText = "{name}: [bold]{valueY}[/]";
         series1.stroke = am4core.color("#FF6F91");
         series1.strokeWidth = 3;
-        series1.tooltip.fill = am4core.color("#FF6F91");
+        //series1.tooltip.fill = am4core.color("#FF6F91");
         series1.tooltip.getFillFromObject = false;
         series1.tooltip.background.fill = am4core.color("#FF6F91");
 

@@ -54,21 +54,21 @@
             </q-item-section>
           </q-item>
 
-          <q-item @click='logout' clickable tag="a">
+          <q-item :to='{name: "select_doctor"}' clickable tag="a">
             <q-item-section avatar>
-              <q-icon name="exit_to_app" />
+              <q-icon name="supervised_user_circle" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Log out</q-item-label>
+              <q-item-label>Select Doctor</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item @click='' clickable tag="a">
+          <q-item :to='{name: "monitor"}' clickable tag="a">
             <q-item-section avatar>
               <q-icon name="accessibility" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Top 10 users</q-item-label>
+              <q-item-label>Monitor</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -111,6 +111,16 @@
             <q-item-label caption>EPL343 - winter19.team12</q-item-label>
           </q-item-section>
         </q-item>
+
+        <q-item @click='logout' clickable tag="a">
+          <q-item-section avatar>
+            <q-icon name="exit_to_app" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Log out</q-item-label>
+          </q-item-section>
+        </q-item>
+
       </q-list>
     </q-drawer>
 
