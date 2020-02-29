@@ -358,10 +358,8 @@ class GraphView(APIView):
 	permission_classes = (IsAuthenticated,)
 	def get(self,request):
 		if request.GET.get('type')==1:#type param will specify which graph will be returned
-			print("type 1")
 			template = loader.get_template('livegraph/graph1.html')
 		elif request.GET.get('type')==2:
-			print("type 2")
 			template = loader.get_template('livegraph/graph2.html')
 		else:
 			template = loader.get_template('livegraph/graph.html')
@@ -373,6 +371,6 @@ class GraphView(APIView):
 
 class AuthView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request):
+    def post(self, request):
         content = {'message': 'Authenticated'}
         return Response(content)
