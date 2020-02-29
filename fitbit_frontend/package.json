@@ -31,8 +31,9 @@
     "babel-eslint": "^10.0.3",
     "eslint": "^6.8.0",
     "eslint-loader": "^3.0.3",
+    "eslint-plugin-import": "latest",
     "eslint-plugin-vue": "^6.1.2",
-    "eslint-plugin-import": "latest"
+    "vuex-persistedstate": "^2.7.1"
   },
   "engines": {
     "node": ">= 8.9.0",
