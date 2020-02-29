@@ -105,6 +105,9 @@ export default {
           this.$q.notify(`Wrong username or password!`)
         }
         this.$q.loading.hide()
+      }).catch(response =>{
+        this.$q.notify(`Wrong username or password!`)
+        this.$q.loading.hide()
       })
     }
   },
