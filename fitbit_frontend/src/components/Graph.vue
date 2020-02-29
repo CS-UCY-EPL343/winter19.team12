@@ -16,7 +16,7 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 // eslint-disable-next-line camelcase
 import am4themes_animated from '@amcharts/amcharts4/themes/animated'
 import axios from 'axios'
-
+import store from 'src/store/index'
 am4core.useTheme(am4themes_animated)
 let interval
 export default {
@@ -99,7 +99,13 @@ export default {
     }, false)
 
     function updateGraph () {
-      axios.get(domain + '/get_latest_metric?type=heart').then(response => {
+      let config = {
+        headers:{
+          Authorization:"Bearer "+store().state.main.token
+        }
+      }
+      console.log(store().state.main.token)
+      axios.get(domain + '/get_latest_metric?type=heart',config).then(response => {
         let lastdataItem = series.dataItems.getIndex(series.dataItems.length - 1)
         chart.addData(
           { date: new Date(lastdataItem.dateX.getTime() + 2000), value: response.data.value },

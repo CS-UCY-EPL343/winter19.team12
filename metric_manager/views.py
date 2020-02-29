@@ -314,21 +314,22 @@ def get_all_metrics(request):
 	#return JsonResponse({'metrics': list(user_metrics)})
 	return JsonResponse({'heart':list(heart), 'calories': list(calories), 'distance': list(distance) })
 
-
-def get_latest_value(request):
-	if len(request.GET)==0 or not 'type' in request.GET:
-		return JsonResponse({'msg':'invalid request'})
-	metric_desc = MetricsDescription.objects.filter(metric_name=request.GET.get('type'))
-	user_row = FitbitUser.objects.first()#change with user name
-	if not user_row:
-		return JsonResponse({'msg':'missing user'})
-	if not metric_desc:
-		return JsonResponse({'msg':'Wrong type'})
-	metric = Metrics.objects.filter(type=metric_desc[0])
-	if len(metric)==0:
-		return JsonResponse({'type':request.GET.get('type'),'value':0})
-	metric = metric.latest('timestamp')
-	return JsonResponse({'type':metric.type.metric_name,'value':metric.amount})
+class LatestValueView(APIView):
+	permission_classes = (IsAuthenticated,)
+	def get(self,request):
+		if len(request.GET)==0 or not 'type' in request.GET:
+			return JsonResponse({'msg':'invalid request'})
+		metric_desc = MetricsDescription.objects.filter(metric_name=request.GET.get('type'))
+		user_row = request.user#change with user name
+		if not user_row:
+			return JsonResponse({'msg':'missing user'})
+		if not metric_desc:
+			return JsonResponse({'msg':'Wrong type'})
+		metric = Metrics.objects.filter(type=metric_desc[0])
+		if len(metric)==0:
+			return JsonResponse({'type':request.GET.get('type'),'value':0})
+		metric = metric.latest('timestamp')
+		return JsonResponse({'type':metric.type.metric_name,'value':metric.amount})
 
 def insert_metrics(request):
 	#check if params are valid
