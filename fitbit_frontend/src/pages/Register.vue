@@ -136,12 +136,12 @@ export default {
           this.$refs.username.focus()
         } else {
           this.$q.notify(`Your account was created successfully`)
-          this.$axios.post(this.$store.state.main.domain + '/login_api', {
+          this.$axios.post(this.$store.state.main.domain + '/get_token', {
             'username': this.username,
             'password': this.password
           }).then(response => {
-            if (response.data.status === 1) {
-              this.$store.commit('main/login', this.username)
+            if (response.data.access) {
+              this.$store.commit('main/login', {'username':this.username,'token':response.data.access})
               this.$router.push({ name: 'dashboard' }) // Redirect to dashboard
             }
           })
