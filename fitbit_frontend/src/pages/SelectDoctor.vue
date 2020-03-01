@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <q-splitter
       v-model="splitterModel"
@@ -6,9 +6,10 @@
     >
 
       <template v-slot:before>
+        <h6 id="head1">This is the list of our specialists:</h6>
         <div class="q-pa-md">
           <q-tree
-            :nodes="simple"
+            :nodes="children"
             node-key="label"
             selected-color="primary"
             :selected.sync="selected"
@@ -24,83 +25,111 @@
           transition-prev="jump-up"
           transition-next="jump-up"
         >
-          <q-tab-panel name="Doctor List">
-            <div class="text-h4 q-mb-md">Welcome</div>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-          </q-tab-panel>
 
-          <q-tab-panel name="Dr.Mark Jacob">
-            <div class="text-h4 q-mb-md">Dr.Mark Jacob</div>
+          <q-tab-panel v-ripple v-for="res in children" :name="res.label" >
+            <div class="text-h4 q-mb-md">{{res.label}}</div>
             <p>
-              Dr.	Mark Jacob	was	born	in	DuBois,	Pennsylvania	and	is	a	graduate	of	Villanova
-              University.	He	obtained	his	medical	degree	at	Thomas	Jefferson	University	in
-              Philadelphia.	His	residency	was	at	Thomas	Jefferson	and	its	affiliated	Wills	Eye
-              Hospital,	and	he	completed	his	training	with	fellowships	at	the	University	of
-              Connecticut in	cataract	and	corneal	surgery.
+              Information about the doctor</br>
+              My birtdate: {{res.birthday}}</br>
+              Gender: {{res.gender}}</br>
+              Email address: {{res.email}}</br>
+              Contact number: {{res.telephone}}</br>
+              My address: {{res.address}}</br>
             </p>
-            <p>
-              Dr.	Jacob	has	thirty	years’	experience	in	ophthalmic	surgery,	with	special	interest	in
-              cataract	surgery,	corneal	transplantation,	and	laser	refractive	procedures.	He	is	a
-              founding	member	of	Precision	LASIK	Group,	Chief	of	Ophthalmology	at	The	Hospital
-              of	Central	Connecticut,	and	co-medical	director	of	the	Connecticut	eye	bank.
-              In	addition	to	his	surgical	practice,	he	is	on	the	board	of	Vision	Health	International,
-              an	organization	providing	eye	care	and	surgery	to	indigent	patients	in	Central	and
-              South	America.
-            </p>
-
-            <q-btn color="red" icon="assignment_turned_in" icon-right="send" label="Send Permissions" />
-
-          </q-tab-panel>
-
-          <q-tab-panel name="Dr.John Doe">
-            <div class="text-h4 q-mb-md">Dr.John Doe</div>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-
             <q-btn color="red" icon="assignment_turned_in" icon-right="send" label="Send Permissions" />
           </q-tab-panel>
+        </q-tab-panels>
 
-          <q-tab-panel name="Dr.Ana Markovie">
-            <div class="text-h4 q-mb-md">Dr.Ana Markovie</div>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quis praesentium cumque magnam odio iure quidem, quod illum numquam possimus obcaecati commodi minima assumenda consectetur culpa fuga nulla ullam. In, libero.</p>
+      </template>
+    </q-splitter>
+  </div>
+</template> -->
+
+
+
+
+<template>
+  <div>
+    <h6 id="head1" class=text-center>This is the list of our specialists:</h6>
+    <q-splitter
+      v-model="splitterModel"
+      style="height: 250px"
+    >
+
+      <template v-slot:before>
+        <q-tabs
+          v-model="tab"
+          vertical
+          class="text-teal"
+        >
+          <q-tab  v-for="res in children"  :name="res.label" :icon="res.icon" :label="res.label" />
+        </q-tabs>
+      </template>
+
+      <template v-slot:after>
+        <q-tab-panels
+          v-model="tab"
+          animated
+          swipeable
+          vertical
+          transition-prev="jump-up"
+          transition-next="jump-up"
+        >
+          <q-tab-panel v-for="res in children" :name="res.label">
+            <div class="text-h4 q-mb-md">{{res.label}}</div>
+            <p>
+              Information about the doctor</br>
+              My birtdate: {{res.birthday}}</br>
+              Gender: {{res.gender}}</br>
+              Email address: {{res.email}}</br>
+              Contact number: {{res.telephone}}</br>
+              My address: {{res.address}}</br>
+            </p>
             <q-btn color="red" icon="assignment_turned_in" icon-right="send" label="Send Permissions" />
           </q-tab-panel>
 
         </q-tab-panels>
       </template>
+
     </q-splitter>
   </div>
 </template>
 
+
 <script>
+import axios from 'axios'
 export default {
   data () {
     return {
       splitterModel: 50,
-      selected: '',
-      simple: [
-        {
-          label: 'Doctor List',
-          children: [
-            {
-              label: 'Dr.Mark Jacob',
-              icon: 'assignment_ind'
-            },
-            {
-              label: 'Dr.John Doe',
-              icon: 'assignment_ind'
-            },
-            {
-              label: 'Dr.Ana Markovie',
-              icon: 'assignment_ind'
-            }
-          ]
-        }
+      tab: '',
+      //selected:'',
+      children: [
       ]
     }
+  },
+  mounted(){
+
+      axios.get(this.$store.state.main.domain + '/get_specialist').then(response => {
+        //console.log(response);
+        var data = response.data.docs;
+        for (var i=0;i<data.length;i++){
+          var name = data[i].first_name;
+          var lastname = data[i].last_name;
+          var email = data[i].email;
+          var telephone = data[i].telephone;
+          var address = data[i].address;
+          var gender = data[i].gender;
+          var birthday = data[i].birthdate;
+          this.children.push({ "label":"Dr."+name+" "+lastname, "icon": 'assignment_ind',
+          "telephone":telephone,"address":address,"gender":gender,"birthday":birthday,"email":email})
+          console.log(this.children);
+        }
+      })
   }
 }
 </script>
+
+<style>
+
+</style>

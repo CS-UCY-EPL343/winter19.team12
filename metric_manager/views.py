@@ -294,6 +294,14 @@ def fill_missing_values(start_date,end_date,metric):
 		currDate+=timedelta(days=1)
 	return result
 
+
+def get_specialist(request):
+	if request.method=='GET':
+		specialist_list =  FitbitUser.objects.filter(is_specialist=True).values('username','first_name','last_name','email','telephone','address','gender','birthdate')
+		if not specialist_list:
+			return JsonResponse({'msg':'No specialist in database'})
+		return JsonResponse({'docs':list(specialist_list)})
+
 class AllMetricsView(APIView):
 	permission_classes = (IsAuthenticated,)
 	def get(self,request):

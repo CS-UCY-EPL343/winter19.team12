@@ -14,6 +14,7 @@ urlpatterns = [
     path('delete_note',views.delete_note,name='delete_note'),
     path('logout_api',views.logout_api,name='logout_api'),
 	path('register', views.register, name='register'),
+    path('get_specialist', views.get_specialist, name='get_specialist'),
     path('insert_metrics', views.insert_metrics, name='insert_metrics'),
     path('get_metrics',views.get_metrics, name='get_metrics' ),
     path('get_all_metrics',views.AllMetricsView.as_view(), name='get_all_metrics' ),
