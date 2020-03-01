@@ -36,6 +36,7 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 // eslint-disable-next-line camelcase
 import am4themes_animated from '@amcharts/amcharts4/themes/animated'
 import axios from 'axios'
+import store from 'src/store/index'
 
 am4core.useTheme(am4themes_animated)
 
@@ -67,8 +68,19 @@ export default {
             }
           }
 
+            let config = {
+          headers:{
+            Authorization:"Bearer "+store().state.main.token
+          },
+          params: {
+            from: start,
+            to: end,
+            username: user
+          }
+        }
+        console.log(store().state.main.token)
 
-            axios.get(domain + '/get_all_metrics', request).then(response => {
+          axios.get(domain + '/get_all_metrics',config).then(response => {
 
             var data =response.data
             //console.log(data);

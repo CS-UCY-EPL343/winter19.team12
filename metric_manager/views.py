@@ -287,32 +287,32 @@ def fill_missing_values(start_date,end_date,metric):
 		currDate+=timedelta(days=1)
 	return result
 
-def get_all_metrics(request):
-	# import pdb; pdb.set_trace()
+class AllMetricsView(APIView):
+	permission_classes = (IsAuthenticated,)
+	def get(self,request):
+		if len(request.GET)==0 or not 'from' in request.GET or not 'username' in request.GET or not 'to' in request.GET  :
+			return JsonResponse({'msg':'invalid request'})
 
-	if len(request.GET)==0 or not 'from' in request.GET or not 'username' in request.GET or not 'to' in request.GET  :
-		return JsonResponse({'msg':'invalid request'})
+		fromDate = request.GET.get('from')
+		toDate = request.GET.get('to')
+		local_timezone = timezone('Europe/Athens')
+		fromDate = datetime.datetime.strptime(fromDate,'%Y-%m-%d').astimezone(local_timezone)
+		toDate =datetime.datetime.strptime(toDate,'%Y-%m-%d').astimezone(local_timezone)
 
-	fromDate = request.GET.get('from')
-	toDate = request.GET.get('to')
-	local_timezone = timezone('Europe/Athens')
-	fromDate = datetime.datetime.strptime(fromDate,'%Y-%m-%d').astimezone(local_timezone)
-	toDate =datetime.datetime.strptime(toDate,'%Y-%m-%d').astimezone(local_timezone)
+		user = request.user
+		user_metrics = Metrics.objects.filter(user_fk=user , timestamp__range=(fromDate,toDate)).values('timestamp','amount','type')
+		heart=Metrics.objects.filter(type=1, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Avg('amount')).order_by('day')
 
-	user = FitbitUser.objects.filter(username=request.GET.get('username')).first()
-	user_metrics = Metrics.objects.filter(user_fk=user , timestamp__range=(fromDate,toDate)).values('timestamp','amount','type')
-	heart=Metrics.objects.filter(type=1, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Avg('amount')).order_by('day')
+		calories= Metrics.objects.filter(type=2, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Sum('amount')).order_by('day')
 
-	calories= Metrics.objects.filter(type=2, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Sum('amount')).order_by('day')
-
-	distance= Metrics.objects.filter(type=3, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Sum('amount')).order_by('day')
-	heart = fill_missing_values(fromDate,toDate,heart)
-	calories = fill_missing_values(fromDate,toDate,calories)
-	distance = fill_missing_values(fromDate,toDate,distance)
-	if len(user_metrics)==0:
-		return JsonResponse({'type':request.GET.get('type'),'value':0})
-	#return JsonResponse({'metrics': list(user_metrics)})
-	return JsonResponse({'heart':list(heart), 'calories': list(calories), 'distance': list(distance) })
+		distance= Metrics.objects.filter(type=3, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Sum('amount')).order_by('day')
+		heart = fill_missing_values(fromDate,toDate,heart)
+		calories = fill_missing_values(fromDate,toDate,calories)
+		distance = fill_missing_values(fromDate,toDate,distance)
+		if len(user_metrics)==0:
+			return JsonResponse({'type':request.GET.get('type'),'value':0})
+		#return JsonResponse({'metrics': list(user_metrics)})
+		return JsonResponse({'heart':list(heart), 'calories': list(calories), 'distance': list(distance) })
 
 class LatestValueView(APIView):
 	permission_classes = (IsAuthenticated,)

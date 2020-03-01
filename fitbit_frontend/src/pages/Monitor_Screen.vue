@@ -6,6 +6,7 @@
       :columns="columns"
       row-key="name"
       :filter="filter"
+      no-data-label="I didn't find anything for you"
     >
 
       <template v-slot:header="props">
@@ -15,6 +16,7 @@
             v-for="col in props.cols"
             :key="col.name"
             :props="props"
+             class="text-italic text-blue"
           >
             {{ col.label }}
           </q-th>
@@ -52,6 +54,17 @@
           </q-td>
         </q-tr>
       </template>
+
+      <template v-slot:no-data="{ icon, message, filter }">
+        <div class="full-width row flex-center text-accent q-gutter-sm">
+          <q-icon size="2em" name="sentiment_dissatisfied" />
+          <span>
+            Well this is sad... {{ message }}
+          </span>
+          <q-icon size="2em" :name="filter ? 'filter_b_and_w' : icon" />
+        </div>
+      </template>
+
 
     </q-table>
   </div>
