@@ -130,17 +130,24 @@ def register_api(request):
 	username = body.get('username')
 	password = body.get('password')
 	password_r = body.get('repeat_password')
+	if body.get('type') == 'specialist_select':
+		type=True
+	else:
+		type=False
+
 	if not username:
 		return JsonResponse({'required':'username'})
 	if not password:
 		return JsonResponse({'required':'password'})
 	if not password_r:
 		return JsonResponse({'required':'repeat_password'})
+	if not type:
+		return JsonResponse({'required':'type'})
 	if password!=password_r:
 		return JsonResponse({'error':'password not equal repeat password'})
 	if len(FitbitUser.objects.filter(username=username))>0:
 		return JsonResponse({'error':'username already exists'})
-	user = FitbitUser.objects.create_user(username,'testmail@test.com',password)
+	user = FitbitUser.objects.create_user(username,'testmail@test.com',password,is_specialist=type)
 	login(request,user)
 	return JsonResponse({'status':1})
 
