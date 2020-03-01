@@ -141,7 +141,7 @@ def register_api(request):
 		return JsonResponse({'required':'password'})
 	if not password_r:
 		return JsonResponse({'required':'repeat_password'})
-	if not type:
+	if not body.get('type'):
 		return JsonResponse({'required':'type'})
 	if password!=password_r:
 		return JsonResponse({'error':'password not equal repeat password'})
@@ -297,7 +297,14 @@ def fill_missing_values(start_date,end_date,metric):
 
 def get_specialist(request):
 	if request.method=='GET':
-		specialist_list =  FitbitUser.objects.filter(is_specialist=True).values('username','first_name','last_name','email','telephone','address','gender','birthdate')
+		specialist_list =  FitbitUser.objects.filter(is_specialist=True).values('username',
+																				'first_name',
+																				'last_name',
+																				'email',
+																				'telephone',
+																				'address',
+																				'gender',
+																				'birthdate')
 		if not specialist_list:
 			return JsonResponse({'msg':'No specialist in database'})
 		return JsonResponse({'docs':list(specialist_list)})
@@ -305,7 +312,7 @@ def get_specialist(request):
 class AllMetricsView(APIView):
 	permission_classes = (IsAuthenticated,)
 	def get(self,request):
-		if len(request.GET)==0 or not 'from' in request.GET or not 'username' in request.GET or not 'to' in request.GET  :
+		if len(request.GET)==0 or not 'from' in request.GET or not 'username' in request.GET or not 'to' in request.GET:
 			return JsonResponse({'msg':'invalid request'})
 
 		fromDate = request.GET.get('from')
@@ -315,12 +322,25 @@ class AllMetricsView(APIView):
 		toDate =datetime.datetime.strptime(toDate,'%Y-%m-%d').astimezone(local_timezone)
 
 		user = request.user
-		user_metrics = Metrics.objects.filter(user_fk=user , timestamp__range=(fromDate,toDate)).values('timestamp','amount','type')
-		heart=Metrics.objects.filter(type=1, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Avg('amount')).order_by('day')
+		user_metrics = Metrics.objects.filter(user_fk=user , timestamp__range=(fromDate,toDate)) \
+									  .values('timestamp','amount','type')
+		heart=Metrics.objects.filter(type=1, timestamp__range=(fromDate,toDate)) \
+							 .extra(select={'day': 'date(timestamp)'}) \
+							 .values('day') \
+							 .annotate(amount=Avg('amount')) \
+							 .order_by('day')
 
-		calories= Metrics.objects.filter(type=2, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Sum('amount')).order_by('day')
+		calories= Metrics.objects.filter(type=2, timestamp__range=(fromDate,toDate)) \
+								 .extra(select={'day': 'date(timestamp)'}) \
+								 .values('day') \
+								 .annotate(amount=Sum('amount')) \
+								 .order_by('day') \
 
-		distance= Metrics.objects.filter(type=3, timestamp__range=(fromDate,toDate)).extra(select={'day': 'date(timestamp)'}).values('day').annotate(amount=Sum('amount')).order_by('day')
+		distance= Metrics.objects.filter(type=3, timestamp__range=(fromDate,toDate)) \
+								 .extra(select={'day': 'date(timestamp)'}) \
+								 .values('day') \
+								 .annotate(amount=Sum('amount')) \
+								 .order_by('day')
 		heart = fill_missing_values(fromDate,toDate,heart)
 		calories = fill_missing_values(fromDate,toDate,calories)
 		distance = fill_missing_values(fromDate,toDate,distance)
@@ -390,3 +410,57 @@ class AuthView(APIView):
     def post(self, request):
         content = {'message': 'Authenticated'}
         return Response(content)
+
+
+class PermissionManager(APIView):
+	permission_classes = (IsAuthenticated,)
+	'''
+	POST params:
+	if specialist:
+		username:The user who will receive the permission request
+	if patient:
+		username:The specialist to grant access
+	'''
+	def post(self,request):
+		username = request.POST.get('username')
+		if not username:
+			return JsonResponse({'status':0,'msg':'missing fields'})
+		if len(FitbitUser.objects.filter(username=username))==0:
+			return JsonResponse({'status':0,'msg':'user not found'})
+		if(
+			request.user.is_specialist
+			and not FitbitUser.objects.filter(username=username).first().is_specialist
+		):
+			from_user = request.user
+			to_user = FitbitUser.objects.filter(username=username).first()
+			#store in db that request is sent
+			if len(PermissionRequest.objects.filter(from_user=request.user,to_user=to_user,completed=False))==0:
+				permission_record = PermissionRequest(from_user=request.user,to_user=to_user)
+				permission_record.save()
+		elif(
+			not request.user.is_specialist
+			and FitbitUser.objects.filter(username=username).first().is_specialist
+		):
+			from_user = FitbitUser.objects.filter(username=username).first()
+			to_user = request.user
+			req = PermissionRequest.objects.filter(from_user=from_user,to_user=to_user).first()
+			req.completed=True
+			req.save()
+		else:
+			return JsonResponse({'status':0,'msg':'Wrong user type'})
+			#update db that request has been accepted
+
+		return JsonResponse({'status':1})
+
+	'''
+	if specialist : returns all requests of the user sent and if completed
+	if patient:returns all requests received and if completed
+	'''
+	def get(self,request):
+		if request.user.is_specialist:
+			users = PermissionRequest.objects.filter(from_user=request.user) \
+											 .values('to_user__username','completed')
+		else:
+			users = PermissionRequest.objects.filter(to_user=request.user) \
+											 .values('from_user__username','completed')
+		return JsonResponse({'users':list(users)})

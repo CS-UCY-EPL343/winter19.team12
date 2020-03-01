@@ -25,6 +25,18 @@ class Monitor(models.Model):
         null=True
 	)
 
+class PermissionRequest(models.Model):
+    from_user = models.ForeignKey(
+		FitbitUser,
+        related_name='%(class)s_from',
+		on_delete=models.CASCADE
+	)
+    to_user = models.ForeignKey(
+		FitbitUser,
+        related_name='%(class)s_to',
+		on_delete=models.CASCADE
+	)
+    completed = models.BooleanField(default=False)
 
 class MetricsDescription(models.Model):
     metric_name = models.CharField(max_length=20)
