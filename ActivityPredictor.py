@@ -107,8 +107,22 @@ def evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro
 	testX[:-1] = [acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z,  float(acc_x) + float(gyro_x),float(acc_y) + float(gyro_y), float(acc_z) + float(gyro_z)]
 	y_pred=model.predict(testX[:-1])
 	print("For user's input: ", testX[:-1])
+	print(type(y_pred))
+	#np.set_printoptions(threshold=sys.maxsize)
 	print("The output is: ",y_pred)
 	print("Easier interpretation form output: ", np.round(y_pred, 1))
+	if((y_pred[0])[0]==1):
+		print("Activity is: Walking")
+	if((y_pred[0])[1]==1):
+		print("Activity is: Walking Upstairs")
+	if((y_pred[0])[2]==1):
+		print("Activity is: Walking Downstairs")
+	if((y_pred[0])[3]==1):
+		print("Activity is: Sitting")
+	if((y_pred[0])[4]==1):
+		print("Activity is: Standing")
+	if((y_pred[0])[5]==1):
+		print("Activity is: Laying")
 	return accuracy
 
 """
