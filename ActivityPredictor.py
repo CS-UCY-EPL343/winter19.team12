@@ -10,6 +10,14 @@ from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.utils import to_categorical
 from matplotlib import pyplot
+from keras.layers import TimeDistributed
+from keras.layers import ConvLSTM2D
+import sys
+import numpy as np
+import pandas as pd
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+
 
 # load a single file as a numpy array
 def load_file(filepath):
@@ -60,13 +68,28 @@ def load_dataset(prefix=''):
 	print(trainX.shape, trainy.shape, testX.shape, testy.shape)
 	return trainX, trainy, testX, testy
 
+acc_x=sys.argv[1]
+acc_y=sys.argv[2]
+acc_z=sys.argv[3]
+gyro_x=sys.argv[4]
+gyro_y=sys.argv[5]
+gyro_z=sys.argv[6]
+
 # fit and evaluate a model
-def evaluate_model(trainX, trainy, testX, testy):
-	verbose, epochs, batch_size = 0, 15, 64
+def evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,trainX, trainy, testX, testy):
+
+	# define model
+	verbose, epochs, batch_size = 0, 25, 64
 	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
+	# reshape into subsequences (samples, time steps, rows, cols, channels)
+	n_steps, n_length = 4, 32
+	trainX = trainX.reshape((trainX.shape[0], n_steps, 1, n_length, n_features))
+	testX = testX.reshape((testX.shape[0], n_steps, 1, n_length, n_features))
+	# define model
 	model = Sequential()
-	model.add(LSTM(100, input_shape=(n_timesteps,n_features)))
+	model.add(ConvLSTM2D(filters=64, kernel_size=(1,3), activation='relu', input_shape=(n_steps, 1, n_length, n_features)))
 	model.add(Dropout(0.5))
+	model.add(Flatten())
 	model.add(Dense(100, activation='relu'))
 	model.add(Dense(n_outputs, activation='softmax'))
 	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -81,8 +104,20 @@ def evaluate_model(trainX, trainy, testX, testy):
 	print('\n')
 	# evaluate model
 	_, accuracy = model.evaluate(testX, testy, batch_size=batch_size, verbose=0)
+	testX[:-1] = [acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z,  float(acc_x) + float(gyro_x),float(acc_y) + float(gyro_y), float(acc_z) + float(gyro_z)]
+	y_pred=model.predict(testX[:-1])
+	print("For user's input: ", testX[:-1])
+	print("The output is: ",y_pred)
+	print("Easier interpretation form output: ", np.round(y_pred, 1))
 	return accuracy
 
+"""
+def user_data_prediction(acc_x,acc_y,acc_z,testX):
+	#testX[(len(testX))-1] = [acc_x, acc_y, acc_z,acc_x, acc_y, acc_z,acc_x, acc_y, acc_z]
+	y_pred=model.predict(testX)
+	print("The output is ",y_pred)
+"""
+	
 # summarize scores
 def summarize_results(scores):
 	print(scores)
@@ -91,13 +126,14 @@ def summarize_results(scores):
 
 # run an experiment
 print("Trying experiment 2 times to evaluate")
-def run_experiment(repeats=2):
+def run_experiment(repeats=1):
 	# load data
 	trainX, trainy, testX, testy = load_dataset()
 	# repeat experiment
+	#user_data_prediction(acc_x,acc_y,acc_z,testX)
 	scores = list()
 	for r in range(repeats):
-		score = evaluate_model(trainX, trainy, testX, testy)
+		score = evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,trainX, trainy, testX, testy)
 		score = score * 100.0
 		print('>#%d: %.3f' % (r+1, score))
 		scores.append(score)
@@ -105,5 +141,4 @@ def run_experiment(repeats=2):
 	summarize_results(scores)
 
 # run the experiment
-run_experiment()
 run_experiment()
