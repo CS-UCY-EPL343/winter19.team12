@@ -416,13 +416,16 @@ class PermissionManager(APIView):
 	permission_classes = (IsAuthenticated,)
 	'''
 	POST params:
-	if patient:
-		username:The specialist who will receive the permission request
 	if specialist:
-		username:The user who will be accepted to be monitored
+		username:The user who will receive the permission request
+	if patient:
+		username:The specialist to grant access
 	'''
 	def post(self,request):
-		username = request.POST.get('username')
+		body = str(request.body.decode('utf-8').replace("\'", "\""))
+		body = json.loads(body)
+
+		username = body.get('username')
 		if not username:
 			return JsonResponse({'status':0,'msg':'missing fields'})
 		if len(FitbitUser.objects.filter(username=username))==0:
@@ -431,21 +434,22 @@ class PermissionManager(APIView):
 			request.user.is_specialist
 			and not FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			from_user = FitbitUser.objects.filter(username=username).first()
 			to_user = request.user
+			from_user = FitbitUser.objects.filter(username=username).first()
 			req = Monitor.objects.filter(from_user=from_user,to_user=to_user).first()
 			req.completed=True
 			req.save()
+			#store in db that request is sent
+
 		elif(
 			not request.user.is_specialist
 			and FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			from_user = request.user
-			to_user = FitbitUser.objects.filter(username=username).first()
-			#store in db that request is sent
+			to_user = FitbitUser.objects.filter(username=request.user).first()
 			if len(Monitor.objects.filter(from_user=request.user,to_user=to_user,completed=False))==0:
 				permission_record = Monitor(from_user=request.user,to_user=to_user)
 				permission_record.save()
+
 		else:
 			return JsonResponse({'status':0,'msg':'Wrong user type'})
 			#update db that request has been accepted
@@ -453,14 +457,14 @@ class PermissionManager(APIView):
 		return JsonResponse({'status':1})
 
 	'''
-	if specialist : returns all requests from users received and if accepted
-	if patient:returns all requests sent and if accepted
+	if specialist : returns all requests of the user sent and if completed
+	if patient:returns all requests received and if completed
 	'''
 	def get(self,request):
 		if request.user.is_specialist:
-			users = Monitor.objects.filter(to_user=request.user) \
-								   .values('from_user__username','completed')
-		else:
 			users = Monitor.objects.filter(from_user=request.user) \
-								   .values('to_user__username','completed')
+											 .values('to_user__username','completed')
+		else:
+			users = Monitor.objects.filter(to_user=request.user) \
+											 .values('from_user__username','completed')
 		return JsonResponse({'users':list(users)})
