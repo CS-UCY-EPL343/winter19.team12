@@ -434,8 +434,8 @@ class PermissionManager(APIView):
 			from_user = request.user
 			to_user = FitbitUser.objects.filter(username=username).first()
 			#store in db that request is sent
-			if len(PermissionRequest.objects.filter(from_user=request.user,to_user=to_user,completed=False))==0:
-				permission_record = PermissionRequest(from_user=request.user,to_user=to_user)
+			if len(Monitor.objects.filter(from_user=request.user,to_user=to_user,completed=False))==0:
+				permission_record = Monitor(from_user=request.user,to_user=to_user)
 				permission_record.save()
 		elif(
 			not request.user.is_specialist
@@ -443,7 +443,7 @@ class PermissionManager(APIView):
 		):
 			from_user = FitbitUser.objects.filter(username=username).first()
 			to_user = request.user
-			req = PermissionRequest.objects.filter(from_user=from_user,to_user=to_user).first()
+			req = Monitor.objects.filter(from_user=from_user,to_user=to_user).first()
 			req.completed=True
 			req.save()
 		else:
@@ -458,9 +458,9 @@ class PermissionManager(APIView):
 	'''
 	def get(self,request):
 		if request.user.is_specialist:
-			users = PermissionRequest.objects.filter(from_user=request.user) \
+			users = Monitor.objects.filter(from_user=request.user) \
 											 .values('to_user__username','completed')
 		else:
-			users = PermissionRequest.objects.filter(to_user=request.user) \
+			users = Monitor.objects.filter(to_user=request.user) \
 											 .values('from_user__username','completed')
 		return JsonResponse({'users':list(users)})

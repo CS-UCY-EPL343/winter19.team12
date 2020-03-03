@@ -12,31 +12,20 @@ class FitbitUser(AbstractUser):
     is_specialist = models.BooleanField(default=False)
 
 class Monitor(models.Model):
-    spec_fk = models.ForeignKey(
-		FitbitUser,
-        related_name='%(class)s_specialist',
-		on_delete=models.CASCADE,
-        null=True
-	)
-    user_fk = models.ForeignKey(
-		FitbitUser,
-        related_name='%(class)s_user',
-		on_delete=models.CASCADE,
-        null=True
-	)
-
-class PermissionRequest(models.Model):
     from_user = models.ForeignKey(
 		FitbitUser,
         related_name='%(class)s_from',
-		on_delete=models.CASCADE
+		on_delete=models.CASCADE,
+        null=True
 	)
     to_user = models.ForeignKey(
 		FitbitUser,
         related_name='%(class)s_to',
-		on_delete=models.CASCADE
+		on_delete=models.CASCADE,
+        null=True
 	)
     completed = models.BooleanField(default=False)
+
 
 class MetricsDescription(models.Model):
     metric_name = models.CharField(max_length=20)
