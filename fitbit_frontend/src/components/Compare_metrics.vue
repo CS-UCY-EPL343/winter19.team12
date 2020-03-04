@@ -60,14 +60,7 @@ export default {
         function updateGraph (start,end) {
           console.log(start +" "+end);
 
-          var request = {
-            params: {
-              from: start,
-              to: end,
-              username: user
-            }
-          }
-
+        
             let config = {
           headers:{
             Authorization:"Bearer "+store().state.main.token
