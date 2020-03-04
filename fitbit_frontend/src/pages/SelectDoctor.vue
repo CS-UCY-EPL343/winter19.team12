@@ -28,14 +28,14 @@
           <q-tab-panel v-for="res in children" :name="res.label">
             <div class="text-h4 q-mb-md">{{res.label}}</div>
             <p>
-              Information about the doctor</br>
-              My birtdate: {{res.birthday}}</br>
+              Information about the doctor: {{res.username}}</br>
+              My birthdate: {{res.birthday}}</br>
               Gender: {{res.gender}}</br>
               Email address: {{res.email}}</br>
               Contact number: {{res.telephone}}</br>
               My address: {{res.address}}</br>
             </p>
-            <q-btn color="red" icon="assignment_turned_in" icon-right="send" label="Send Permissions" />
+            <q-btn type='submit' id="per" ref="permission" @click='send_permission()' color="red" :value="res.username" icon="assignment_turned_in" icon-right="send" label="Send Permissions" />
           </q-tab-panel>
 
         </q-tab-panels>
@@ -47,6 +47,7 @@
 
 
 <script>
+import store from 'src/store/index'
 import axios from 'axios'
 export default {
   data () {
@@ -56,6 +57,31 @@ export default {
       //selected:'',
       children: [
       ]
+    }
+  },
+  methods: {
+    send_permission () {
+
+
+    let config = {
+        headers:{
+          'Content-Type': 'application/json',
+          Authorization:"Bearer "+store().state.main.token
+        }
+    }
+
+
+    let data={
+      username: document.getElementById("per").value
+    }
+
+      console.log(store().state.main.token);
+      this.$axios.post(this.$store.state.main.domain + '/permission_request',data,config).then(response => {
+        console.log(response);
+        if (response.data.status === '1') {
+          this.$q.notify(`Specialist selected successfully!`)
+        }
+      })
     }
   },
   mounted(){
@@ -71,8 +97,9 @@ export default {
           var address = data[i].address;
           var gender = data[i].gender;
           var birthday = data[i].birthdate;
+          var username = data[i].username;
           this.children.push({ "label":"Dr."+name+" "+lastname, "icon": 'assignment_ind',
-          "telephone":telephone,"address":address,"gender":gender,"birthday":birthday,"email":email})
+          "telephone":telephone,"address":address,"gender":gender,"birthday":birthday,"email":email,"username":username})
           console.log(this.children);
         }
       })
