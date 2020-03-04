@@ -366,6 +366,34 @@ class LatestValueView(APIView):
 		metric = metric.latest('timestamp')
 		return JsonResponse({'type':metric.type.metric_name,'value':metric.amount})
 
+'''
+This endpoint will allow specialist to monitor any user
+'''
+class UserLatestMetric(APIView):
+	permission_classes = (IsAuthenticated,)
+	'''
+	params:
+	username:The user that the specialist has access to monitor
+	'''
+	def get(self,request):
+		if not request.GET.get('username') or not request.GET.get('type'):
+			return JsonResponse({'status':0,'msg':'missing fields'})
+		username = request.GET.get('username')
+		type = request.GET.get('type')
+		user_row = FitbitUser.objects.filter(username=username).first()
+		metric_desc = MetricsDescription.objects.filter(metric_name=request.GET.get('type'))
+		if not user_row:
+			return JsonResponse({'status':0,'msg':'user not found'})
+		request_row = Monitor.objects.filter(from_user=user_row,to_user=request.user,completed=True).first()
+		if not user_row:
+			return JsonResponse({'status':0,'msg':'no granted access'})
+		metric = Metrics.objects.filter(user_fk=user_row,type=metric_desc[0])
+		if len(metric)==0:
+			return JsonResponse({'type':request.GET.get('type'),'value':0})
+		metric = metric.latest('timestamp')
+		return JsonResponse({'type':metric.type.metric_name,'value':metric.amount})
+
+
 def insert_metrics(request):
 	#check if params are valid
 	# import pdb;pdb.set_trace()
