@@ -15,6 +15,8 @@ from keras.layers import ConvLSTM2D
 import sys
 import numpy as np
 import pandas as pd
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
 from keras.models import model_from_json
 
 import os
@@ -74,54 +76,39 @@ def load_dataset(prefix=''):
 	#print(trainX.shape, trainy.shape, testX.shape, testy.shape)
 	return trainX, trainy, testX, testy
 
-acc_x=sys.argv[1]
-acc_y=sys.argv[2]
-acc_z=sys.argv[3]
-gyro_x=sys.argv[4]
-gyro_y=sys.argv[5]
-gyro_z=sys.argv[6]
-
 # fit and evaluate a model
-def evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,trainX, trainy, testX, testy):
-	
-	# load json and create model
-	json_file = open('model.json', 'r')
-	loaded_model_json = json_file.read()
-	json_file.close()
-	model = model_from_json(loaded_model_json)
-	# load weights into new model
-	model.load_weights("model.h5")
-	#print("Loaded model from disk")
-	
+def create_model_and_train(trainX, trainy, testX, testy):
+
+	# define model
 	verbose, epochs, batch_size = 0, 25, 64
 	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
 	# reshape into subsequences (samples, time steps, rows, cols, channels)
 	n_steps, n_length = 4, 32
+	trainX = trainX.reshape((trainX.shape[0], n_steps, 1, n_length, n_features))
 	testX = testX.reshape((testX.shape[0], n_steps, 1, n_length, n_features))
-	# evaluate model
-	model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-	_, accuracy = model.evaluate(testX, testy, batch_size=batch_size, verbose=0)
-	testX[:-1] = [acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z,  float(acc_x) + float(gyro_x),float(acc_y) + float(gyro_y), float(acc_z) + float(gyro_z)]
-	y_pred=model.predict(testX[:-1])
-	#print("For user's input: ", testX[:-1])
-	#print(type(y_pred))
-	#np.set_printoptions(threshold=sys.maxsize)
-	#print("The output is: ",y_pred)
-	#print("Easier interpretation form output: ", np.round(y_pred, 1))
-	if((y_pred[0])[0]>0.5):
-		print("Activity is: Walking")
-	if((y_pred[0])[1]>0.5):
-		print("Activity is: Walking Upstairs")
-	if((y_pred[0])[2]>0.5):
-		print("Activity is: Walking Downstairs")
-	if((y_pred[0])[3]>0.5):
-		print("Activity is: Sitting")
-	if((y_pred[0])[4]>0.5):
-		print("Activity is: Standing")
-	if((y_pred[0])[5]>0.5):
-		print("Activity is: Laying")
-	return accuracy
+	
+	
+	# define model
+	model = Sequential()
+	model.add(ConvLSTM2D(filters=64, kernel_size=(1,3), activation='relu', input_shape=(n_steps, 1, n_length, n_features)))
+	model.add(Dropout(0.5))
+	model.add(Flatten())
+	model.add(Dense(100, activation='relu'))
+	model.add(Dense(n_outputs, activation='softmax'))
+	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+	# fit network
+	model.fit(trainX, trainy, epochs=epochs, batch_size=batch_size, verbose=verbose)
+	
+	# serialize model to JSON
+	model_json = model.to_json()
+	with open("model.json", "w") as json_file:
+		json_file.write(model_json)
+	# serialize weights to HDF5
+	model.save_weights("model.h5")
+	print("Saved model to disk")
+
 
 trainX, trainy, testX, testy = load_dataset()
-score = evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,trainX, trainy, testX, testy)
-print ("With accuracy: ",score*100, "%")
+create_model_and_train(trainX, trainy, testX, testy)	
+# summarize scores
+#print ("Model created")
