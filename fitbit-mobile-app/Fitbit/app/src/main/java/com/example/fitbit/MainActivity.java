@@ -19,6 +19,7 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.fitbit.model.User;
 

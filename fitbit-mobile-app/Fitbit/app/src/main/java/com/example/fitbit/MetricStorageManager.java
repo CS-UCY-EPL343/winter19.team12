@@ -50,6 +50,7 @@ public class MetricStorageManager {
                                             .orderBy("timestamp DESC")
                                             .limit(String.valueOf(BATCH_SIZE))
                                             .list();
+        Log.d(TAG,metricRecords.toString());
         CallAPI request = new CallAPI("POST", output -> {
             try {
                 JSONObject obj = new JSONObject(output);
