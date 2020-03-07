@@ -22,7 +22,7 @@
 </template>
 
 <script>
-
+import store from 'src/store/index'
 /* Imports */
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
@@ -72,12 +72,21 @@ export default {
         return;
       }
 
-      this.$axios.post(this.$store.state.main.domain + '/retrieve_history_metrics', {
-        'username': this.$store.state.main.username,
-        'type_metric' : 'heart',
-        'startDate' : start,
-        'endDate' : end,
-      }).then(response => {
+      let config = {
+        headers:{
+          'Content-Type': 'application/json',
+          Authorization:"Bearer "+store().state.main.token
+                }
+      }
+
+      let data = {
+        username: this.$store.state.main.username,
+        type_metric : 'calories',
+        startDate : start,
+        endDate : end
+      }
+
+      this.$axios.post(this.$store.state.main.domain + '/retrieve_history_metrics',data,config).then(response => {
         if (response.data.error === '0') {
           alert("Error")
         }

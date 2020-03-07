@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import store from 'src/store/index'
+
 export default {
   name: 'AddNote',
   data () {
@@ -46,22 +48,33 @@ export default {
         this.noteContent = '';
       },
 
+
       clickSave(){
+
+        let config = {
+          headers:{
+            'Content-Type': 'application/json',
+            Authorization:"Bearer "+store().state.main.token
+                  }
+        }
+
+        let data = {
+          owner: this.$store.state.main.username,
+          reader : this.$store.state.main.username,
+          description : this.noteTitle + "\n" + this.noteContent
+        }
+
         if (this.noteTitle==='' || this.noteContent === '') {
           alert("Please fill all the gaps to the Note List");
         }
         else {
           this.$q.loading.show()
-          this.$axios.post(this.$store.state.main.domain + '/save_note', {
-            'owner': this.$store.state.main.username,
-            'reader' : this.$store.state.main.username,
-            'description': this.noteTitle + "\n" + this.noteContent,
-          }).then(response => {
+          this.$axios.post(this.$store.state.main.domain + '/save_note',data,config).then(response => {
             if (response.data.error === '0') {
               alert("Error")
             }
             else {
-              alert("You successfully save your note");
+              this.$q.notify('Note saved successfully')
               location.reload();
               this.noteTitle = '';
               this.noteContent = '';

@@ -45,51 +45,92 @@ def register(request):
 	context = {'form' : form}
 	return render(request, 'registration/register.html', context)
 
-@csrf_exempt
-def save_note(request):
-	if request.method == "POST":
-		body = str(request.body.decode('utf-8').replace("\'", "\""))
-		body = json.loads(body)
-		owner = body.get('owner')
-		reader = body.get('reader')
-		description = body.get('description')
-		# note = (owner,reader,description)
-		writer_id = FitbitUser.objects.filter(username=reader)[0]
-		note_row = Notes(id_writer=writer_id,id_reader=writer_id,text=description)
-		note_row.save()
-		return JsonResponse({'status':1})
-	return JsonResponse({'status':0})
 
-def delete_note(request):
-	if request.method == "POST":
-		body = str(request.body.decode('utf-8').replace("\'", "\""))
-		body = json.loads(body)
-		username = body.get("username")
-		text = body.get("text")
-		timestamp = body.get("timestamp")
-		note_id = body.get("note_id")
-		reader_id = FitbitUser.objects.filter(username=username)[0]
-		note_row = Notes(id=note_id,id_reader=reader_id,text=text)
-		note_row.delete()
-		return JsonResponse({'status':1})
-	return JsonResponse({'status':0})
+class SaveNotes(APIView):
+	permission_classes = (IsAuthenticated,)
+	def post(self,request):
+		if request.method == "POST":
+			body = str(request.body.decode('utf-8').replace("\'", "\""))
+			body = json.loads(body)
+			owner = body.get('owner')
+			reader = body.get('reader')
+			description = body.get('description')
+			# note = (owner,reader,description)
+			writer_id = FitbitUser.objects.filter(username=reader)[0]
+			note_row = Notes(id_writer=writer_id,id_reader=writer_id,text=description)
+			note_row.save()
+			return JsonResponse({'status':1})
+		return JsonResponse({'status':0})
 
-def retrieve_notes(request):
-	if request.method == "POST":
-		body = str(request.body.decode('utf-8').replace("\'", "\""))
-		body = json.loads(body)
-		username = body.get("username")
-		reader_id = FitbitUser.objects.filter(username=username)[0]
-		note_list = Notes.objects.filter(id_reader=reader_id).values()
-		specialist_list = []
-		patient_list = []
-		for i in range(len(note_list)):
-			if (note_list[i]['id_writer_id']==note_list[0]['id_reader_id']):
-				patient_list.append(note_list[i])
-			else:
-				specialist_list.append(note_list[i])
-		return JsonResponse({'patient_list':patient_list,'specialist_list':specialist_list})
-	return JsonResponse({'status':0})
+class DeleteNotes(APIView):
+	permission_classes = (IsAuthenticated,)
+	def post(self,request):
+		if request.method == "POST":
+			body = str(request.body.decode('utf-8').replace("\'", "\""))
+			body = json.loads(body)
+			username = body.get("username")
+			text = body.get("text")
+			timestamp = body.get("timestamp")
+			note_id = body.get("note_id")
+			reader_id = FitbitUser.objects.filter(username=username)[0]
+			note_row = Notes(id=note_id,id_reader=reader_id,text=text)
+			note_row.delete()
+			return JsonResponse({'status':1})
+		return JsonResponse({'status':0})
+
+class RetrieveNotes(APIView):
+	permission_classes = (IsAuthenticated,)
+	def post(self,request):
+		if request.method == "POST":
+			body = str(request.body.decode('utf-8').replace("\'", "\""))
+			body = json.loads(body)
+			username = body.get("username")
+			reader_id = FitbitUser.objects.filter(username=username)[0]
+			note_list = Notes.objects.filter(id_reader=reader_id).values()
+			specialist_list = []
+			patient_list = []
+			for i in range(len(note_list)):
+				if (note_list[i]['id_writer_id']==note_list[0]['id_reader_id']):
+					patient_list.append(note_list[i])
+				else:
+					specialist_list.append(note_list[i])
+			return JsonResponse({'patient_list':patient_list,'specialist_list':specialist_list})
+		return JsonResponse({'status':0})
+
+class RetrieveHistoryMetrics(APIView):
+	permission_classes = (IsAuthenticated,)
+	def post(self,request):
+		if request.method == "POST":
+			body = str(request.body.decode('utf-8').replace("\'", "\""))
+			body = json.loads(body)
+			username = body.get("username")
+			type_metric = body.get("type_metric")
+			startDate = body.get("startDate")
+			endDate = body.get("endDate")
+			start_list = startDate.split("-")
+			end_list = endDate.split("-")
+
+			sdate = date(int(start_list[0]), int(start_list[1]), int(start_list[2]))   # start date
+			edate = date(int(end_list[0]), int(end_list[1]), int(end_list[2]))   # end date
+
+			delta = edate - sdate       # as timedelta
+			dates_list = []
+			for i in range(delta.days + 1):
+				day = sdate + timedelta(days=i)
+				dates_list.append(day)
+
+			user_id = FitbitUser.objects.filter(username=username)[0]
+			id_metric = MetricsDescription.objects.filter(metric_name=type_metric)[0]
+			final_list = []
+			metric_list = Metrics.objects.filter(user_fk=user_id,type=id_metric).values()
+			for i in range(len(metric_list)):
+				current_date = metric_list[i]["timestamp"]
+				if ((current_date.year>=int(start_list[0]) and current_date.year<=int(end_list[0])) and
+					(current_date.month>=int(start_list[1]) and current_date.month<=int(end_list[1])) and
+					(current_date.day>int(start_list[2]) and current_date.day<=int(end_list[2]))):
+					final_list.append(metric_list[i])
+			return JsonResponse({'metric_list':final_list,'dates_list':dates_list})
+		return JsonResponse({'status':1})
 
 def retrieve_history_metrics(request):
 	if request.method == "POST":
@@ -261,26 +302,6 @@ def get_user_info(request):
 		return JsonResponse(res_dict,safe=False)
 
 
-def get_metrics(request):
-	if len(request.GET)==0 or not 'type' in request.GET or not 'username' in request.GET  :
-		return JsonResponse({'msg':'invalid request'})
-
-	metric_desc = MetricsDescription.objects.filter(metric_name=request.GET.get('type')).first()
-	user = FitbitUser.objects.filter(username=request.GET.get('username')).first()
-	user_metrics = Metrics.objects.filter(user_fk=user, type=metric_desc).values('timestamp','amount')
-
-	if not user_metrics:
-		return JsonResponse({'msg':'missing metrics'})
-	if not metric_desc:
-		return JsonResponse({'msg':'Wrong type'})
-	if not user:
-		return JsonResponse({'msg':'missing user'})
-
-	if len(user_metrics)==0:
-		return JsonResponse({'type':request.GET.get('type'),'value':0})
-
-	return JsonResponse({'metrics': list(user_metrics)})
-
 def fill_missing_values(start_date,end_date,metric):
 	result = []
 	currDate = start_date.date()
@@ -395,8 +416,6 @@ class UserLatestMetric(APIView):
 
 
 def insert_metrics(request):
-	#check if params are valid
-	# import pdb;pdb.set_trace()
 	body = str(request.body.decode('utf-8').replace("\'", "\""))
 	body = json.loads(body)
 	if request.method!='POST':

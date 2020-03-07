@@ -45,37 +45,53 @@
 
 
 <script>
+import store from 'src/store/index'
 import axios from 'axios'
 export default {
   name: 'NotesList',
   methods: {
     clickDelete(item){
+      let config = {
+        headers:{
+          'Content-Type': 'application/json',
+          Authorization:"Bearer "+store().state.main.token
+                }
+      }
+
+      let data = {
+        username: this.$store.state.main.username,
+        text : item["title"] + "\n" + item ["text"],
+        timestamp : item["timestamp"],
+        note_id : item["note_id"]
+      }
+
       this.$q.loading.show();
       let idx = this.messages.indexOf(item)
       this.messages.splice(idx,1)
-      console.log("Hello World");
-      this.$axios.post(this.$store.state.main.domain + '/delete_note', {
-        'username': this.$store.state.main.username,
-        'text' : item["title"] + "\n" + item ["text"],
-        'timestamp' : item["timestamp"],
-        'note_id' : item["note_id"],
-      }).then(response => {
+      this.$axios.post(this.$store.state.main.domain + '/delete_note',data,config).then(response => {
         if (response.data.error === '0') {
-          alert("Error")
+          this.$q.notify('Error')
         }
         else {
-          alert("You successfully delete your note");
+          this.$q.notify('You successfully delete your note')
         }
       })
       console.log(item["title"]);
       this.$q.loading.hide();
     },
     fetchNotesData(){
-      // this.$q.loading.show();
-      this.$axios.post(this.$store.state.main.domain + '/retrieve_notes', {
-        'username': this.$store.state.main.username
-      }).then(response => {
-          console.log("response");
+      let config = {
+        headers:{
+          'Content-Type': 'application/json',
+          Authorization:"Bearer "+store().state.main.token
+                }
+      }
+
+      let data = {
+        username: this.$store.state.main.username,
+      }
+
+      this.$axios.post(this.$store.state.main.domain + '/retrieve_notes',data,config).then(response => {
           var data_patient = response.data.patient_list;
           for (var i=0;i<data_patient.length;i++){
             var note_id = data_patient[i].id;
