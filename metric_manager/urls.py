@@ -14,6 +14,7 @@ urlpatterns = [
     path('insert_metrics', views.insert_metrics, name='insert_metrics'),
     path('retrieve_history_metrics',views.RetrieveHistoryMetrics.as_view(),name='retrieve_history_metrics'),
     path('retrieve_notes',views.RetrieveNotes.as_view(),name='retrieve_notes'),
+    path('is_specialist',views.is_specialist,name='is_specialist'),
     path('save_note',views.SaveNotes.as_view(),name='save_note'),
     path('delete_note',views.DeleteNotes.as_view(),name='delete_note'),
     path('get_all_metrics',views.AllMetricsView.as_view(), name='get_all_metrics' ),
