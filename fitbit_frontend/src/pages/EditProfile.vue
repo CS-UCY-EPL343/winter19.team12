@@ -182,10 +182,20 @@ export default {
   },
   methods: {
     fetchUserData () {
+
+      let config = {
+          headers:{
+            'Content-Type': 'application/json',
+            Authorization:"Bearer "+store().state.main.token
+          }
+      }
+
+      let data = {
+        username: this.$store.state.main.username
+      }
+
       this.$q.loading.show()
-      this.$axios.post(this.$store.state.main.domain + '/get_user_info', {
-        'username': this.$store.state.main.username
-      }).then(response => {
+      this.$axios.post(this.$store.state.main.domain + '/get_user_info',data,config).then(response => {
         this.name = response.data.first_name
         this.surname = response.data.last_name
         this.email = response.data.email
@@ -198,19 +208,29 @@ export default {
       })
     },
     submit () {
+
+      let config = {
+          headers:{
+            'Content-Type': 'application/json',
+            Authorization:"Bearer "+store().state.main.token
+          }
+      }
+
+      let data = {
+        username: this.$store.state.main.username,
+        password: this.password,
+        name: this.name,
+        surname: this.surname,
+        birthday: this.birth,
+        height: this.height,
+        gender: this.gender,
+        email: this.email,
+        telephone: this.phone,
+        address: this.address
+      }
+
       this.$q.loading.show()
-      this.$axios.post(this.$store.state.main.domain + '/edit_profile_api', {
-        'username': this.$store.state.main.username,
-        'password': this.password,
-        'name': this.name,
-        'surname': this.surname,
-        'birthday': this.birth,
-        'height': this.height,
-        'gender': this.gender,
-        'email': this.email,
-        'telephone': this.phone,
-        'address': this.address
-      }).then(response => {
+      this.$axios.post(this.$store.state.main.domain + '/edit_profile_api',data,config).then(response => {
         if (response.data.status === '1') {
           this.$q.notify(`User information updated successfully!`)
         }

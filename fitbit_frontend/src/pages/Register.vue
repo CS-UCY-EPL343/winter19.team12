@@ -126,12 +126,22 @@ export default {
   methods: {
     submit () {
       this.$q.loading.show()
-      this.$axios.post(this.$store.state.main.domain + '/register_api', {
-        'username': this.username,
-        'password': this.password,
-        'repeat_password': this.retypePassword,
-        'type':this.type
-      }).then(response => {
+
+      let config = {
+          headers:{
+            'Content-Type': 'application/json',
+            Authorization:"Bearer "+store().state.main.token
+          }
+      }
+
+      let data = {
+        username: this.username,
+        password: this.password,
+        repeat_password: this.retypePassword,
+        type: this.type
+      }
+
+      this.$axios.post(this.$store.state.main.domain + '/register_api',data).then(response => {
         if (response.data.error === 'username already exists') {
           this.$q.notify(`Username '${this.username}' already exists! Enter a new one.`)
           this.$refs.username.focus()

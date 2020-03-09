@@ -86,7 +86,13 @@ export default {
   },
   mounted(){
 
-      axios.get(this.$store.state.main.domain + '/get_specialist').then(response => {
+    let config = {
+      headers:{
+        Authorization:"Bearer "+store().state.main.token
+      }
+    }
+
+      axios.get(this.$store.state.main.domain + '/get_specialist',config).then(response => {
         //console.log(response);
         var data = response.data.docs;
         for (var i=0;i<data.length;i++){
