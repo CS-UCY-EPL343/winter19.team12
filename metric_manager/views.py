@@ -221,11 +221,10 @@ class EditProfileApi(APIView):
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
 
-		username = body.get('username')
 		if not username:
 			return JsonResponse({'error':'username missing'})
 
-		userRow = FitbitUser.objects.filter(username=username).first()
+		userRow = FitbitUser.objects.filter(username=request.user).first()
 		if not userRow:
 			return JsonResponse({'error':'user not found'})
 
