@@ -107,7 +107,7 @@ export default {
                 let is_specialist = response.data.is_specialist;
                 if (is_specialist) {
                   this.$store.commit('main/login', {'username':this.username,'token':access,'is_specialist':is_specialist})
-                  this.$router.push({ path: '/specialist', name: 'monitor'})
+                  this.$router.push({ name: 'monitor'})
                   this.$q.notify(`You have logged in successfully as Specialist.`)
                 }
                 else {
