@@ -26,7 +26,8 @@
       bordered
     >
       <q-list padding>
-        <template v-if='$store.state.main.loggedIn'>
+        <template v-if='$store.state.main.loggedIn && !$store.state.main.is_specialist'>
+
           <q-item :to='{name: "dashboard"}' clickable tag="a" exact>
             <q-item-section avatar>
               <q-icon name="home" />
@@ -63,6 +64,9 @@
             </q-item-section>
           </q-item>
 
+        </template>
+        <template v-else-if='$store.state.main.loggedIn && $store.state.main.is_specialist'>
+
           <q-item :to='{name: "monitor"}' clickable tag="a">
             <q-item-section avatar>
               <q-icon name="accessibility" />
@@ -72,7 +76,17 @@
             </q-item-section>
           </q-item>
 
+          <q-item :to='{name: "edit"}' clickable tag="a">
+            <q-item-section avatar>
+              <q-icon name="edit" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Edit Profile</q-item-label>
+            </q-item-section>
+          </q-item>
+
         </template>
+
         <template v-else>
           <q-item :to='{name: "login"}' clickable tag="a">
             <q-item-section avatar>

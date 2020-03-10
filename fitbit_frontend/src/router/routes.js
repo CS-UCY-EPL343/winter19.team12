@@ -4,9 +4,9 @@ const routes = [
     path: '/',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { name: 'dashboard', path: '', alias: 'index', component: () => import('pages/Dashboard.vue') },
-      { name: 'history', path: 'history', alias: 'uhistory', component: () => import('pages/History.vue') },
+      { name: 'dashboard', path: 'dashboard', alias: 'index', component: () => import('pages/Dashboard.vue') },
       { name: 'monitor', path: 'monitor', alias: 'umonitor', component: () => import('pages/Monitor_Screen.vue') },
+      { name: 'history', path: 'history', alias: 'uhistory', component: () => import('pages/History.vue') },
       { name: 'login', path: 'login', alias: 'ulogin', component: () => import('pages/Login.vue') },
       { name: 'select_doctor', path: 'select_doctor', alias: 'uselect_doctor', component: () => import('pages/SelectDoctor.vue') },
       { name: 'register', path: 'register', alias: 'uregister', component: () => import('pages/Register.vue') },

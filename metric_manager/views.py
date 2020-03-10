@@ -99,6 +99,25 @@ class RetrieveNotes(APIView):
 			return JsonResponse({'patient_list':patient_list,'specialist_list':specialist_list})
 		return JsonResponse({'status':0})
 
+# class IsSpecialist(APIView):
+# 	permission_classes = (IsAuthenticated,)
+# 	def post(self,request):
+# 		if request.method == "POST":
+# 			import pdb; pdb.set_trace()
+# 			body = str(request.body.decode('utf-8').replace("\'", "\""))
+# 			body = json.loads(body)
+# 			username = body.get("username")
+# 			get_details = FitbitUser.objects.filter(username=username)
+
+def is_specialist(request):
+	if request.method == "POST":
+		body = str(request.body.decode('utf-8').replace("\'", "\""))
+		body = json.loads(body)
+		username = body.get("username")
+		get_details = FitbitUser.objects.filter(username=username).values()[0]
+		return JsonResponse({'is_specialist':get_details['is_specialist']})
+	return JsonResponse({'status':-1})
+
 class RetrieveHistoryMetrics(APIView):
 	permission_classes = (IsAuthenticated,)
 	def post(self,request):
@@ -202,11 +221,10 @@ class EditProfileApi(APIView):
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
 
-		username = body.get('username')
 		if not username:
 			return JsonResponse({'error':'username missing'})
 
-		userRow = FitbitUser.objects.filter(username=username).first()
+		userRow = FitbitUser.objects.filter(username=request.user).first()
 		if not userRow:
 			return JsonResponse({'error':'user not found'})
 

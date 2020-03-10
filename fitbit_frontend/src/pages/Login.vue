@@ -97,9 +97,27 @@ export default {
         'password': this.password
       }).then(response => {
         if (response.data.access) {
-          this.$store.commit('main/login', {'username':this.username,'token':response.data.access})
-          this.$router.push({ name: 'dashboard' })
-          this.$q.notify(`You have logged in successfully.`)
+          let access = response.data.access
+          this.$axios.post(this.$store.state.main.domain + '/is_specialist', {
+            'username': this.username}).then(response => {
+              if (response.data.error === '-1') {
+                alert("Error")
+              }
+              else {
+                let is_specialist = response.data.is_specialist;
+                if (is_specialist) {
+                  this.$store.commit('main/login', {'username':this.username,'token':access,'is_specialist':is_specialist})
+                  this.$router.push({ name: 'monitor'})
+                  this.$q.notify(`You have logged in successfully as Specialist.`)
+                }
+                else {
+                  this.$store.commit('main/login', {'username':this.username,'token':access,'is_specialist':is_specialist})
+                  // this.$router.push('/apoel')
+                  this.$router.push({ name: 'dashboard' })
+                  this.$q.notify(`You have logged in successfully as Patient.`)
+                }
+              }
+            })
         } else {
           this.$q.notify(`Wrong username or password!`)
         }
