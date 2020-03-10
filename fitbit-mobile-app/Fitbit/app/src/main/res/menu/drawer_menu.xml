@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="nav_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_graph1"
+            android:checked="false"
+            android:icon="@drawable/ic_graph"
+            android:title="Live graph" />
+        <item
+            android:id="@+id/nav_graph2"
+            android:checked="false"
+            android:icon="@drawable/ic_chart2"
+            android:title="History Metrics" />
+    </group>
+    <item android:title="@string/account_actions">
+        <menu>
+            <item android:id="@+id/edit_profile_menu"
+                android:checked="false"
+                android:icon="@drawable/ic_person"
+                android:title="@string/edit_profile" />
+
+            <item android:id="@+id/change_password"
+                android:icon="@drawable/ic_lock"
+                android:checked="false"
+                android:title="@string/change_password" />
+
+            <item android:id="@+id/logout_menu"
+                android:icon="@drawable/ic_logout"
+                android:title="@string/logout_submit" />
+        </menu>
+    </item>
+</menu>

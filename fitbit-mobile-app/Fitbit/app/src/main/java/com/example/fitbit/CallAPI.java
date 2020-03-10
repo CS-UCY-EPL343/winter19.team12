@@ -13,17 +13,27 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 
 public class CallAPI extends AsyncTask<String, String, String> {
     private AsyncResponse responseFunction;
     private String method;
+    private Map<String,String> headers;
     public CallAPI(String method,AsyncResponse responseFunction){
         this.responseFunction=responseFunction;
         this.method=method;
         //set context variables if required
     }
-
+    /*
+    Overloaded constructor with headers
+     */
+    public CallAPI(String method, Map<String, String> headers , AsyncResponse responseFunction){
+        this.responseFunction=responseFunction;
+        this.method=method;
+        this.headers=headers;
+        //set context variables if required
+    }
     @Override
     protected void onPostExecute(String result) {
         responseFunction.processFinish(result);
@@ -53,6 +63,11 @@ public class CallAPI extends AsyncTask<String, String, String> {
             urlConnection.setRequestMethod(method);
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
+            if(headers!=null){
+                for (Map.Entry<String,String> entry : headers.entrySet()){
+                    urlConnection.setRequestProperty(entry.getKey(), entry.getValue());
+                }
+            }
             urlConnection.setRequestProperty("Content-Type", "application/json; utf-8");
             urlConnection.setRequestProperty("Accept", "application/json");
             out = new BufferedOutputStream(urlConnection.getOutputStream());

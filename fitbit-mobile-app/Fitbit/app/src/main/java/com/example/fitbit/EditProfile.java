@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
@@ -65,8 +66,9 @@ public class EditProfile extends AppCompatActivity {
         address=findViewById(R.id.editTextAddressEditProfile);
         weight=findViewById(R.id.editTextWeightEditProfile);
 
-
-        CallAPI userInfo=new CallAPI("POST",(r)->{
+        HashMap<String,String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + User.first(User.class).getToken());
+        CallAPI userInfo=new CallAPI("POST",headers,(r)->{
             try {
                 JSONObject results=new JSONObject(r);
                 height.setText(results.getString("height").equals("null")?"":results.getString("height"));
@@ -101,9 +103,8 @@ public class EditProfile extends AppCompatActivity {
         });
         User currentUser=User.first(User.class);
         userInfo.execute(Urls.SERVER_URL+Urls.VIEW_PROFILE_DETAILS,"username",currentUser.getUsername());
-
         findViewById(R.id.buttonEditProfileSubmit).setOnClickListener((l)->{
-            CallAPI userDataChange = new CallAPI("POST",(r)->{
+            CallAPI userDataChange = new CallAPI("POST",headers,(r)->{
                 try{
                     JSONObject results=new JSONObject(r);
                     if(results.getString("status").equals("1")){

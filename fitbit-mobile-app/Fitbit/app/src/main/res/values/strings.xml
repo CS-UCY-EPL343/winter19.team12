@@ -11,11 +11,14 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="file">"Welcome"</string>
+    <string name="account_actions">"Account Actions"</string>
     <string name="create_new">"Create new"</string>
     <string name="open">"Open"</string>
     <string name="login_submit">"Login"</string>
     <string name="logout_submit">"Logout"</string>
     <string name="username">"Username"</string>
+    <string name="nav_open">"Navigation Open"</string>
+    <string name="nav_close">"Navigation Close"</string>
     <string name="password">"Password"</string>
     <string name="retype_password">"Retype Password"</string>
     <string name="email">"Email"</string>

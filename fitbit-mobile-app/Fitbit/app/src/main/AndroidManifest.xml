@@ -45,6 +45,8 @@
 
         <activity android:name=".SignUpActivity" />
         <activity
+                android:allowBackup="true"
+                android:theme="@style/AppTheme.NoActionBar"
                 android:name=".MainActivity"
                 android:screenOrientation="portrait" />
     </application>
