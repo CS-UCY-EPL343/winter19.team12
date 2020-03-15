@@ -518,7 +518,10 @@ class PermissionManager(APIView):
 		username:The user who will be accepted to be monitored
 	'''
 	def post(self,request):
-		username = request.POST.get('username')
+		body = str(request.body.decode('utf-8').replace("\'", "\""))
+		body = json.loads(body)
+
+		username = body['username']
 		if not username:
 			return JsonResponse({'status':0,'msg':'missing fields'})
 		if len(FitbitUser.objects.filter(username=username))==0:

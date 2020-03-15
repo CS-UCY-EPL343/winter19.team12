@@ -64,9 +64,79 @@
           <q-icon size="2em" :name="filter ? 'filter_b_and_w' : icon" />
         </div>
       </template>
+    </q-table>
 
+
+    <q-table
+      title="Request sent from patients"
+      :data="data1"
+      :columns="columns1"
+      row-key="name"
+      :filter="filter1"
+      no-data-label="I didn't find anything for you"
+    >
+
+      <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th auto-width />
+          <q-th
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+             class="text-italic text-blue"
+          >
+            {{ col.label }}
+          </q-th>
+        </q-tr>
+      </template>
+
+      <template v-slot:top-right>
+        <q-input borderless dense debounce="300" v-model="filter1" placeholder="Search">
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
+
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td auto-width>
+            <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
+          </q-td>
+          <q-td
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+          >
+            {{ col.value }}
+          </q-td>
+        </q-tr>
+        <q-tr v-show="props.expand" :props="props">
+          <q-td colspan="100%">
+            <div class="text-left">
+              <q-btn type='submit' id="patient" :value="props.row.name" color="primary" @click='accept_patient()' icon="done" label="Accept" class="q-mt-md">
+                <q-tooltip content-class="bg-accent">Accept {{ props.row.name }}</q-tooltip>
+              </q-btn>
+              <q-btn color="red" icon="delete_forever" label="Reject" class="q-mt-md">
+                <q-tooltip content-class="bg-accent">Reject {{ props.row.name }}</q-tooltip>
+              </q-btn>
+            </div>
+          </q-td>
+        </q-tr>
+      </template>
+
+      <template v-slot:no-data="{ icon, message, filter }">
+        <div class="full-width row flex-center text-accent q-gutter-sm">
+          <q-icon size="2em" name="sentiment_dissatisfied" />
+          <span>
+            Well this is sad... {{ message }}
+          </span>
+          <q-icon size="2em" :name="filter1 ? 'filter_b_and_w' : icon" />
+        </div>
+      </template>
 
     </q-table>
+
   </div>
 </template>
 
@@ -75,6 +145,8 @@
 
 <script>
 import store from 'src/store/index'
+import axios from 'axios'
+
 export default {
   methods: {
     clickSelect(name){
@@ -88,36 +160,36 @@ export default {
 
     },
 
-    fetchUsersData(){
-      let config = {
-        headers:{
-          'Content-Type': 'application/json',
-          Authorization:"Bearer "+store().state.main.token
+      accept_patient () {
+
+            let config = {
+                headers:{
+                  'Content-Type': 'application/json',
+                  Authorization:"Bearer "+store().state.main.token
                 }
-      }
-
-      let data = {
-        username: this.$store.state.main.username,
-      }
-
-      this.$axios.post(this.$store.state.main.domain + '/retrieve_users',data,config).then(response =>{
-            var data_patient = response.data.patient_list;
-            // console.log(data_patient);
-            for (var i = 0; i < data_patient.length; i++) {
-              var info = data_patient[i]
-              // console.log(info);
-              var p_username = info['username']
-              var p_date_joined = info['date_joined'].split("T")[0]
-              this.data.push({name:p_username,date:p_date_joined})
             }
-      })
 
 
-    }
+            let data={
+              username: document.getElementById("patient").value
+            }
+
+            console.log(data);
+
+              this.$axios.post(this.$store.state.main.domain + '/permission_request',data,config).then(response => {
+                console.log(response);
+                if (response.data.status == '1') {
+                  this.$q.notify(`Patient accepted!`)
+                }
+              })
+              location.reload();
+      }
+
   },
   data () {
     return {
       filter: '',
+      filter1:'',
       columns: [
         {
           name: 'name',
@@ -130,13 +202,54 @@ export default {
         },
         { name: 'Register date', align: 'center', label: 'Register date', field: 'date', sortable: true },
         { name: 'age', label: 'Age', field: 'age' },
-
       ],
-      data: []
+      columns1:[
+        {
+          name: 'name',
+          required: true,
+          label: 'Patients',
+          align: 'left',
+          field: row => row.name,
+          format: val => `${val}`,
+          sortable: true
+        },
+        { name: 'Register date', align: 'center', label: 'Register date', field: 'date', sortable: true },
+        { name: 'Action', label: 'Action', field: 'action' },
+      ]
+      ,data: [],
+       data1:[]
     }
   },
   mounted(){
-    this.fetchUsersData();
-  }
+
+          let config = {
+                headers:{
+                    Authorization:"Bearer "+store().state.main.token
+                  }
+              }
+
+          axios.get(this.$store.state.main.domain + '/permission_request',config).then(response => {
+                var data = response.data.users;
+                //console.log(data)
+                for (var i=0;i<data.length;i++){
+                        if(data[i].completed==false){
+                          var name = data[i].from_user__username;
+                          this.data1.push({ "name":name})
+                        }
+                }
+          })
+
+          axios.get(this.$store.state.main.domain + '/permission_request',config).then(response => {
+                var data = response.data.users;
+                //console.log(data)
+                for (var i=0;i<data.length;i++){
+                        if(data[i].completed==true){
+                          var name = data[i].from_user__username;
+                          this.data.push({ "name":name})
+                        }
+                }
+          })
+
+      }
 }
 </script>

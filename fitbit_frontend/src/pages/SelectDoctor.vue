@@ -78,7 +78,7 @@ export default {
       console.log(store().state.main.token);
       this.$axios.post(this.$store.state.main.domain + '/permission_request',data,config).then(response => {
         console.log(response);
-        if (response.data.status === '1') {
+        if (response.data.status == '1') {
           this.$q.notify(`Specialist selected successfully!`)
         }
       })
