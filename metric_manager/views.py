@@ -22,6 +22,7 @@ from django.db.models import Sum
 from datetime import timedelta
 import datetime
 from datetime import date, timedelta
+from django.db.models import F
 # Create your views here.
 
 
@@ -518,6 +519,7 @@ class PermissionManager(APIView):
 		username:The user who will be accepted to be monitored
 	'''
 	def post(self,request):
+		print(request.user.username)
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
 
@@ -558,8 +560,24 @@ class PermissionManager(APIView):
 	def get(self,request):
 		if request.user.is_specialist:
 			users = Monitor.objects.filter(to_user=request.user) \
-								   .values('from_user__username','completed')
-		else:
-			users = Monitor.objects.filter(from_user=request.user) \
-								   .values('to_user__username','completed')
-		return JsonResponse({'users':list(users)})
+								   .annotate(username=F('from_user__username')) \
+								   .annotate(first_name=F('from_user__first_name')) \
+								   .annotate(surname=F('from_user__last_name')) \
+								   .annotate(telephone=F('from_user__telephone')) \
+								   .values('username','first_name','surname','telephone','completed')
+			return JsonResponse({'users':list(users)})
+
+		specialists_sent = Monitor.objects.filter(from_user=request.user) \
+	  								      .annotate(username=F('to_user__username')) \
+	  								      .annotate(first_name=F('to_user__first_name')) \
+	  								      .annotate(surname=F('to_user__last_name')) \
+	  								      .annotate(telephone=F('to_user__telephone')) \
+								   		  .values('username','first_name','surname','telephone','completed')
+		excluded_specialists = Monitor.objects.filter(from_user=request.user) \
+											  .values_list('to_user__id',flat=True)
+		specialists_not_sent = FitbitUser.objects.filter(is_specialist=True) \
+												 .exclude(id__in=excluded_specialists) \
+												 .exclude(username=request.user.username) \
+												 .values('username','first_name','last_name','telephone')
+		return JsonResponse({'specialists_sent':list(specialists_sent),
+							 'specialists_not_sent':list(specialists_not_sent)})
