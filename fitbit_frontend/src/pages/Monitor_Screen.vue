@@ -47,7 +47,7 @@
         <q-tr v-show="props.expand" :props="props">
           <q-td colspan="100%">
             <div class="text-left">
-              <q-btn color="primary" label="Select patient" class="q-mt-md">
+              <q-btn color="primary" label="Select patient" class="q-mt-md" @click='clickSelect(props.row.name)'>
                 <q-tooltip content-class="bg-accent">See {{ props.row.name }} data </q-tooltip>
               </q-btn>
             </div>
@@ -74,7 +74,47 @@
 
 
 <script>
+import store from 'src/store/index'
 export default {
+  methods: {
+    clickSelect(name){
+      this.$store.state.main.view_user = name
+      console.log(this.$store.state.main);
+      // console.log(name);
+      this.$store.commit('main/change_view', {'view_user':name})
+      this.$router.push({path:'/track_user', name: 'track_user/dashboard'})
+      // this.$q.notify(`You have logged in successfully as Specialist.`)
+
+
+    },
+
+    fetchUsersData(){
+      let config = {
+        headers:{
+          'Content-Type': 'application/json',
+          Authorization:"Bearer "+store().state.main.token
+                }
+      }
+
+      let data = {
+        username: this.$store.state.main.username,
+      }
+
+      this.$axios.post(this.$store.state.main.domain + '/retrieve_users',data,config).then(response =>{
+            var data_patient = response.data.patient_list;
+            // console.log(data_patient);
+            for (var i = 0; i < data_patient.length; i++) {
+              var info = data_patient[i]
+              // console.log(info);
+              var p_username = info['username']
+              var p_date_joined = info['date_joined'].split("T")[0]
+              this.data.push({name:p_username,date:p_date_joined})
+            }
+      })
+
+
+    }
+  },
   data () {
     return {
       filter: '',
@@ -92,19 +132,11 @@ export default {
         { name: 'age', label: 'Age', field: 'age' },
 
       ],
-      data: [
-        {
-          name: 'Mark',
-          date: '11-11-2020',
-          age: 23,
-        },
-        {
-          name: 'Ana',
-          date: '10-02-2020',
-          age: 45,
-        }
-      ]
+      data: []
     }
+  },
+  mounted(){
+    this.fetchUsersData();
   }
 }
 </script>

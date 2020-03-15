@@ -28,17 +28,18 @@ from datetime import date, timedelta
 def index(request):
 	return render(request, 'static/index.html')
 
+
 class Register(APIView):
 	permission_classes = (IsAuthenticated,)
 	def post(self,request):
 		if request.method == 'POST':
 			form = MyRegistrationForm(request.POST)
-
 			if form.is_valid():
 				form.save()
 				username = form.cleaned_data['username']
 				password = form.cleaned_data['password1']
-				user = authenticate(username=username, password=password)
+				is_specialist = form.cleaned_data['type']
+				user = authenticate(username=username, password=password,is_specialist=is_specialist)
 				login(request, user)
 				return redirect('index')
 		else:
@@ -58,8 +59,9 @@ class SaveNotes(APIView):
 			reader = body.get('reader')
 			description = body.get('description')
 			# note = (owner,reader,description)
-			writer_id = FitbitUser.objects.filter(username=reader)[0]
-			note_row = Notes(id_writer=writer_id,id_reader=writer_id,text=description)
+			writer_id = FitbitUser.objects.filter(username=owner)[0]
+			reader_id = FitbitUser.objects.filter(username=reader)[0]
+			note_row = Notes(id_writer=writer_id,id_reader=reader_id,text=description)
 			note_row.save()
 			return JsonResponse({'status':1})
 		return JsonResponse({'status':0})
@@ -79,6 +81,26 @@ class DeleteNotes(APIView):
 			note_row.delete()
 			return JsonResponse({'status':1})
 		return JsonResponse({'status':0})
+
+class RetrieveUsers(APIView):
+	permission_classes = (IsAuthenticated,)
+	def post(self,request):
+		if request.method == "POST":
+			body = str(request.body.decode('utf-8').replace("\'", "\""))
+			body = json.loads(body)
+			username = body.get("username")
+			specialist_id = FitbitUser.objects.filter(username=username)[0]
+			temp_list = Monitor.objects.filter(from_user=specialist_id).values()
+			patient_list = []
+			for temp in temp_list:
+				user_info = FitbitUser.objects.filter(id=temp['to_user_id'])[0]
+				patient_user = user_info.username
+				patient_birth = user_info.birthdate
+				patient_joined = user_info.date_joined
+				patient_list.append({'username':patient_user,'birthdate':patient_birth,'date_joined':patient_joined})
+			return JsonResponse({'patient_list':patient_list})
+		return JsonResponse({'status':0})
+
 
 class RetrieveNotes(APIView):
 	permission_classes = (IsAuthenticated,)
@@ -216,11 +238,12 @@ def register_api(request):
 class EditProfileApi(APIView):
 	permission_classes = (IsAuthenticated,)
 	def post(self,request):
+		# import pdb; pdb.set_trace()
 		if request.method != 'POST':
 			return JsonResponse({'error':'method not permitted'})
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
-
+		username = body.get('username')
 		if not username:
 			return JsonResponse({'error':'username missing'})
 
@@ -367,9 +390,9 @@ class AllMetricsView(APIView):
 		local_timezone = timezone('Europe/Athens')
 		fromDate = datetime.datetime.strptime(fromDate,'%Y-%m-%d').astimezone(local_timezone)
 		toDate =datetime.datetime.strptime(toDate,'%Y-%m-%d').astimezone(local_timezone)
-
-		user = request.user
-		user_metrics = Metrics.objects.filter(user_fk=user , timestamp__range=(fromDate,toDate)) \
+		user = request.GET.get('username')
+		user_id = FitbitUser.objects.filter(username=user)[0]
+		user_metrics = Metrics.objects.filter(user_fk=user_id , timestamp__range=(fromDate,toDate)) \
 									  .values('timestamp','amount','type')
 		heart=Metrics.objects.filter(type=1, timestamp__range=(fromDate,toDate)) \
 							 .extra(select={'day': 'date(timestamp)'}) \

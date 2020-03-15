@@ -84,6 +84,14 @@ export default {
     tab: 'Live graph Heartbeat'
    }
  },
+ mounted(){
+   var same_user = this.$store.state.main.username.localeCompare(this.$store.state.main.view_user);
+   var is_specialist = this.$store.state.main.is_specialist
+   if (same_user==0 && is_specialist){
+     this.$q.notify(`You do not have access to this link.`)
+     this.$router.push({ path: 'track_user/error',name: 'error'})
+   }
+ },
  components: {
     'add-note': AddNote,
     'notes-list': NotesList,

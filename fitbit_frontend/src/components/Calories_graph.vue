@@ -1,7 +1,7 @@
 <template>
   <q-card class='full-width'>
     <q-card-section>
-      <div class="text-h6">Calories data for {{$store.state.main.username}}</div>
+      <div class="text-h6">Calories data for {{$store.state.main.view_user}}</div>
     </q-card-section>
     <q-separator />
     <q-card-section class='no-padding'>
@@ -33,7 +33,7 @@ export default {
   mounted () {
 
     const domain = this.$store.state.main.domain
-    const user = this.$store.state.main.username
+    const user = this.$store.state.main.view_user
 
     let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
     chart.hiddenState.properties.opacity = 0

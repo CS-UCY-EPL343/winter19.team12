@@ -153,7 +153,12 @@ export default {
           }).then(response => {
             if (response.data.access) {
               this.$store.commit('main/login', {'username':this.username,'token':response.data.access})
-              this.$router.push({ name: 'dashboard' }) // Redirect to dashboard
+              if (this.type == 'specialist_select') {
+                this.$router.push({ name: 'monitor' }) // Redirect to monitor
+              }
+              else {
+                this.$router.push({ name: 'dashboard' }) // Redirect to dashboard
+              }
             }
           })
         }

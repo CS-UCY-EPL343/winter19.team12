@@ -9,6 +9,7 @@ urlpatterns = [
     path('get_user_info',views.GetUserInfo.as_view(),name='get_user_info'),
     path('login_api',views.login_api,name='login_api'),
     path('logout_api',views.logout_api,name='logout_api'),
+	path('retrieve_users', views.RetrieveUsers.as_view(), name='retrieve_users'),
 	path('register', views.Register.as_view(), name='register'),
     path('get_specialist', views.GetSpecialist.as_view(), name='get_specialist'),
     path('insert_metrics', views.insert_metrics, name='insert_metrics'),

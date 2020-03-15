@@ -1,7 +1,7 @@
 <template>
   <q-card class='full-width'>
     <q-card-section>
-      <div class="text-h6">Metric Comparison {{$store.state.main.username}}</div>
+      <div class="text-h6">Metric Comparison {{$store.state.main.view_user}}</div>
     </q-card-section>
     <q-separator />
 
@@ -50,7 +50,7 @@ export default {
   methods: {
     clickSearch(){
         const domain = this.$store.state.main.domain
-        const user = this.$store.state.main.username
+        const user = this.$store.state.main.view_user
         let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
         am4core.useTheme(am4themes_animated);
 
@@ -60,7 +60,7 @@ export default {
         function updateGraph (start,end) {
           console.log(start +" "+end);
 
-        
+
             let config = {
           headers:{
             Authorization:"Bearer "+store().state.main.token
@@ -71,12 +71,11 @@ export default {
             username: user
           }
         }
-        console.log(store().state.main.token)
+        // console.log(store().state.main.token)
 
           axios.get(domain + '/get_all_metrics',config).then(response => {
-
             var data =response.data
-            //console.log(data);
+            console.log(data);
             chart.data=[]
 
             response.data.heart.forEach(function(metric){

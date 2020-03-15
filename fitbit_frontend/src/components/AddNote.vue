@@ -60,7 +60,7 @@ export default {
 
         let data = {
           owner: this.$store.state.main.username,
-          reader : this.$store.state.main.username,
+          reader : this.$store.state.main.view_user,
           description : this.noteTitle + "\n" + this.noteContent
         }
 
@@ -74,7 +74,7 @@ export default {
               alert("Error")
             }
             else {
-              this.$q.notify('Note saved successfully')
+              this.$q.notify('Your note has saved successfully')
               location.reload();
               this.noteTitle = '';
               this.noteContent = '';

@@ -26,7 +26,7 @@
       bordered
     >
       <q-list padding>
-        <template v-if='$store.state.main.loggedIn && !$store.state.main.is_specialist'>
+        <template v-if='$store.state.main.loggedIn && !$store.state.main.is_specialist '>
 
           <q-item :to='{name: "dashboard"}' clickable tag="a" exact>
             <q-item-section avatar>

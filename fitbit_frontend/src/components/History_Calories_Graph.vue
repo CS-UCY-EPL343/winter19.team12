@@ -1,7 +1,7 @@
 <template>
   <q-card class='full-width'>
     <q-card-section>
-      <div class="text-h6">History Calories data for {{$store.state.main.username}}</div>
+      <div class="text-h6">History Calories data for {{$store.state.main.view_user}}</div>
     </q-card-section>
     <q-separator />
 
@@ -47,7 +47,7 @@ export default {
     clickSearch(){
 
       const domain = this.$store.state.main.domain
-      const user = this.$store.state.main.username
+      const user = this.$store.state.main.view_user
 
       let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
       chart.hiddenState.properties.opacity = 0
@@ -73,7 +73,7 @@ export default {
         alert("Please set the dates correctly")
         return;
       }
-      
+
       let config = {
         headers:{
           'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ export default {
       }
 
       let data = {
-        username: this.$store.state.main.username,
+        username: this.$store.state.main.view_user,
         type_metric : 'calories',
         startDate : start,
         endDate : end

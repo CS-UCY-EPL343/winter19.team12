@@ -17,6 +17,9 @@
             <q-item-label caption> <i>#PK {{msg.note_id}}</i>
             </q-item-label>
           </q-item-section>
+          <q-item-section>
+            <q-btn flat round dense color="black" icon="delete" @click='clickDeleteSpecialist(msg)'/>
+          </q-item-section>
         </q-item>
     </q-list>
     </q-card-section>
@@ -50,35 +53,74 @@ import axios from 'axios'
 export default {
   name: 'NotesList',
   methods: {
-    clickDelete(item){
-      let config = {
-        headers:{
-          'Content-Type': 'application/json',
-          Authorization:"Bearer "+store().state.main.token
-                }
+    clickDeleteSpecialist(item){
+      if (!this.$store.state.main.is_specialist) {
+        this.$q.notify('You do not have the permission to delete this note');
       }
+      else {
+        let config = {
+          headers:{
+            'Content-Type': 'application/json',
+            Authorization:"Bearer "+store().state.main.token
+                  }
+        }
 
-      let data = {
-        username: this.$store.state.main.username,
-        text : item["title"] + "\n" + item ["text"],
-        timestamp : item["timestamp"],
-        note_id : item["note_id"]
+        let data = {
+          username: this.$store.state.main.view_user,
+          text : item["title"] + "\n" + item ["text"],
+          timestamp : item["timestamp"],
+          note_id : item["note_id"]
+        }
+
+        this.$q.loading.show();
+        let idx = this.specialist_messages.indexOf(item)
+        this.specialist_messages.splice(idx,1)
+        this.$axios.post(this.$store.state.main.domain + '/delete_note',data,config).then(response => {
+          if (response.data.error === '0') {
+            this.$q.notify('Error')
+          }
+          else {
+            this.$q.notify('You successfully delete your note')
+          }
+        })
+        console.log(item["title"]);
+        this.$q.loading.hide();
       }
-
-      this.$q.loading.show();
-      let idx = this.messages.indexOf(item)
-      this.messages.splice(idx,1)
-      this.$axios.post(this.$store.state.main.domain + '/delete_note',data,config).then(response => {
-        if (response.data.error === '0') {
-          this.$q.notify('Error')
-        }
-        else {
-          this.$q.notify('You successfully delete your note')
-        }
-      })
-      console.log(item["title"]);
-      this.$q.loading.hide();
     },
+    clickDelete(item){
+      if (this.$store.state.main.view_user.localeCompare(this.$store.state.main.username)!=0) {
+        this.$q.notify('You do not have the permission to delete this note');
+      }
+      else {
+        let config = {
+          headers:{
+            'Content-Type': 'application/json',
+            Authorization:"Bearer "+store().state.main.token
+                  }
+        }
+
+        let data = {
+          username: this.$store.state.main.view_user,
+          text : item["title"] + "\n" + item ["text"],
+          timestamp : item["timestamp"],
+          note_id : item["note_id"]
+        }
+
+        this.$q.loading.show();
+        let idx = this.messages.indexOf(item)
+        this.messages.splice(idx,1)
+        this.$axios.post(this.$store.state.main.domain + '/delete_note',data,config).then(response => {
+          if (response.data.error === '0') {
+            this.$q.notify('Error')
+          }
+          else {
+            this.$q.notify('You successfully delete your note')
+          }
+        })
+        console.log(item["title"]);
+        this.$q.loading.hide();
+    }
+  },
     fetchNotesData(){
       let config = {
         headers:{
@@ -88,7 +130,7 @@ export default {
       }
 
       let data = {
-        username: this.$store.state.main.username,
+        username: this.$store.state.main.view_user,
       }
 
       this.$axios.post(this.$store.state.main.domain + '/retrieve_notes',data,config).then(response => {
@@ -135,9 +177,7 @@ export default {
   },
 
   mounted(){
-
-  this.fetchNotesData();
-
+    this.fetchNotesData();
   },
   template: '<p>{{ message }}</p>'
   }

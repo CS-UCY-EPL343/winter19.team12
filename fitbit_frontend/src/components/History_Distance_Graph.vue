@@ -1,7 +1,7 @@
 <template>
   <q-card class='full-width'>
     <q-card-section>
-      <div class="text-h6">History Distance data for {{$store.state.main.username}}</div>
+      <div class="text-h6">History Distance data for {{$store.state.main.view_user}}</div>
     </q-card-section>
     <q-separator />
 
@@ -45,7 +45,7 @@ export default {
   methods: {
     clickSearch(){
       const domain = this.$store.state.main.domain
-      const user = this.$store.state.main.username
+      const user = this.$store.state.main.view_user
 
       let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
       chart.hiddenState.properties.opacity = 0
@@ -79,8 +79,8 @@ export default {
       }
 
       let data = {
-        username: this.$store.state.main.username,
-        type_metric : 'calories',
+        username: this.$store.state.main.view_user,
+        type_metric : 'distance',
         startDate : start,
         endDate : end
       }

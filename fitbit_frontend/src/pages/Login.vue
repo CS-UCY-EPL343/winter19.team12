@@ -106,12 +106,12 @@ export default {
               else {
                 let is_specialist = response.data.is_specialist;
                 if (is_specialist) {
-                  this.$store.commit('main/login', {'username':this.username,'token':access,'is_specialist':is_specialist})
+                  this.$store.commit('main/login', {'username':this.username,'token':access,'is_specialist':is_specialist,'view_user':this.username})
                   this.$router.push({ name: 'monitor'})
                   this.$q.notify(`You have logged in successfully as Specialist.`)
                 }
                 else {
-                  this.$store.commit('main/login', {'username':this.username,'token':access,'is_specialist':is_specialist})
+                  this.$store.commit('main/login', {'username':this.username,'token':access,'is_specialist':is_specialist,'view_user':this.username})
                   // this.$router.push('/apoel')
                   this.$router.push({ name: 'dashboard' })
                   this.$q.notify(`You have logged in successfully as Patient.`)

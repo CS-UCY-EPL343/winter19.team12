@@ -1,7 +1,7 @@
 <template>
   <q-card class='full-width'>
     <q-card-section>
-      <div class="text-h6">Heartbeat data for {{$store.state.main.username}}</div>
+      <div class="text-h6">Heartbeat data for {{$store.state.main.view_user}}</div>
     </q-card-section>
     <q-separator />
     <q-card-section class='no-padding'>
