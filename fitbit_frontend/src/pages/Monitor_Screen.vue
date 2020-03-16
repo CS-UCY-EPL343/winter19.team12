@@ -194,27 +194,29 @@ export default {
         {
           name: 'name',
           required: true,
-          label: 'Patients',
+          label: 'Patients_Id',
           align: 'left',
           field: row => row.name,
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'Register date', align: 'center', label: 'Register date', field: 'date', sortable: true },
-        { name: 'age', label: 'Age', field: 'age' },
+        { name: 'firstName', align: 'center', label: 'First name', field: 'firstName', sortable: true },
+        { name: 'surname', label: 'Surname', field: 'surname' ,sortable: true },
+        { name: 'telephone', label: 'Telephone', field: 'telephone'  },
       ],
       columns1:[
         {
           name: 'name',
           required: true,
-          label: 'Patients',
+          label: 'Patients_Id',
           align: 'left',
           field: row => row.name,
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'Register date', align: 'center', label: 'Register date', field: 'date', sortable: true },
-        { name: 'Action', label: 'Action', field: 'action' },
+        { name: 'firstName', align: 'center', label: 'First name', field: 'firstName', sortable: true },
+        { name: 'surname', label: 'Surname', field: 'surname' ,sortable: true },
+        { name: 'telephone', label: 'Telephone', field: 'telephone'  },
       ]
       ,data: [],
        data1:[]
@@ -233,22 +235,22 @@ export default {
                 //console.log(data)
                 for (var i=0;i<data.length;i++){
                         if(data[i].completed==false){
-                          var name = data[i].from_user__username;
-                          this.data1.push({ "name":name})
+                          var name = data[i].username;
+                          var first_name = data[i].username;
+                          var surname = data[i].surname;
+                          var telephone = data[i].telephone;
+                          this.data1.push({ "name":name , "firstName":first_name, "surname":surname, "telephone":telephone })
+                        }else{
+                          var name = data[i].username;
+                          var first_name = data[i].username;
+                          var surname = data[i].surname;
+                          var telephone = data[i].telephone;
+                          this.data.push({ "name":name , "firstName":first_name, "surname":surname, "telephone":telephone })
                         }
                 }
           })
 
-          axios.get(this.$store.state.main.domain + '/permission_request',config).then(response => {
-                var data = response.data.users;
-                //console.log(data)
-                for (var i=0;i<data.length;i++){
-                        if(data[i].completed==true){
-                          var name = data[i].from_user__username;
-                          this.data.push({ "name":name})
-                        }
-                }
-          })
+
 
       }
 }
