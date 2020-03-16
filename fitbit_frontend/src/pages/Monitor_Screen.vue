@@ -117,7 +117,7 @@
               <q-btn type='submit' id="patient" :value="props.row.name" color="primary" @click='accept_patient()' icon="done" label="Accept" class="q-mt-md">
                 <q-tooltip content-class="bg-accent">Accept {{ props.row.name }}</q-tooltip>
               </q-btn>
-              <q-btn color="red" icon="delete_forever" label="Reject" class="q-mt-md">
+              <q-btn color="red" id="reject" icon="delete_forever" :value="props.row.name" @click='reject_patient()' label="Reject" class="q-mt-md">
                 <q-tooltip content-class="bg-accent">Reject {{ props.row.name }}</q-tooltip>
               </q-btn>
             </div>
@@ -174,8 +174,6 @@ export default {
               username: document.getElementById("patient").value
             }
 
-            console.log(data);
-
               this.$axios.post(this.$store.state.main.domain + '/permission_request',data,config).then(response => {
                 console.log(response);
                 if (response.data.status == '1') {
@@ -183,7 +181,30 @@ export default {
                 }
               })
               location.reload();
-      }
+      },
+        reject_patient (){
+
+          let config = {
+              headers:{
+                'Content-Type': 'application/json',
+                Authorization:"Bearer "+store().state.main.token
+              }
+          }
+
+          let data={
+            username: document.getElementById("reject").value,
+            reject: true
+          }
+          console.log(data);
+
+          this.$axios.post(this.$store.state.main.domain + '/permission_request',data,config).then(response => {
+            console.log(response);
+            if (response.data.status == '1') {
+              this.$q.notify(`Patient rejected!`)
+            }
+          })
+          //location.reload();
+        }
 
   },
   data () {
@@ -232,7 +253,7 @@ export default {
 
           axios.get(this.$store.state.main.domain + '/permission_request',config).then(response => {
                 var data = response.data.users;
-                //console.log(data)
+                console.log(data)
                 for (var i=0;i<data.length;i++){
                         if(data[i].completed==false){
                           var name = data[i].username;
@@ -249,7 +270,6 @@ export default {
                         }
                 }
           })
-
 
 
       }
