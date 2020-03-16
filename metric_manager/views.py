@@ -335,19 +335,11 @@ def logout_api(request):
 
 class GetUserInfo(APIView):
 	permission_classes = (IsAuthenticated,)
-	def post(self,request):
-		if request.method=='POST':
-			body = str(request.body.decode('utf-8').replace("\'", "\""))
-			body = json.loads(body)
-			username = body.get('username')
-			if not username:
-				return JsonResponse({'error':'missing username'})
-			userRow = FitbitUser.objects.filter(username=username)
-			if not userRow:
-				return JsonResponse({'error':'user does not exist'})
-			res_dict = json.loads(serializers.serialize('json', userRow))[0]['fields']
-			res_dict.pop('password')
-			return JsonResponse(res_dict,safe=False)
+	def get(self,request):
+		import pdb;pdb.set_trace()
+		res_dict = json.loads(serializers.serialize('json', request.user))[0]['fields']
+		res_dict.pop('password')
+		return JsonResponse(res_dict,safe=False)
 
 
 def fill_missing_values(start_date,end_date,metric):
@@ -532,9 +524,13 @@ class PermissionManager(APIView):
 			request.user.is_specialist
 			and not FitbitUser.objects.filter(username=username).first().is_specialist
 		):
+			rejected = body['reject']==True
 			from_user = FitbitUser.objects.filter(username=username).first()
 			to_user = request.user
 			req = Monitor.objects.filter(from_user=from_user,to_user=to_user).first()
+			if rejected:
+				req.delete()
+				return JsonResponse({'status':1,'msg':'Rejected successfuly'})
 			req.completed=True
 			req.save()
 		elif(
