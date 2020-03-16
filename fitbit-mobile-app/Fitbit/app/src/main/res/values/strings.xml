@@ -43,4 +43,9 @@
     <string name="weight">"Weight"</string>
     <string name="kilos">"Kg"</string>
     <string name="save">"Save"</string>
+    <string name="deny_permission">"Deny permission"</string>
+    <string name="accept_permission">"Accept permission"</string>
+    <string name="specialist_permission">"Specialist's permission"</string>
+    <string name="pending_acceptance">"Pending Acceptance"</string>
+    <string name="already_accepted">"Request Accepted"</string>
 </resources>

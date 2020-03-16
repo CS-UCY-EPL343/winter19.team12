@@ -40,7 +40,9 @@ public class CallAPI extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        responseFunction.processFinish(result);
+        if(responseFunction!=null) {
+            responseFunction.processFinish(result);
+        }
     }
 
     @Override

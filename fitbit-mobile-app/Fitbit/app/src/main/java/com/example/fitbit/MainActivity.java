@@ -125,6 +125,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //TODO
                 logout();
                 break;
+            case R.id.nav_permissions:
+                startActivity(new Intent(MainActivity.this,PermissionsActivity.class));
+                break;
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
