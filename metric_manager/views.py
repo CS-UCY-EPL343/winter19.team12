@@ -553,22 +553,21 @@ class PermissionManager(APIView):
 	if patient:returns all requests sent and if accepted
 	'''
 	def get(self,request):
-		
 		if request.user.is_specialist:
 			users = Monitor.objects.filter(to_user=request.user) \
 								   .annotate(username=F('from_user__username')) \
 								   .annotate(first_name=F('from_user__first_name')) \
-								   .annotate(surname=F('from_user__last_name')) \
+								   .annotate(last_name=F('from_user__last_name')) \
 								   .annotate(telephone=F('from_user__telephone')) \
-								   .values('username','first_name','surname','telephone','completed')
+								   .values('username','first_name','last_name','telephone','completed')
 			return JsonResponse({'users':list(users)})
 
 		specialists_sent = Monitor.objects.filter(from_user=request.user) \
 	  								      .annotate(username=F('to_user__username')) \
 	  								      .annotate(first_name=F('to_user__first_name')) \
-	  								      .annotate(surname=F('to_user__last_name')) \
+	  								      .annotate(last_name=F('to_user__last_name')) \
 	  								      .annotate(telephone=F('to_user__telephone')) \
-								   		  .values('username','first_name','surname','telephone','completed')
+								   		  .values('username','first_name','last_name','telephone','completed')
 		excluded_specialists = Monitor.objects.filter(from_user=request.user) \
 											  .values_list('to_user__id',flat=True)
 		specialists_not_sent = FitbitUser.objects.filter(is_specialist=True) \
