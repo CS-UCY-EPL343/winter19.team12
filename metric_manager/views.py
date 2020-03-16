@@ -523,7 +523,10 @@ class PermissionManager(APIView):
 			request.user.is_specialist
 			and not FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			rejected = body['reject']==True
+			if body.get('reject') and body['reject']==True:
+				rejected=True
+			else:
+				rejected=False
 			from_user = FitbitUser.objects.filter(username=username).first()
 			to_user = request.user
 			req = Monitor.objects.filter(from_user=from_user,to_user=to_user).first()
@@ -536,12 +539,18 @@ class PermissionManager(APIView):
 			not request.user.is_specialist
 			and FitbitUser.objects.filter(username=username).first().is_specialist
 		):
+			if body.get('reject') and body['reject']==True:
+				rejected=True
+			else:
+				rejected=False
 			from_user = request.user
 			to_user = FitbitUser.objects.filter(username=username).first()
 			#store in db that request is sent
 			if len(Monitor.objects.filter(from_user=request.user,to_user=to_user,completed=False))==0:
 				permission_record = Monitor(from_user=request.user,to_user=to_user)
 				permission_record.save()
+			elif rejected:
+				Monitor.objects.filter(from_user=request.user,to_user=to_user).delete()
 		else:
 			return JsonResponse({'status':0,'msg':'Wrong user type'})
 			#update db that request has been accepted
