@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h6 id="head1" class=text-center>This is the list of our specialists:</h6>
+    <h6 id="head1" class=text-center>This is the list of specialists Accepted:</h6>
     <q-splitter
       v-model="splitterModel"
       style="height: 250px"
@@ -42,6 +42,52 @@
       </template>
 
     </q-splitter>
+
+    <h6 id="head1" class=text-center>This is the list of remaining specialists:</h6>
+    <q-splitter
+      v-model="splitterModel"
+      style="height: 250px"
+    >
+
+      <template v-slot:before>
+        <q-tabs
+          v-model="tab1"
+          vertical
+          class="text-teal"
+        >
+          <q-tab  v-for="res in children1"  :name="res.label" :icon="res.icon" :label="res.label" />
+        </q-tabs>
+      </template>
+
+      <template v-slot:after>
+        <q-tab-panels
+          v-model="tab1"
+          animated
+          swipeable
+          vertical
+          transition-prev="jump-up"
+          transition-next="jump-up"
+        >
+          <q-tab-panel v-for="res in children1" :name="res.label">
+            <div class="text-h4 q-mb-md">{{res.label}}</div>
+            <p>
+              Information about the doctor: {{res.username}}</br>
+              My birthdate: {{res.birthday}}</br>
+              Gender: {{res.gender}}</br>
+              Email address: {{res.email}}</br>
+              Contact number: {{res.telephone}}</br>
+              My address: {{res.address}}</br>
+            </p>
+            <q-btn type='submit' id="per" ref="permission" @click='send_permission()' color="red" :value="res.username" icon="assignment_turned_in" icon-right="send" label="Send Permissions" />
+          </q-tab-panel>
+
+        </q-tab-panels>
+      </template>
+
+    </q-splitter>
+
+
+
   </div>
 </template>
 
@@ -54,9 +100,10 @@ export default {
     return {
       splitterModel: 50,
       tab: '',
+      tab1:'',
       //selected:'',
-      children: [
-      ]
+      children: [],
+      children1: []
     }
   },
   methods: {
@@ -92,9 +139,9 @@ export default {
       }
     }
 
-      axios.get(this.$store.state.main.domain + '/get_specialist',config).then(response => {
-        //console.log(response);
-        var data = response.data.docs;
+      axios.get(this.$store.state.main.domain + '/permission_request',config).then(response => {
+        console.log(response);
+        var data = response.data.specialists_sent;
         for (var i=0;i<data.length;i++){
           var name = data[i].first_name;
           var lastname = data[i].last_name;
@@ -107,6 +154,20 @@ export default {
           this.children.push({ "label":"Dr."+name+" "+lastname, "icon": 'assignment_ind',
           "telephone":telephone,"address":address,"gender":gender,"birthday":birthday,"email":email,"username":username})
           console.log(this.children);
+        }
+        var data1 = response.data.specialists_not_sent;
+        for (var i=0;i<data1.length;i++){
+          var name = data1[i].first_name;
+          var lastname = data1[i].last_name;
+          var email = data1[i].email;
+          var telephone = data1[i].telephone;
+          var address = data1[i].address;
+          var gender = data1[i].gender;
+          var birthday = data1[i].birthdate;
+          var username = data1[i].username;
+          this.children1.push({ "label":"Dr."+name+" "+lastname, "icon": 'assignment_ind',
+          "telephone":telephone,"address":address,"gender":gender,"birthday":birthday,"email":email,"username":username})
+          console.log(this.children1);
         }
       })
   }

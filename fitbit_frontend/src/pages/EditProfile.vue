@@ -184,18 +184,13 @@ export default {
     fetchUserData () {
 
       let config = {
-          headers:{
-            'Content-Type': 'application/json',
-            Authorization:"Bearer "+store().state.main.token
-          }
-      }
-
-      let data = {
-        username: this.$store.state.main.username
+        headers:{
+          Authorization:"Bearer "+store().state.main.token
+        }
       }
 
       this.$q.loading.show()
-      this.$axios.post(this.$store.state.main.domain + '/get_user_info',data,config).then(response => {
+      this.$axios.get(this.$store.state.main.domain + '/get_user_info',config).then(response => {
         this.name = response.data.first_name
         this.surname = response.data.last_name
         this.email = response.data.email

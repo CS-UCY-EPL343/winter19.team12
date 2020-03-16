@@ -336,8 +336,7 @@ def logout_api(request):
 class GetUserInfo(APIView):
 	permission_classes = (IsAuthenticated,)
 	def get(self,request):
-		import pdb;pdb.set_trace()
-		res_dict = json.loads(serializers.serialize('json', request.user))[0]['fields']
+		res_dict = json.loads(serializers.serialize('json', [request.user]))[0]['fields']
 		res_dict.pop('password')
 		return JsonResponse(res_dict,safe=False)
 
@@ -554,6 +553,7 @@ class PermissionManager(APIView):
 	if patient:returns all requests sent and if accepted
 	'''
 	def get(self,request):
+		
 		if request.user.is_specialist:
 			users = Monitor.objects.filter(to_user=request.user) \
 								   .annotate(username=F('from_user__username')) \

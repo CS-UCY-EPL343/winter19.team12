@@ -50,6 +50,9 @@
               <q-btn color="primary" label="Select patient" class="q-mt-md" @click='clickSelect(props.row.name)'>
                 <q-tooltip content-class="bg-accent">See {{ props.row.name }} data </q-tooltip>
               </q-btn>
+              <q-btn color="red" label="Delete patient" class="q-mt-md" @click='delete_patient(props.row.name)'>
+                <q-tooltip content-class="bg-accent">Delete {{ props.row.name }}</q-tooltip>
+              </q-btn>
             </div>
           </q-td>
         </q-tr>
@@ -159,7 +162,6 @@ export default {
 
 
     },
-
       accept_patient () {
 
             let config = {
@@ -203,7 +205,30 @@ export default {
               this.$q.notify(`Patient rejected!`)
             }
           })
-          //location.reload();
+          location.reload();
+        },
+        delete_patient(name){
+
+          let config = {
+              headers:{
+                'Content-Type': 'application/json',
+                Authorization:"Bearer "+store().state.main.token
+              }
+          }
+
+          let data={
+            username: name,
+            reject: true
+          }
+          console.log(data);
+
+          this.$axios.post(this.$store.state.main.domain + '/permission_request',data,config).then(response => {
+            console.log(response);
+            if (response.data.status == '1') {
+              this.$q.notify(`Patient rejected!`)
+            }
+          })
+          location.reload();
         }
 
   },
