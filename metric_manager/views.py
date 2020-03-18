@@ -531,8 +531,16 @@ class PermissionManager(APIView):
 			to_user = request.user
 			req = Monitor.objects.filter(from_user=from_user,to_user=to_user).first()
 			if rejected:
-				req.delete()
-				return JsonResponse({'status':1,'msg':'Rejected successfuly'})
+				user_deleted = req.from_user
+				response_user = {'username':user_deleted.username,
+								 'first_name':user_deleted.first_name,
+								 'last_name':user_deleted.last_name,
+								 'telephone':user_deleted.telephone}
+				user = req.delete()
+				print(response_user)
+				return JsonResponse({'status':1,
+									 'msg':'Rejected successfuly',
+									 'user':list(response_user)})
 			req.completed=True
 			req.save()
 		elif(
@@ -550,7 +558,16 @@ class PermissionManager(APIView):
 				permission_record = Monitor(from_user=request.user,to_user=to_user)
 				permission_record.save()
 			elif rejected:
-				Monitor.objects.filter(from_user=request.user,to_user=to_user).delete()
+				user_row = Monitor.objects.filter(from_user=request.user,to_user=to_user)
+				user_deleted = user_row.first().to_user
+				response_user = {'username':user_deleted.username,
+								 'first_name':user_deleted.first_name,
+								 'last_name':user_deleted.last_name,
+								 'telephone':user_deleted.telephone}
+				user_row.delete()
+				return JsonResponse({'status':1,
+									 'msg':'Rejected successfuly',
+									 'user':list(response_user)})
 		else:
 			return JsonResponse({'status':0,'msg':'Wrong user type'})
 			#update db that request has been accepted
