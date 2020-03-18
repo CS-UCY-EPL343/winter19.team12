@@ -15,7 +15,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".ChangePasswordActivity"></activity>
+        <activity android:name=".PermissionsActivity"></activity>
+        <activity android:name=".ChangePasswordActivity" />
         <activity android:name=".EditProfile" />
         <activity android:name=".LoginActivity">
             <intent-filter>
@@ -45,10 +46,10 @@
 
         <activity android:name=".SignUpActivity" />
         <activity
-                android:allowBackup="true"
-                android:theme="@style/AppTheme.NoActionBar"
                 android:name=".MainActivity"
-                android:screenOrientation="portrait" />
+                android:allowBackup="true"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

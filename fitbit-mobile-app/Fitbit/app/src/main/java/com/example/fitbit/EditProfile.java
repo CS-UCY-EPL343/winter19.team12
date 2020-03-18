@@ -68,7 +68,7 @@ public class EditProfile extends AppCompatActivity {
 
         HashMap<String,String> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + User.first(User.class).getToken());
-        CallAPI userInfo=new CallAPI("POST",headers,(r)->{
+        CallAPI userInfo=new CallAPI("GET",headers,(r)->{
             try {
                 JSONObject results=new JSONObject(r);
                 height.setText(results.getString("height").equals("null")?"":results.getString("height"));

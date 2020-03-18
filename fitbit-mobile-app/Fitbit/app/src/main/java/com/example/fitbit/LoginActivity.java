@@ -64,7 +64,7 @@ public class LoginActivity extends Activity{
         //TODO WRONG TO GET WITH PASSWORD ONLY POST
         LoginActivity.username=username;
         //String params = String.format("{\"username\":\"%s\",\"password\":\"%s\"}",username,password);
-        CallAPI request = new CallAPI("GET", output -> {
+        CallAPI request = new CallAPI("POST", output -> {
             Log.d("TEST","output:"+output);
             try {
                 JSONObject obj = new JSONObject(output);

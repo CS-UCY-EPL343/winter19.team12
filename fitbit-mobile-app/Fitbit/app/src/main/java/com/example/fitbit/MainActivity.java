@@ -25,13 +25,18 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.fitbit.model.User;
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,6 +66,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         stopService(new Intent(this, CollectDataService.class));
     }
 
+    private void updateNavDrawer(){
+        HashMap<String,String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + User.first(User.class).getToken());
+        CallAPI userInfo=new CallAPI("GET",headers,(r)->{
+            Log.d("nav_drawer",r.toString());
+            try {
+                String res = "Welcome ";
+                JSONObject results=new JSONObject(r);
+                TextView welcomeTxt = (TextView)findViewById(R.id.welcome_user_txt);
+                if(results.has("first_name")){
+                    res+=results.getString("first_name");
+                }
+                if(results.has("last_name")){
+                    res+=results.getString("last_name");
+                    welcomeTxt.setText(res);
+                }
+                TextView emailTxt = (TextView)findViewById(R.id.email_txt);
+                if(results.has("email")){
+                    emailTxt.setText(results.getString("email"));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        });
+        User currentUser=User.first(User.class);
+        userInfo.execute(Urls.SERVER_URL+Urls.VIEW_PROFILE_DETAILS);
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mNetworkReceiver = new NetworkChangeReceiver();
         registerReceiver(mNetworkReceiver, intentFilter);
         setContentView(R.layout.activity_main);
-
+        updateNavDrawer();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -93,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         MetricStorageManager metricMgr = new MetricStorageManager();
         metricMgr.start();
-        if (GENERATE_DUMMY_VALUES) {
+        if (GENERATE_DUMMY_VALUES){
             dummyLooper = new DummyLooper();
             dummyLooper.start();
         }
@@ -124,6 +160,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.logout_menu:
                 //TODO
                 logout();
+                break;
+            case R.id.nav_permissions:
+                startActivity(new Intent(MainActivity.this,PermissionsActivity.class));
                 break;
         }
 
