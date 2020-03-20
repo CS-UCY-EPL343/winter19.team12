@@ -124,7 +124,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Map<String, String> headers = new HashMap<String, String>();
         Log.d("TOKEN", User.first(User.class).getToken());
         headers.put("Authorization", "Bearer " + User.first(User.class).getToken());
-        mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT, headers);
+        mWebView.loadUrl("http://35.246.28.223:8080/login");
+        mWebView.loadUrl("javascript:document.querySelector('[aria-label=\"Username\"]').value='test'");
+        mWebView.loadUrl("javascript:document.querySelector('[aria-label=\"Password\"]').value='test'");
+        mWebView.loadUrl("javascript:document.getElementsByTagName(\"button\")[1].click()");
+        mWebView.loadUrl("http://35.246.28.223:8080/dashboard");
+//        mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT, headers);
 
 
         MetricStorageManager metricMgr = new MetricStorageManager();
