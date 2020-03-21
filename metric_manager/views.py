@@ -145,12 +145,18 @@ class RetrieveHistoryMetrics(APIView):
 	permission_classes = (IsAuthenticated,)
 	def post(self,request):
 		if request.method == "POST":
-			body = str(request.body.decode('utf-8').replace("\'", "\""))
-			body = json.loads(body)
-			username = body.get("username")
-			type_metric = body.get("type_metric")
-			startDate = body.get("startDate")
-			endDate = body.get("endDate")
+			try:
+				body = str(request.body.decode('utf-8').replace("\'", "\""))
+				body = json.loads(body)
+				username = body.get("username")
+				type_metric = body.get("type_metric")
+				startDate = body.get("startDate")
+				endDate = body.get("endDate")
+			except Exception as e:
+				username=request.POST['username']
+				type_metric=request.POST['type_metric']
+				startDate=request.POST['startDate']
+				endDate=request.POST['endDate']
 			start_list = startDate.split("-")
 			end_list = endDate.split("-")
 
@@ -239,7 +245,6 @@ def register_api(request):
 class EditProfileApi(APIView):
 	permission_classes = (IsAuthenticated,)
 	def post(self,request):
-		# import pdb; pdb.set_trace()
 		if request.method != 'POST':
 			return JsonResponse({'error':'method not permitted'})
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
@@ -481,13 +486,22 @@ def insert_metrics(request):
 class GraphView(APIView):
 	permission_classes = (IsAuthenticated,)
 	def get(self,request):
-		if request.GET.get('type')==1:#type param will specify which graph will be returned
+		token = request.META.get('HTTP_AUTHORIZATION')
+		if request.GET.get('type')=='1':#type param will specify which graph will be returned
+			context = {'token':token}
 			template = loader.get_template('livegraph/graph1.html')
-		elif request.GET.get('type')==2:
-			template = loader.get_template('livegraph/graph2.html')
+		elif request.GET.get('type')=='2':
+			# import pdb;pdb.set_trace()
+			start_date = request.GET.get('start_date')
+			end_date = request.GET.get('end_date')
+			context = {'token':token,
+					   'start_date':start_date,
+					   'end_date':end_date,
+					   'username':request.user.username}
+			template = loader.get_template('historygraph/calories.html')
 		else:
 			template = loader.get_template('livegraph/graph.html')
-		context = {}
+			context = {'token':token}
 		return HttpResponse(template.render(context, request))
 
 

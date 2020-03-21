@@ -88,10 +88,12 @@ document.addEventListener("visibilitychange", function() {
 }, false);
 function updateGraph(type){
   var result;
+  var token = $("#info").attr("value");
   $.ajax({
     method: "GET",
     url: LATEST_URL,
     data: { 'type': METRIC_TYPE}
+    headers: { "Authorization": 'Bearer ' + token }
   })
   .done(function( data ) {
     var lastdataItem = series.dataItems.getIndex(series.dataItems.length - 1);
@@ -177,4 +179,5 @@ series.events.on("validated", function() {
 </script>
 
 <!-- HTML -->
+<div id="info" value={{token}}>{{token}}</div>
 <div id="chartdiv"></div>
