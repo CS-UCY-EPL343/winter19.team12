@@ -499,6 +499,15 @@ class GraphView(APIView):
 					   'end_date':end_date,
 					   'username':request.user.username}
 			template = loader.get_template('historygraph/calories.html')
+		elif request.GET.get('type')=='3':
+			# import pdb;pdb.set_trace()
+			start_date = request.GET.get('start_date')
+			end_date = request.GET.get('end_date')
+			context = {'token':token,
+					   'start_date':start_date,
+					   'end_date':end_date,
+					   'username':request.user.username}
+			template = loader.get_template('historygraph/heart.html')
 		else:
 			template = loader.get_template('livegraph/graph.html')
 			context = {'token':token}

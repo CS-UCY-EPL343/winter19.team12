@@ -41,11 +41,13 @@ import java.util.StringTokenizer;
 @SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String GRAPH_ENDPOINT = "/live_graph";
-    public static final boolean GENERATE_DUMMY_VALUES = false;//if true,dummy metrics are sent to the server
+    public static final boolean GENERATE_DUMMY_VALUES = true;//if true,dummy metrics are sent to the server
     private NetworkChangeReceiver mNetworkReceiver;
     private static DummyLooper dummyLooper;
     private static MetricStorageManager metricMgr;
     private WebView mWebView;
+    private Map<String, String> headers = new HashMap<String, String>();
+
     private DrawerLayout drawerLayout;
     private void logout() {
         if (GENERATE_DUMMY_VALUES && dummyLooper!=null) {
@@ -121,15 +123,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         mWebView = (WebView) findViewById(R.id.graph_webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        Map<String, String> headers = new HashMap<String, String>();
+        mWebView.getSettings().setDomStorageEnabled(true);
+
         Log.d("TOKEN", User.first(User.class).getToken());
         headers.put("Authorization", "Bearer " + User.first(User.class).getToken());
-        mWebView.loadUrl("http://35.246.28.223:8080/login");
-        mWebView.loadUrl("javascript:document.querySelector('[aria-label=\"Username\"]').value='test'");
-        mWebView.loadUrl("javascript:document.querySelector('[aria-label=\"Password\"]').value='test'");
-        mWebView.loadUrl("javascript:document.getElementsByTagName(\"button\")[1].click()");
-        mWebView.loadUrl("http://35.246.28.223:8080/dashboard");
-//        mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT, headers);
+        mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT, headers);
 
 
         MetricStorageManager metricMgr = new MetricStorageManager();
@@ -154,6 +152,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.nav_graph1:
+                mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT, headers);
+                break;
             case R.id.edit_profile_menu:
                 //TODO
                 startActivity(new Intent(MainActivity.this, EditProfile.class));
@@ -168,6 +169,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_permissions:
                 startActivity(new Intent(MainActivity.this,PermissionsActivity.class));
+                break;
+            case R.id.nav_history_heartbeat :
+                mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT+"?type=3&end_date=2020-03-21&start_date=2020-03-21", headers);
                 break;
         }
 

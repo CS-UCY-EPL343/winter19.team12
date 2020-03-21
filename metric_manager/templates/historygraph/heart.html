@@ -1,0 +1,111 @@
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+
+</style>
+
+<!-- Resources -->
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<!-- Chart code -->
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+var chart = am4core.create("chartdiv", am4charts.XYChart);
+chart.data = [];
+
+// Create chart instance
+const REQUEST_URL = "retrieve_history_metrics";
+const METRIC_TYPE = "heart";
+var chart = am4core.create("chartdiv", am4charts.XYChart);
+chart.data = [];
+chart.scrollbarX = new am4core.Scrollbar();
+
+var token = "{{token}}";
+var start_date = "{{start_date}}";
+var end_date = "{{end_date}}";
+var username = "{{username}}"
+console.log(token);
+$.ajax({
+  'method':"POST",
+  url: REQUEST_URL,
+  data: {
+    startDate : start_date,
+    endDate : end_date,
+    username : username,
+    type_metric:METRIC_TYPE
+  },
+  headers: { "Authorization": token },
+  success:function(response){
+	  const distinct = (value,index,self) => {
+	    return self.indexOf(value) === index;
+	  }
+	  var unique_dates = response.dates_list;
+	  var data = response.metric_list;
+	  console.log(data);
+	  for (var j=0;j<unique_dates.length;j++){
+	    let sum = 0;
+	    let count_sum = 0;
+	    for (var i=0;i<data.length;i++){
+	      var timestamp = data[i].timestamp;
+	      timestamp = timestamp.split("T");
+	      var date = timestamp[0];
+	      if (unique_dates[j]===date) {
+	        count_sum+=1
+	        var amount = data[i].amount;
+	        sum+=amount;
+	      }
+	    }
+	    chart.data.push({"Heartbeat":sum/count_sum,"Date":unique_dates[j]});
+	  }
+	  console.log(chart.data);
+	  update();    
+  }
+});
+
+function update(){
+    // Create axes
+    var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+    dateAxis.renderer.minGridDistance = 50;
+    dateAxis.renderer.grid.template.location = 0.5;
+    dateAxis.startLocation = 0.5;
+    dateAxis.endLocation = 0.5;
+
+
+	var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    valueAxis.title.text = "Metrics";
+    // Create series
+    var series = chart.series.push(new am4charts.LineSeries());
+    series.dataFields.valueY = "Heartbeat";
+    series.dataFields.dateX = "Date";
+    series.name = "Average Heartbeat (bpm)";
+    //series.tooltipText = "{name}: [bold]{valueY}[/]";
+    series.strokeWidth = 3;
+    series.stroke = am4core.color("#FF6F91");
+    series.tooltip.fill = am4core.color("#FF6F91");
+    series.tooltip.getFillFromObject = false;
+    series.tooltip.background.fill = am4core.color("#FF6F91");
+    series.tooltip.pointerOrientation = "vertical";
+
+	chart.cursor = new am4charts.XYCursor();
+	chart.cursor.snapToSeries = series;
+	chart.cursor.xAxis = dateAxis;
+}
+
+chart.scrollbarY = new am4core.Scrollbar();
+chart.scrollbarX = new am4core.Scrollbar();
+
+}); // end am4core.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>

@@ -51,11 +51,11 @@ public class PermissionsActivity extends AppCompatActivity {
                 JSONObject specialist=specialistsSend.getJSONObject(i);
                 nameArray[i]=specialist.getString("first_name")+specialist.getString("last_name");
                 username[i]=specialist.getString("username");
-                secondaryArray[i]=specialist.getBoolean("completed")?"Request Accepted":"Pending Acceptance";
+                secondaryArray[i]=specialist.getBoolean("completed")?getResources().getString(R.string.accept_permission) :getResources().getString(R.string.pending_acceptance);
             }
             for(int i=0;i<specialistsNotSend.length();i++){
                 JSONObject specialist=specialistsNotSend.getJSONObject(i);
-                nameArray[specialistsSend.length()+i]=specialist.getString("first_name")+specialist.getString("last_name");
+                nameArray[specialistsSend.length()+i]=specialist.getString("first_name")+" "+specialist.getString("last_name");
                 username[specialistsSend.length()+i]=specialist.getString("username");
                 secondaryArray[specialistsSend.length()+i]=specialist.getString("telephone");
             }
@@ -75,7 +75,18 @@ public class PermissionsActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this).setTitle("Revoke Permissions")
                         .setMessage("Do you want this doctor to not be able to view your data")
                         .setPositiveButton(android.R.string.yes,(d,w)->{
-                            //TODO cancel the request or revoke access
+                            CallAPI request=new CallAPI("POST",headers,(r)->{
+                                Log.v("PermisionRevokeResponse",r);
+                                View child=listView.getChildAt(position);
+                                if(child==null){
+                                    return;
+                                }
+                                TextView textInfo=child.findViewById(R.id.textDoctorMail);
+                                textInfo.setText(secondaryArray[position]);
+                                ImageView imageView=child.findViewById(R.id.imageReject);
+                                imageView.setImageResource(R.drawable.ic_give_access);
+                            });
+                            request.execute(Urls.SERVER_URL+Urls.PERMISION_REQUEST,"username",username[position],"reject","True");
                         })
                         .setNegativeButton(android.R.string.no,null)
                         .setIcon(null)
