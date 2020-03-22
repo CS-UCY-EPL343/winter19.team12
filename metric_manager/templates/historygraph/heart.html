@@ -30,46 +30,52 @@ var chart = am4core.create("chartdiv", am4charts.XYChart);
 chart.data = [];
 chart.scrollbarX = new am4core.Scrollbar();
 
-var token = "{{token}}";
-var start_date = "{{start_date}}";
-var end_date = "{{end_date}}";
-var username = "{{username}}"
-console.log(token);
-$.ajax({
-  'method':"POST",
-  url: REQUEST_URL,
-  data: {
-    startDate : start_date,
-    endDate : end_date,
-    username : username,
-    type_metric:METRIC_TYPE
-  },
-  headers: { "Authorization": token },
-  success:function(response){
-	  const distinct = (value,index,self) => {
-	    return self.indexOf(value) === index;
-	  }
-	  var unique_dates = response.dates_list;
-	  var data = response.metric_list;
-	  console.log(data);
-	  for (var j=0;j<unique_dates.length;j++){
-	    let sum = 0;
-	    let count_sum = 0;
-	    for (var i=0;i<data.length;i++){
-	      var timestamp = data[i].timestamp;
-	      timestamp = timestamp.split("T");
-	      var date = timestamp[0];
-	      if (unique_dates[j]===date) {
-	        count_sum+=1
-	        var amount = data[i].amount;
-	        sum+=amount;
-	      }
-	    }
-	    chart.data.push({"Heartbeat":sum/count_sum,"Date":unique_dates[j]});
-	  }
-	  console.log(chart.data);
-	  update();    
-  }
+
+$("#submit_search").on("click",function(){
+  var token = "{{token}}";
+  // var start_date = "{{start_date}}";
+  // var end_date = "{{end_date}}";
+  var from_date = $("#date_from").val().split("-");
+  var start_date = from_date[0]+'-'+from_date[1]+'-'+from_date[2];
+  var to_date = $("#date_to").val().split("-");
+  var end_date = to_date[0]+'-'+to_date[1]+'-'+to_date[2];
+  var username = "{{username}}"
+  $.ajax({
+    'method':"POST",
+    url: REQUEST_URL,
+    data: {
+      startDate : start_date,
+      endDate : end_date,
+      username : username,
+      type_metric:METRIC_TYPE
+    },
+    headers: { "Authorization": token },
+    success:function(response){
+  	  const distinct = (value,index,self) => {
+  	    return self.indexOf(value) === index;
+  	  }
+  	  var unique_dates = response.dates_list;
+  	  var data = response.metric_list;
+  	  console.log(data);
+  	  for (var j=0;j<unique_dates.length;j++){
+  	    let sum = 0;
+  	    let count_sum = 0;
+  	    for (var i=0;i<data.length;i++){
+  	      var timestamp = data[i].timestamp;
+  	      timestamp = timestamp.split("T");
+  	      var date = timestamp[0];
+  	      if (unique_dates[j]===date) {
+  	        count_sum+=1
+  	        var amount = data[i].amount;
+  	        sum+=amount;
+  	      }
+  	    }
+  	    chart.data.push({"Heartbeat":sum/count_sum,"Date":unique_dates[j]});
+  	  }
+  	  console.log(chart.data);
+  	  update();
+    }
+  });
 });
 
 function update(){
@@ -108,4 +114,9 @@ chart.scrollbarX = new am4core.Scrollbar();
 </script>
 
 <!-- HTML -->
+<label for="date_from">From:</label>
+<input type="date" id="date_from" name="date_from">
+<label for="date_to">To:</label>
+<input type="date" id="date_to" name="date_to">
+<button id="submit_search" type="submit">Submit</button>
 <div id="chartdiv"></div>
