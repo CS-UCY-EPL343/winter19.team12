@@ -92,7 +92,7 @@ function updateGraph(type){
   $.ajax({
     method: "GET",
     url: LATEST_URL,
-    data: { 'type': METRIC_TYPE}
+    data: { 'type': METRIC_TYPE},
     headers: { "Authorization": 'Bearer ' + token }
   })
   .done(function( data ) {
@@ -178,6 +178,4 @@ series.events.on("validated", function() {
 }); // end am4core.ready()
 </script>
 
-<!-- HTML -->
-<div id="info" value={{token}}>{{token}}</div>
 <div id="chartdiv"></div>

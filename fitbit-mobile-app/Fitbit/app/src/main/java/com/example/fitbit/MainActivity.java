@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 JSONObject results=new JSONObject(r);
                 TextView welcomeTxt = (TextView)findViewById(R.id.welcome_user_txt);
                 if(results.has("first_name")){
-                    res+=results.getString("first_name");
+                    res+=results.getString("first_name")+" ";
                 }
                 if(results.has("last_name")){
                     res+=results.getString("last_name");
@@ -109,7 +110,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         updateNavDrawer();
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.bringToFront();
         setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();

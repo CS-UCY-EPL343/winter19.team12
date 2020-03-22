@@ -21,7 +21,7 @@
         <item
             android:id="@+id/nav_permissions"
             android:checked="false"
-            android:icon="@drawable/ic_chart2"
+            android:icon="@drawable/ic_permission"
             android:title="@string/specialist_permission" />
 
 

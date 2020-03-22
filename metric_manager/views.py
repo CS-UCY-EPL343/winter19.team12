@@ -509,8 +509,8 @@ class GraphView(APIView):
 					   'username':request.user.username}
 			template = loader.get_template('historygraph/heart.html')
 		else:
-			template = loader.get_template('livegraph/graph.html')
 			context = {'token':token}
+			template = loader.get_template('livegraph/graph.html')
 		return HttpResponse(template.render(context, request))
 
 
