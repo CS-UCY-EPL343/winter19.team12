@@ -9,10 +9,10 @@
             android:icon="@drawable/ic_graph"
             android:title="Live graph" />
         <item
-            android:id="@+id/nav_graph2"
+            android:id="@+id/nav_history_calories"
             android:checked="false"
             android:icon="@drawable/ic_chart2"
-            android:title="History Metrics" />
+            android:title="History Calories" />
         <item
             android:id="@+id/nav_history_heartbeat"
             android:checked="false"

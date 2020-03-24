@@ -174,8 +174,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_permissions:
                 startActivity(new Intent(MainActivity.this,PermissionsActivity.class));
                 break;
+            case R.id.nav_history_calories :
+                mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT+"?type=2", headers);
+                break;
             case R.id.nav_history_heartbeat :
-                mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT+"?type=3&end_date=2020-03-21&start_date=2020-03-21", headers);
+                mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT+"?type=3", headers);
                 break;
         }
 
