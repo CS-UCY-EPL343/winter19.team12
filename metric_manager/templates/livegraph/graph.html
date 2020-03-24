@@ -88,12 +88,12 @@ document.addEventListener("visibilitychange", function() {
 }, false);
 function updateGraph(type){
   var result;
-  var token = $("#info").attr("value");
+  var token = "{{token}}";
   $.ajax({
     method: "GET",
     url: LATEST_URL,
     data: { 'type': METRIC_TYPE},
-    headers: { "Authorization": 'Bearer ' + token }
+    headers: { "Authorization": token }
   })
   .done(function( data ) {
     var lastdataItem = series.dataItems.getIndex(series.dataItems.length - 1);
