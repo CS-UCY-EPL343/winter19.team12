@@ -145,18 +145,12 @@ class RetrieveHistoryMetrics(APIView):
 	permission_classes = (IsAuthenticated,)
 	def post(self,request):
 		if request.method == "POST":
-			try:
-				body = str(request.body.decode('utf-8').replace("\'", "\""))
-				body = json.loads(body)
-				username = body.get("username")
-				type_metric = body.get("type_metric")
-				startDate = body.get("startDate")
-				endDate = body.get("endDate")
-			except Exception as e:
-				username=request.POST['username']
-				type_metric=request.POST['type_metric']
-				startDate=request.POST['startDate']
-				endDate=request.POST['endDate']
+			body = str(request.body.decode('utf-8').replace("\'", "\""))
+			body = json.loads(body)
+			username = body.get("username")
+			type_metric = body.get("type_metric")
+			startDate = body.get("startDate")
+			endDate = body.get("endDate")
 			start_list = startDate.split("-")
 			end_list = endDate.split("-")
 
@@ -245,6 +239,7 @@ def register_api(request):
 class EditProfileApi(APIView):
 	permission_classes = (IsAuthenticated,)
 	def post(self,request):
+		# import pdb; pdb.set_trace()
 		if request.method != 'POST':
 			return JsonResponse({'error':'method not permitted'})
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
@@ -486,31 +481,13 @@ def insert_metrics(request):
 class GraphView(APIView):
 	permission_classes = (IsAuthenticated,)
 	def get(self,request):
-		token = request.META.get('HTTP_AUTHORIZATION')
-		if request.GET.get('type')=='1':#type param will specify which graph will be returned
-			context = {'token':token}
+		if request.GET.get('type')==1:#type param will specify which graph will be returned
 			template = loader.get_template('livegraph/graph1.html')
-		elif request.GET.get('type')=='2':
-			# import pdb;pdb.set_trace()
-			start_date = request.GET.get('start_date')
-			end_date = request.GET.get('end_date')
-			context = {'token':token,
-					   'start_date':start_date,
-					   'end_date':end_date,
-					   'username':request.user.username}
-			template = loader.get_template('historygraph/calories.html')
-		elif request.GET.get('type')=='3':
-			# import pdb;pdb.set_trace()
-			start_date = request.GET.get('start_date')
-			end_date = request.GET.get('end_date')
-			context = {'token':token,
-					   'start_date':start_date,
-					   'end_date':end_date,
-					   'username':request.user.username}
-			template = loader.get_template('historygraph/heart.html')
+		elif request.GET.get('type')==2:
+			template = loader.get_template('livegraph/graph2.html')
 		else:
-			context = {'token':token}
 			template = loader.get_template('livegraph/graph.html')
+		context = {}
 		return HttpResponse(template.render(context, request))
 
 
@@ -536,6 +513,7 @@ class PermissionManager(APIView):
 		print(request.user.username)
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
+
 		username = body['username']
 		if not username:
 			return JsonResponse({'status':0,'msg':'missing fields'})
@@ -545,7 +523,7 @@ class PermissionManager(APIView):
 			request.user.is_specialist
 			and not FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if body.get('reject') and body['reject']=='True':
+			if body.get('reject') and body['reject']==True:
 				rejected=True
 			else:
 				rejected=False
@@ -553,22 +531,15 @@ class PermissionManager(APIView):
 			to_user = request.user
 			req = Monitor.objects.filter(from_user=from_user,to_user=to_user).first()
 			if rejected:
-				user_deleted = req.from_user
-				user = req.delete()
-				print(response_user)
-				return JsonResponse({'status':1,
-									 'msg':'Rejected successfuly',
-									 'username':user_deleted.username,
-	 								 'first_name':user_deleted.first_name,
-	 								 'last_name':user_deleted.last_name,
-	 								 'telephone':user_deleted.telephone})
+				req.delete()
+				return JsonResponse({'status':1,'msg':'Rejected successfuly'})
 			req.completed=True
 			req.save()
 		elif(
 			not request.user.is_specialist
 			and FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if body.get('reject') and body['reject']=='True':
+			if body.get('reject') and body['reject']==True:
 				rejected=True
 			else:
 				rejected=False
@@ -579,15 +550,7 @@ class PermissionManager(APIView):
 				permission_record = Monitor(from_user=request.user,to_user=to_user)
 				permission_record.save()
 			elif rejected:
-				user_row = Monitor.objects.filter(from_user=request.user,to_user=to_user)
-				user_deleted = user_row.first().to_user
-				user_row.delete()
-				return JsonResponse({'status':1,
-									 'msg':'Rejected successfuly',
-									 'username':user_deleted.username,
-	 								 'first_name':user_deleted.first_name,
-	 								 'last_name':user_deleted.last_name,
-	 								 'telephone':user_deleted.telephone})
+				Monitor.objects.filter(from_user=request.user,to_user=to_user).delete()
 		else:
 			return JsonResponse({'status':0,'msg':'Wrong user type'})
 			#update db that request has been accepted
@@ -622,3 +585,22 @@ class PermissionManager(APIView):
 												 .values('username','first_name','last_name','telephone')
 		return JsonResponse({'specialists_sent':list(specialists_sent),
 							 'specialists_not_sent':list(specialists_not_sent)})
+
+def output(request):
+	data=requests.get("https://reqres.in/api/users")
+	print(data.text)
+	data=data.text
+	return render(request,'livegraph\graph.html',{'data':data})
+	
+def external(request):
+	input0=1
+	input1=1
+	input2=1
+	input3=1
+	input4=1
+	input5=1
+	output=run([sys.executable,'winter19.team12//ActivityPredictor.py',input0,input1,input2,input3,input4,input5],shell=False,stdout=PIPE) #You can pass input layer. Check bookmarks
+	print(output)
+	#out = output.stdout.splitlines()
+	#out=str(out).strip('b[\'\']')
+	return render(request,'livegraph\graph.html',{'data1': output.stdout})
