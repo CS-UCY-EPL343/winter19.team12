@@ -1,4 +1,4 @@
-<template>
+z<template>
   <q-page padding class="flex flex-center">
     <q-card class='full-width' style='max-width: 700px'>
       <q-card-section class='bg-grey-1'>
@@ -84,7 +84,8 @@
               <q-icon name='email' />
             </template>
           </q-input>
-          <q-input :label="$t('birth')"
+
+          <!-- <q-input :label="$t('birth')"
                    :hint="$t('birth_hint')"
                    type='text'
                    v-model='birth'
@@ -95,7 +96,30 @@
             <template v-slot:prepend>
               <q-icon name='event' />
             </template>
-          </q-input>
+          </q-input> -->
+          <!-- mask="date"
+          :rules="['date']" -->
+
+          <q-input :label="$t('birth')"
+                   v-model="birth"
+                   ref='birth'
+                   type='text'
+                   :hint="$t('birth_hint')"
+                   outlined bottom-slots
+                   dense
+                   >
+
+       <template v-slot:append>
+         <q-icon name="event" class="cursor-pointer">
+           <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+             <q-date v-model="birth" mask="YYYY-MM-DD" @input="() => $refs.qDateProxy.hide()" />
+           </q-popup-proxy>
+         </q-icon>
+       </template>
+     </q-input>
+
+
+
           <q-input :label="$t('height')"
                    :hint="$t('height_hint')"
                    type='number'

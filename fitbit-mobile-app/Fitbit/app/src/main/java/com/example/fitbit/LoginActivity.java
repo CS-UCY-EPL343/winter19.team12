@@ -61,7 +61,6 @@ public class LoginActivity extends Activity{
                     .show();
             return;
         }
-        //TODO WRONG TO GET WITH PASSWORD ONLY POST
         LoginActivity.username=username;
         //String params = String.format("{\"username\":\"%s\",\"password\":\"%s\"}",username,password);
         CallAPI request = new CallAPI("POST", output -> {
@@ -84,8 +83,6 @@ public class LoginActivity extends Activity{
                     Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(myIntent);
                 }
-
-
             }
             catch(Exception e){
                 e.printStackTrace();

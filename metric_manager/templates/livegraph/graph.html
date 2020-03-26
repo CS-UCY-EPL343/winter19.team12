@@ -88,10 +88,12 @@ document.addEventListener("visibilitychange", function() {
 }, false);
 function updateGraph(type){
   var result;
+  var token = "{{token}}";
   $.ajax({
     method: "GET",
     url: LATEST_URL,
-    data: { 'type': METRIC_TYPE}
+    data: { 'type': METRIC_TYPE},
+    headers: { "Authorization": token }
   })
   .done(function( data ) {
     var lastdataItem = series.dataItems.getIndex(series.dataItems.length - 1);
@@ -176,5 +178,4 @@ series.events.on("validated", function() {
 }); // end am4core.ready()
 </script>
 
-<!-- HTML -->
 <div id="chartdiv"></div>

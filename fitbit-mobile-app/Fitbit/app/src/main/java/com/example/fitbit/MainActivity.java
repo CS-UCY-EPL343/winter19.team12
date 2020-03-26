@@ -36,16 +36,19 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String GRAPH_ENDPOINT = "/live_graph";
-    public static final boolean GENERATE_DUMMY_VALUES = false;//if true,dummy metrics are sent to the server
+    public static final boolean GENERATE_DUMMY_VALUES = true;//if true,dummy metrics are sent to the server
     private NetworkChangeReceiver mNetworkReceiver;
     private static DummyLooper dummyLooper;
     private static MetricStorageManager metricMgr;
     private WebView mWebView;
+    private Map<String, String> headers = new HashMap<String, String>();
+
     private DrawerLayout drawerLayout;
     private void logout() {
         if (GENERATE_DUMMY_VALUES && dummyLooper!=null) {
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 JSONObject results=new JSONObject(r);
                 TextView welcomeTxt = (TextView)findViewById(R.id.welcome_user_txt);
                 if(results.has("first_name")){
-                    res+=results.getString("first_name");
+                    res+=results.getString("first_name")+" ";
                 }
                 if(results.has("last_name")){
                     res+=results.getString("last_name");
@@ -107,7 +110,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         updateNavDrawer();
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.bringToFront();
         setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.bringToFront();
@@ -121,7 +127,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         mWebView = (WebView) findViewById(R.id.graph_webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        Map<String, String> headers = new HashMap<String, String>();
+        mWebView.getSettings().setDomStorageEnabled(true);
+
         Log.d("TOKEN", User.first(User.class).getToken());
         headers.put("Authorization", "Bearer " + User.first(User.class).getToken());
         mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT, headers);
@@ -149,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.nav_graph1:
+                mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT, headers);
+                break;
             case R.id.edit_profile_menu:
                 //TODO
                 startActivity(new Intent(MainActivity.this, EditProfile.class));
@@ -163,6 +173,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_permissions:
                 startActivity(new Intent(MainActivity.this,PermissionsActivity.class));
+                break;
+            case R.id.nav_history_calories :
+                mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT+"?type=2", headers);
+                break;
+            case R.id.nav_history_heartbeat :
+                mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT+"?type=3", headers);
                 break;
         }
 

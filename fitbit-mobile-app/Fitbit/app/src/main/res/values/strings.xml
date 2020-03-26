@@ -48,4 +48,5 @@
     <string name="specialist_permission">"Specialist's permission"</string>
     <string name="pending_acceptance">"Pending Acceptance"</string>
     <string name="already_accepted">"Request Accepted"</string>
+    <string name="history_heartbeat">"History Heartbeat"</string>
 </resources>
