@@ -13,6 +13,9 @@ const routes = [
       { name: 'help', path: 'help', component: () => import('pages/Help.vue') },
       { name: 'edit', path: 'edit', component: () => import('pages/EditProfile.vue') },
       { name: 'error', path: 'error', component: () => import('pages/Error404.vue') },
+      { name: 'TermsAndConditions', path: 'TermsAndConditions', component: () => import('pages/TermsAndConditions.vue') },
+      { name: 'CookiesPolicy', path: 'CookiesPolicy', component: () => import('pages/CookiesPolicy.vue') },
+      { name: 'PrivacyPolicy', path: 'PrivacyPolicy', component: () => import('pages/PrivacyPolicy.vue') },
     ]
   },
   {

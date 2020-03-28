@@ -66,6 +66,17 @@
               <q-radio dense v-model="type" val="specialist_select" label="Specialist" />
             </div>
           </div>
+
+          <div class="q-gutter-sm">
+            <q-checkbox
+              v-model="customModel"
+              color="primary"
+              label=""
+              true-value="yes"
+              false-value="no"
+            />
+              I acknowledge that i agree to the<a href='TermsAndConditions'>Terms of Use</a> and have read the<a href='PrivacyPolicy'>Privacy Policy</a> and<a href='CookiesPolicy'>Cookies Policy</a> .
+          </div>
         </q-card-section>
         <q-separator />
         <q-card-actions class='bg-grey-1 q-pl-none'>
@@ -76,6 +87,7 @@
                 :label='$t("register")'
                 icon='add_box' color='primary' no-caps v-ripple
                 class='full-width'
+                :disable="clickable"
               />
             </div>
             <div class='col-xs-12 col-sm-6'>
@@ -100,6 +112,7 @@ export default {
   name: 'Register',
   data () {
     return {
+      customModel: 'no',
       username: '',
       email: '',
       password: '',
@@ -118,6 +131,14 @@ export default {
         val => !!val || this.$t('field_required'),
         val => this.password === val || 'Passwords do not match.'
       ]
+    }
+  },
+  computed: {
+    clickable(){
+      if(this.customModel=='no'){
+        return true
+      }else
+        return false
     }
   },
   mounted () {

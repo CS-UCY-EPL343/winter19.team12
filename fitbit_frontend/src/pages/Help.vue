@@ -21,6 +21,8 @@
   </q-card-section>
 
    <q-separator dark />
+
+   <div class="text-subtitle2">Contact us: fitbitadm@fitbit.com </div>
  </q-card>
 
     <q-card class="my-card">
