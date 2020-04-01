@@ -27,8 +27,9 @@ urlpatterns = [
     path('auth_token', views.AuthView.as_view(), name='auth_token'),
     path('change_password', views.change_password, name='change_password'),
     path('permission_request', views.PermissionManager.as_view(), name='permission_request'),
-	path('^output', views.output,name='script'),
-	path('external/', views.external)
+    path('export_data', views.ExportData.as_view(), name='export_data'),
+	path('output', views.output,name='script'),
+	path('external', views.external)
 ]
 try:
     fixture_manager.load_fixtures()

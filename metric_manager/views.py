@@ -17,12 +17,14 @@ import datetime
 from pytz import timezone
 from datetime import date
 import pytz
-from django.db.models import Avg
+from django.db.models import Avg,Q
 from django.db.models import Sum
 from datetime import timedelta
 import datetime
 from datetime import date, timedelta
 from django.db.models import F
+from django.core.serializers.json import DjangoJSONEncoder
+
 # Create your views here.
 
 
@@ -523,7 +525,7 @@ class PermissionManager(APIView):
 			request.user.is_specialist
 			and not FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if body.get('reject') and body['reject']==True:
+			if 'reject' in body and (body['reject']=='True' or body['reject']==True):
 				rejected=True
 			else:
 				rejected=False
@@ -531,15 +533,21 @@ class PermissionManager(APIView):
 			to_user = request.user
 			req = Monitor.objects.filter(from_user=from_user,to_user=to_user).first()
 			if rejected:
-				req.delete()
-				return JsonResponse({'status':1,'msg':'Rejected successfuly'})
+				user_deleted = req.from_user
+				user = req.delete()
+				return JsonResponse({'status':1,
+									 'msg':'Rejected successfuly',
+									 'username':user_deleted.username,
+	 								 'first_name':user_deleted.first_name,
+	 								 'last_name':user_deleted.last_name,
+	 								 'telephone':user_deleted.telephone})
 			req.completed=True
 			req.save()
 		elif(
 			not request.user.is_specialist
 			and FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if body.get('reject') and body['reject']==True:
+			if 'reject' in body and (body['reject']=='True' or body['reject']==True):
 				rejected=True
 			else:
 				rejected=False
@@ -586,12 +594,51 @@ class PermissionManager(APIView):
 		return JsonResponse({'specialists_sent':list(specialists_sent),
 							 'specialists_not_sent':list(specialists_not_sent)})
 
+class DateTimeEncoder(json.JSONEncoder):
+        #Override the default method
+        def default(self, obj):
+            if isinstance(obj, (datetime.date, datetime.datetime)):
+                return obj.isoformat()
+
+class ExportData(APIView):
+	permission_classes = (IsAuthenticated,)
+	def get(self,request):
+		user = request.user
+		metric_records = Metrics.objects.filter(user_fk=user) \
+										.values("timestamp","amount","type__metric_name")
+		notes_records = Notes.objects.filter(Q(id_writer=user) | Q(id_reader=user)) \
+									 .values('id_writer__username','id_reader__username','text','timestamp')
+		monitor_records = Monitor.objects.filter(Q(from_user=user) | Q(to_user=user)) \
+									     .values('from_user__username','to_user__username','completed')
+		result_dict = {
+			'user':{
+				'username':user.username,
+				'first_name':user.first_name,
+				'last_name':user.last_name,
+				'birthday':user.birthdate,
+				'height':user.height,
+				'date':user.birthdate,
+				'is_specialist':user.is_specialist,
+				'email':user.email
+			},
+			'metrics':list(metric_records),
+			'notes':list(notes_records),
+			'monitor':list(monitor_records)
+		}
+		with open("tmp.json", 'w') as f:
+			f.write(json.dumps(result_dict),cls=DateTimeEncoder)
+		response = HttpResponse(open("tmp.json", 'rb').read())
+		response['Content-Type'] = 'text/plain'
+		response['Content-Disposition'] = 'attachment; filename=data.json'
+		return response
+
+
 def output(request):
 	data=requests.get("https://reqres.in/api/users")
 	print(data.text)
 	data=data.text
 	return render(request,'livegraph\graph.html',{'data':data})
-	
+
 def external(request):
 	input0=1
 	input1=1
