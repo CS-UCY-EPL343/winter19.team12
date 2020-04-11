@@ -1,0 +1,209 @@
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+const REQUEST_URL = "get_all_metrics";
+am4core.ready(function() {
+  am4core.useTheme(am4themes_animated)
+  var chart = am4core.create("chartdiv", am4charts.XYChart)
+  chart.data=[]
+  am4core.useTheme(am4themes_animated);
+
+  chart.paddingRight = 20;
+  $("#submit_search").on("click",function(){
+    let inputFieldFormat = "yyyy-MM-dd";
+    let start = document.getElementById("date_from").value;
+    let end = document.getElementById("date_to").value;
+
+    if ((start.length < inputFieldFormat.length) || (end.length < inputFieldFormat.length)) {
+      alert("Please set correct dates")
+      return;
+    }
+
+    if (start>end){
+      alert("Please set the dates correctly")
+      return;
+    }
+    console.log(start +" "+end);
+    console.log("{{token}}");
+        // console.log(store().state.main.token)
+    $.ajax({
+      method:'GET',
+      url:REQUEST_URL,
+      data:{
+        from : start,
+        to : end,
+        username : "{{username}}"
+      },
+      headers: { "Authorization": "Bearer {{token}}" },
+      success:function(response){
+        console.log(response);
+        chart.data=[]
+        response.heart.forEach(function(metric){
+          chart.data.push({"timestamp": (new Date(metric.day)).toISOString() ,"heart":metric.amount});
+        });
+
+        response.calories.forEach(function(metric){
+          chart.data.push({'timestamp': (new Date(metric.day)).toISOString() ,'calories':metric.amount});
+        });
+
+        response.distance.forEach(function(metric){
+          chart.data.push({'timestamp': (new Date(metric.day)).toISOString() ,'distance':metric.amount});
+        });
+        update(chart);
+      }
+    });
+  });
+});
+
+
+
+function update(chart){
+  var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+  dateAxis.renderer.minGridDistance = 50;
+  dateAxis.renderer.grid.template.location = 0.5;
+  dateAxis.startLocation = 0.5;
+  dateAxis.endLocation = 0.5;
+
+  var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  valueAxis.title.text = "Metrics";
+
+  // Create series
+  var series = chart.series.push(new am4charts.ColumnSeries());
+  series.dataFields.valueY = 'calories';
+  series.dataFields.dateX = "timestamp";
+  series.name = "calories";
+  series.tooltipText = "{name}: [bold]{valueY}[/]";
+
+
+  var series1 = chart.series.push(new am4charts.LineSeries());
+  series1.dataFields.valueY = "heart";
+  series1.dataFields.dateX = "timestamp";
+  series1.name = "heartbeat";
+  series1.tooltipText = "{name}: [bold]{valueY}[/]";
+  series1.stroke = am4core.color("#FF6F91");
+  series1.strokeWidth = 3;
+  //series1.tooltip.fill = am4core.color("#FF6F91");
+  series1.tooltip.getFillFromObject = false;
+  series1.tooltip.background.fill = am4core.color("#FF6F91");
+
+
+  var series3 = chart.series.push(new am4charts.LineSeries());
+  series3.dataFields.valueY = 'distance'
+  series3.dataFields.dateX = "timestamp";
+  series3.name = "distance";
+  series3.tooltipText = "{name}: [bold]{valueY}[/]";
+  series3.strokeWidth = 3;
+  series3.stroke = am4core.color("#845EC2");
+  series3.tooltip.getFillFromObject = false;
+  series3.tooltip.background.fill = am4core.color("#845EC2");
+
+
+  // Add legend
+  chart.legend = new am4charts.Legend();
+
+  // Add cursor
+  chart.cursor = new am4charts.XYCursor();
+
+  // Add simple vertical scrollbar
+  chart.scrollbarY = new am4core.Scrollbar();
+
+  // Add horizotal scrollbar with preview
+  var scrollbarX = new am4charts.XYChartScrollbar();
+  scrollbarX.series.push(series);
+  chart.scrollbarX = scrollbarX;
+
+  let inputFieldFormat = "yyyy-MM-dd";
+
+  document.getElementById("b1m").addEventListener("click", function() {
+    let max = dateAxis.groupMax["day1"];
+    let date = new Date(max);
+    am4core.time.add(date, "month", -1);
+    zoomToDates(date);
+  });
+
+  document.getElementById("b3m").addEventListener("click", function() {
+    let max = dateAxis.groupMax["day1"];
+    let date = new Date(max);
+    am4core.time.add(date, "month", -3);
+    zoomToDates(date);
+  });
+
+  document.getElementById("b6m").addEventListener("click", function() {
+    let max = dateAxis.groupMax["day1"];
+    let date = new Date(max);
+    am4core.time.add(date, "month", -6);
+    zoomToDates(date);
+  });
+
+  document.getElementById("b1y").addEventListener("click", function() {
+    let max = dateAxis.groupMax["day1"];
+    let date = new Date(max);
+    am4core.time.add(date, "year", -1);
+    zoomToDates(date);
+  });
+
+  document.getElementById("bytd").addEventListener("click", function() {
+    let max = dateAxis.groupMax["day1"];
+    let date = new Date(max);
+    am4core.time.round(date, "year", 1);
+    zoomToDates(date);
+  });
+
+  document.getElementById("bmax").addEventListener("click", function() {
+    let min = dateAxis.groupMin["day1"];
+    let date = new Date(min);
+    zoomToDates(date);
+  });
+
+  dateAxis.events.on("selectionextremeschanged", function() {
+    updateFields();
+  });
+
+  dateAxis.events.on("extremeschanged", updateFields);
+
+
+  document.getElementById("fromfield").addEventListener("keyup", updateZoom);
+  document.getElementById("tofield").addEventListener("keyup", updateZoom);
+}
+function updateFields() {
+  let minZoomed = dateAxis.minZoomed + am4core.time.getDuration(dateAxis.mainBaseInterval.timeUnit, dateAxis.mainBaseInterval.count) * 0.5;
+  document.getElementById("fromfield").value = chart.dateFormatter.format(minZoomed, inputFieldFormat);
+  document.getElementById("tofield").value = chart.dateFormatter.format(new Date(dateAxis.maxZoomed), inputFieldFormat);
+}
+function updateZoom() {
+  let zoomTimeout;
+  if (zoomTimeout) {
+    clearTimeout(zoomTimeout);
+  }
+  zoomTimeout = setTimeout(function() {
+    let start = document.getElementById("fromfield").value;
+    let end = document.getElementById("tofield").value;
+
+    if ((start.length < inputFieldFormat.length) || (end.length < inputFieldFormat.length)) {
+      return;
+    }
+    let startDate = chart.dateFormatter.parse(start, inputFieldFormat);
+    let endDate = chart.dateFormatter.parse(end, inputFieldFormat);
+
+    if (startDate && endDate) {
+      dateAxis.zoomToDates(startDate, endDate);
+    }
+  }, 500);
+}
+</script>
+<label for="date_from">From:</label>
+<input type="date" id="date_from" name="date_from">
+<label for="date_to">To:</label>
+<input type="date" id="date_to" name="date_to">
+<button id="submit_search" type="submit">Submit</button>
+<div style="float: right; margin-right: 15px;">
+  <button id="b1m" class="amcharts-input" style="background: goldenrod; color: white" label="1m" />
+  <button id="b3m" class="amcharts-input" style="background: goldenrod; color: white" label="3m" />
+  <button id="b6m" class="amcharts-input" style="background: goldenrod; color: white" label="6m" />
+  <button id="b1y" class="amcharts-input" style="background: goldenrod; color: white" label="1y" />
+  <button id="bytd" class="amcharts-input" style="background: goldenrod; color: white" label="YTD" />
+  <button id="bmax" class="amcharts-input" style="background: goldenrod; color: white" label="MAX" />
+</div>
+<div id="chartdiv"></div>

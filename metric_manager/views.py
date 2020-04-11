@@ -482,17 +482,47 @@ def insert_metrics(request):
 	return JsonResponse({'status':'1'})
 
 
+
 class GraphView(APIView):
 	permission_classes = (IsAuthenticated,)
 	def get(self,request):
-		if request.GET.get('type')==1:#type param will specify which graph will be returned
+		token = request.META.get('HTTP_AUTHORIZATION')
+		if request.GET.get('type')=='1':#type param will specify which graph will be returned
+			context = {'token':token}
 			template = loader.get_template('livegraph/graph1.html')
-		elif request.GET.get('type')==2:
-			template = loader.get_template('livegraph/graph2.html')
+		elif request.GET.get('type')=='2':
+			# import pdb;pdb.set_trace()
+			start_date = request.GET.get('start_date')
+			end_date = request.GET.get('end_date')
+			context = {'token':token,
+					   'start_date':start_date,
+					   'end_date':end_date,
+					   'username':request.user.username}
+			template = loader.get_template('historygraph/calories.html')
+		elif request.GET.get('type')=='3':
+			# import pdb;pdb.set_trace()
+			start_date = request.GET.get('start_date')
+			end_date = request.GET.get('end_date')
+			context = {'token':token,
+					   'start_date':start_date,
+					   'end_date':end_date,
+					   'username':request.user.username}
+			template = loader.get_template('historygraph/heart.html')
+		elif request.GET.get('type')=='4':
+			# import pdb;pdb.set_trace()
+			start_date = request.GET.get('start_date')
+			end_date = request.GET.get('end_date')
+			context = {'token':token,
+					   'start_date':start_date,
+					   'end_date':end_date,
+					   'username':request.user.username}
+			template = loader.get_template('historygraph/comparison.html')
 		else:
+			context = {'token':token}
 			template = loader.get_template('livegraph/graph.html')
-		context = {}
 		return HttpResponse(template.render(context, request))
+
+
 
 
 
