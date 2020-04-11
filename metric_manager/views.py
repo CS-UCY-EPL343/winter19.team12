@@ -674,14 +674,21 @@ def output(request):
 	return render(request,'livegraph\graph.html',{'data':data})
 
 def external(request):
-	input0=1
-	input1=1
-	input2=1
-	input3=1
-	input4=1
-	input5=1
-	output=run([sys.executable,'winter19.team12//ActivityPredictor.py',input0,input1,input2,input3,input4,input5],shell=False,stdout=PIPE) #You can pass input layer. Check bookmarks
+	# Input of user. Is static here, but need to get the following array values from db and continue.
+	accel=[1,1,1]
+	gyro=[1,1,1]
+	# Executing with the above data the script of prediction of both sensors.
+	# Just the accel metrics to be used and teh script name change if only accel prediction to be made.
+	# Both scripts in github.
+	output=run([sys.executable,'winter19.team12//ActivityPredictor.py',accel[0],accel[1],accel[2],gyro[0],gyro[1],gyro[2]],shell=False,stdout=PIPE) #You can pass input layer. Check bookmarks
 	print(output)
+	
+	# This part to insert metrics in db.
+	record = Metrics(user_fk=user_row,amount=item['amount'],type=metric_desc,output=output)
+	record.save()
+	
 	#out = output.stdout.splitlines()
 	#out=str(out).strip('b[\'\']')
+	
+	#Display data in frontend.
 	return render(request,'livegraph\graph.html',{'data1': output.stdout})
