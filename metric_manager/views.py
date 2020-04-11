@@ -24,6 +24,8 @@ import datetime
 from datetime import date, timedelta
 from django.db.models import F
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import CharField
+from django.db.models.functions import Cast
 
 # Create your views here.
 
@@ -605,9 +607,11 @@ class ExportData(APIView):
 	def get(self,request):
 		user = request.user
 		metric_records = Metrics.objects.filter(user_fk=user) \
-										.values("timestamp","amount","type__metric_name")
+										.annotate(str_date=Cast('timestamp',CharField())) \
+										.values("str_date","amount","type__metric_name")
 		notes_records = Notes.objects.filter(Q(id_writer=user) | Q(id_reader=user)) \
-									 .values('id_writer__username','id_reader__username','text','timestamp')
+									 .annotate(str_date=Cast('timestamp',CharField())) \
+									 .values('id_writer__username','id_reader__username','text','str_date')
 		monitor_records = Monitor.objects.filter(Q(from_user=user) | Q(to_user=user)) \
 									     .values('from_user__username','to_user__username','completed')
 		result_dict = {
@@ -626,7 +630,7 @@ class ExportData(APIView):
 			'monitor':list(monitor_records)
 		}
 		with open("tmp.json", 'w') as f:
-			f.write(json.dumps(result_dict),cls=DateTimeEncoder)
+			f.write(json.dumps(result_dict))
 		response = HttpResponse(open("tmp.json", 'rb').read())
 		response['Content-Type'] = 'text/plain'
 		response['Content-Disposition'] = 'attachment; filename=data.json'
