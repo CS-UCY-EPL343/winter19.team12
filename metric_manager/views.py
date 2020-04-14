@@ -149,12 +149,18 @@ class RetrieveHistoryMetrics(APIView):
 	permission_classes = (IsAuthenticated,)
 	def post(self,request):
 		if request.method == "POST":
-			body = str(request.body.decode('utf-8').replace("\'", "\""))
-			body = json.loads(body)
-			username = body.get("username")
-			type_metric = body.get("type_metric")
-			startDate = body.get("startDate")
-			endDate = body.get("endDate")
+			try:
+				body = str(request.body.decode('utf-8').replace("\'", "\""))
+				body = json.loads(body)
+				username = body.get("username")
+				type_metric = body.get("type_metric")
+				startDate = body.get("startDate")
+				endDate = body.get("endDate")
+			except Exception as e:
+				username=request.POST['username']
+				type_metric=request.POST['type_metric']
+				startDate=request.POST['startDate']
+				endDate=request.POST['endDate']
 			start_list = startDate.split("-")
 			end_list = endDate.split("-")
 
@@ -524,9 +530,6 @@ class GraphView(APIView):
 
 
 
-
-
-
 class AuthView(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self, request):
@@ -547,7 +550,6 @@ class PermissionManager(APIView):
 		print(request.user.username)
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
-
 		username = body['username']
 		if not username:
 			return JsonResponse({'status':0,'msg':'missing fields'})
@@ -557,7 +559,7 @@ class PermissionManager(APIView):
 			request.user.is_specialist
 			and not FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if 'reject' in body and (body['reject']=='True' or body['reject']==True):
+			if body.get('reject') and body['reject']=='True':
 				rejected=True
 			else:
 				rejected=False
@@ -567,6 +569,7 @@ class PermissionManager(APIView):
 			if rejected:
 				user_deleted = req.from_user
 				user = req.delete()
+				print(response_user)
 				return JsonResponse({'status':1,
 									 'msg':'Rejected successfuly',
 									 'username':user_deleted.username,
@@ -579,7 +582,7 @@ class PermissionManager(APIView):
 			not request.user.is_specialist
 			and FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if 'reject' in body and (body['reject']=='True' or body['reject']==True):
+			if body.get('reject') and body['reject']=='True':
 				rejected=True
 			else:
 				rejected=False
@@ -590,7 +593,15 @@ class PermissionManager(APIView):
 				permission_record = Monitor(from_user=request.user,to_user=to_user)
 				permission_record.save()
 			elif rejected:
-				Monitor.objects.filter(from_user=request.user,to_user=to_user).delete()
+				user_row = Monitor.objects.filter(from_user=request.user,to_user=to_user)
+				user_deleted = user_row.first().to_user
+				user_row.delete()
+				return JsonResponse({'status':1,
+									 'msg':'Rejected successfuly',
+									 'username':user_deleted.username,
+	 								 'first_name':user_deleted.first_name,
+	 								 'last_name':user_deleted.last_name,
+	 								 'telephone':user_deleted.telephone})
 		else:
 			return JsonResponse({'status':0,'msg':'Wrong user type'})
 			#update db that request has been accepted
@@ -682,13 +693,13 @@ def external(request):
 	# Both scripts in github.
 	output=run([sys.executable,'winter19.team12//ActivityPredictor.py',accel[0],accel[1],accel[2],gyro[0],gyro[1],gyro[2]],shell=False,stdout=PIPE) #You can pass input layer. Check bookmarks
 	print(output)
-	
+
 	# This part to insert metrics in db.
 	record = Metrics(user_fk=user_row,amount=item['amount'],type=metric_desc,output=output)
 	record.save()
-	
+
 	#out = output.stdout.splitlines()
 	#out=str(out).strip('b[\'\']')
-	
+
 	#Display data in frontend.
 	return render(request,'livegraph\graph.html',{'data1': output.stdout})
