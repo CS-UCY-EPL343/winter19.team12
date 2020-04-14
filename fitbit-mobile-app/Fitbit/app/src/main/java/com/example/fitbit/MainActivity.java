@@ -180,6 +180,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_history_heartbeat :
                 mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT+"?type=3", headers);
                 break;
+            case R.id.nav_comparison :
+                Log.d("test",headers.toString());
+                mWebView.loadUrl(Urls.SERVER_URL + GRAPH_ENDPOINT+"?type=4", headers);
+                break;
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
