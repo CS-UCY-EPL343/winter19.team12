@@ -33,15 +33,46 @@
       <q-separator />
 
       <q-card-actions vertical>
-        <q-btn flat>Delete Data</q-btn>
-        <q-btn flat>Retrive Data</q-btn>
+        <q-btn flat @click='delete_data()'>Delete Data</q-btn>
+        <q-btn flat @click='retrieve_data()'>Retrieve Data</q-btn>
       </q-card-actions>
     </q-card>
 </div>
 </template>
 
 <script>
+import store from 'src/store/index'
+import axios from 'axios'
+
 export default {
-  name: 'Help'
+  name: 'Help',
+  methods:{
+
+    delete_data() {
+      let config = {
+        headers:{
+          Authorization:"Bearer "+store().state.main.token
+        }
+      }
+
+      // axios.get(this.$store.state.main.domain + '/delete_data',config).then(response => {
+      //
+      // });
+
+    },
+    retrieve_data() {
+      let config = {
+        headers:{
+          Authorization:"Bearer "+store().state.main.token
+        }
+      }
+
+      axios.get(this.$store.state.main.domain + '/export_data',config).then(response => {
+        this.$q.notify(`Data Retrieved`)
+      });
+    }
+
+  }
 }
+
 </script>

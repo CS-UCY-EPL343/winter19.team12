@@ -64,6 +64,16 @@
             </q-item-section>
           </q-item>
 
+          <q-item :to='{name: "activity"}' clickable tag="a">
+            <q-item-section avatar>
+              <q-icon name="directions_run" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Activity</q-item-label>
+            </q-item-section>
+          </q-item>
+
+
         </template>
         <template v-else-if='$store.state.main.loggedIn && $store.state.main.is_specialist'>
 
@@ -84,7 +94,6 @@
               <q-item-label>Edit Profile</q-item-label>
             </q-item-section>
           </q-item>
-
         </template>
 
         <template v-else>

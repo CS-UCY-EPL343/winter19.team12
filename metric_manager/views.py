@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login , logout
 from django.http import JsonResponse
 import sys
+from subprocess import run,PIPE
 from .models import *
 from .forms import *
 import json
@@ -26,7 +27,7 @@ from django.db.models import F
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import CharField
 from django.db.models.functions import Cast
-
+import ActivityPredictorOnlyAccel
 # Create your views here.
 
 
@@ -660,9 +661,9 @@ class ExportData(APIView):
 				'username':user.username,
 				'first_name':user.first_name,
 				'last_name':user.last_name,
-				'birthday':user.birthdate,
+				'birthday':str(user.birthdate),
 				'height':user.height,
-				'date':user.birthdate,
+				'date':str(user.birthdate),
 				'is_specialist':user.is_specialist,
 				'email':user.email
 			},
@@ -677,29 +678,12 @@ class ExportData(APIView):
 		response['Content-Disposition'] = 'attachment; filename=data.json'
 		return response
 
-
-def output(request):
-	data=requests.get("https://reqres.in/api/users")
-	print(data.text)
-	data=data.text
-	return render(request,'livegraph\graph.html',{'data':data})
-
-def external(request):
-	# Input of user. Is static here, but need to get the following array values from db and continue.
-	accel=[1,1,1]
-	gyro=[1,1,1]
-	# Executing with the above data the script of prediction of both sensors.
-	# Just the accel metrics to be used and teh script name change if only accel prediction to be made.
-	# Both scripts in github.
-	output=run([sys.executable,'winter19.team12//ActivityPredictor.py',accel[0],accel[1],accel[2],gyro[0],gyro[1],gyro[2]],shell=False,stdout=PIPE) #You can pass input layer. Check bookmarks
-	print(output)
-
-	# This part to insert metrics in db.
-	record = Metrics(user_fk=user_row,amount=item['amount'],type=metric_desc,output=output)
-	record.save()
-
-	#out = output.stdout.splitlines()
-	#out=str(out).strip('b[\'\']')
-
-	#Display data in frontend.
-	return render(request,'livegraph\graph.html',{'data1': output.stdout})
+class Activity(APIView):
+	permission_classes = (IsAuthenticated,)
+	def get(self,request):
+		#import pdb; pdb.set_trace();
+		user = request.user
+		trainX, trainy, testX, testy = ActivityPredictorOnlyAccel.load_dataset()
+		output = ActivityPredictorOnlyAccel.evaluate_model_and_user_data_prediction(1,1,1,trainX, trainy, testX, testy)
+		print(output)
+		return JsonResponse({'activity':output})

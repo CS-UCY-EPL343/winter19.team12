@@ -1,4 +1,6 @@
  # lstm model
+import numpy as np
+import pandas as pd
 from numpy import mean
 from numpy import std
 from numpy import dstack
@@ -13,12 +15,10 @@ from matplotlib import pyplot
 from keras.layers import TimeDistributed
 from keras.layers import ConvLSTM2D
 import sys
-import numpy as np
-import pandas as pd
 from keras.models import model_from_json
 
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 
 import warnings
@@ -74,17 +74,17 @@ def load_dataset(prefix=''):
 	#print(trainX.shape, trainy.shape, testX.shape, testy.shape)
 	return trainX, trainy, testX, testy
 
-acc_x=sys.argv[1]
-acc_y=sys.argv[2]
-acc_z=sys.argv[3]
+#acc_x=sys.argv[1]
+#acc_y=sys.argv[2]
+#acc_z=sys.argv[3]
 #gyro_x=sys.argv[4]
 #gyro_y=sys.argv[5]
 #gyro_z=sys.argv[6]
 
 # fit and evaluate a model
 def evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,trainX, trainy, testX, testy):
-	
-	
+
+
 	import io
 	import sys
 	# create a text trap and redirect stdout
@@ -99,7 +99,7 @@ def evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,trainX, trainy, te
 	# load weights into new model
 	model.load_weights("model.h5")
 	#print("Loaded model from disk")
-	
+
 	verbose, epochs, batch_size = 0, 25, 64
 	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
 	# reshape into subsequences (samples, time steps, rows, cols, channels)
@@ -115,24 +115,34 @@ def evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,trainX, trainy, te
 	#np.set_printoptions(threshold=sys.maxsize)
 	#print("The output is: ",y_pred)
 	#print("Easier interpretation form output: ", np.round(y_pred, 1))
-	
+
 	# exit printing from trap
 	sys.stdout = sys.__stdout__
-	
+	type=''
 	if((y_pred[0])[0]>0.5):
-		print("Activity is: Walking")
+		type="Activity is: Walking"
+		#print("Activity is: Walking")
 	if((y_pred[0])[1]>0.5):
-		print("Activity is: Walking Upstairs")
+		#print("Activity is: Walking Upstairs")
+		type="Activity is: Walking Upstairs"
 	if((y_pred[0])[2]>0.5):
-		print("Activity is: Walking Downstairs")
-	if((y_pred[0])[3]>0.5):
-		print("Activity is: Sitting")
-	if((y_pred[0])[4]>0.5):
-		print("Activity is: Standing")
-	if((y_pred[0])[5]>0.5):
-		print("Activity is: Laying")
-	return accuracy
+		#print("Activity is: Walking Downstairs")
+		type="Activity is: Walking Downstairs"
 
-trainX, trainy, testX, testy = load_dataset()
-score = evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,trainX, trainy, testX, testy)
-print ("With accuracy: ",score*100, "%")
+	if((y_pred[0])[3]>0.5):
+		#print("Activity is: Sitting")
+		type="Activity is: Sitting"
+
+	if((y_pred[0])[4]>0.5):
+		#print("Activity is: Standing")
+		type="Activity is: Standing"
+
+	if((y_pred[0])[5]>0.5):
+		#print("Activity is: Laying")
+		type="Activity is: Laying"
+
+	return type +" with accuracy "+str(accuracy)
+
+#trainX, trainy, testX, testy = load_dataset()
+#score = evaluate_model_and_user_data_prediction(acc_x,acc_y,acc_z,trainX, trainy, testX, testy)
+#print ("With accuracy: ",score*100, "%")
