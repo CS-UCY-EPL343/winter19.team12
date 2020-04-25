@@ -50,15 +50,19 @@ export default {
   methods:{
 
     delete_data() {
-      let config = {
-        headers:{
-          Authorization:"Bearer "+store().state.main.token
-        }
-      }
 
-      // axios.get(this.$store.state.main.domain + '/delete_data',config).then(response => {
-      //
-      // });
+      let config = {
+          headers: {
+            Authorization:"Bearer "+ store().state.main.token
+          }
+      }
+      console.log(store().state.main.token);
+      this.$axios.post(this.$store.state.main.domain + '/delete_data',"",config).then(response => {
+        console.log(response);
+        if (response.data.status == '1') {
+          this.$q.notify(`Data Deleted successfully!`)
+        }
+      });
 
     },
     retrieve_data() {
