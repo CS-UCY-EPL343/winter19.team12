@@ -43,6 +43,7 @@
 <script>
 import store from 'src/store/index'
 import axios from 'axios'
+import { exportFile } from 'quasar'
 
 export default {
   name: 'Help',
@@ -68,10 +69,25 @@ export default {
       }
 
       axios.get(this.$store.state.main.domain + '/export_data',config).then(response => {
+
+        //Download data
+        const content = [response.request.response]
+        const status = exportFile(
+        'data.json',
+        content,
+        'text/json'
+      )
+
+      if (status !== true) {
+        this.$q.notify({
+          message: 'Browser denied file download...',
+          color: 'negative',
+          icon: 'warning'
+        })
+      }
         this.$q.notify(`Data Retrieved`)
       });
     }
-
   }
 }
 
