@@ -28,7 +28,8 @@ urlpatterns = [
     path('change_password', views.change_password, name='change_password'),
     path('permission_request', views.PermissionManager.as_view(), name='permission_request'),
     path('export_data', views.ExportData.as_view(), name='export_data'),
-	path('activity', views.Activity.as_view(), name='activity')
+	path('activity', views.Activity.as_view(), name='activity'),
+    path('delete_data',views.DeleteData.as_view(),name='delete_data')
 ]
 try:
     fixture_manager.load_fixtures()

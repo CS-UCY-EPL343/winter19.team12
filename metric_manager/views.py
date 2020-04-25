@@ -677,6 +677,17 @@ class ExportData(APIView):
 		response['Content-Type'] = 'text/plain'
 		response['Content-Disposition'] = 'attachment; filename=data.json'
 		return response
+  
+class DeleteData(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self,request):
+        user = request.user
+        print("deleting user "+str(user))
+        Metrics.objects.filter(user_fk=user).delete()
+        Notes.objects.filter(Q(id_writer=user) | Q(id_reader=user)).delete()
+        Monitor.objects.filter(Q(from_user=user) | Q(to_user=user)).delete()
+
+        return JsonResponse({'status':1})
 
 class Activity(APIView):
 	permission_classes = (IsAuthenticated,)
