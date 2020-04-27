@@ -44,7 +44,7 @@
         <q-separator />
         <q-card-actions class='bg-grey-1 q-pl-none'>
           <div class='row full-width q-col-gutter-sm'>
-            <div class='col-xs-12 col-sm-6'>
+            <div class='col-xs-12 col-sm-4'>
               <q-btn
                 type='submit'
                 :label='$t("login")'
@@ -52,7 +52,16 @@
                 class='full-width'
               />
             </div>
-            <div class='col-xs-12 col-sm-6'>
+            <div class='col-xs-12 col-sm-4'>
+              <!-- :to='{name: "forgetPassword"}' -->
+              <q-btn
+                label='Forgot password'
+                @click='forget()'
+                icon="send" color='red' no-caps v-ripple
+                class='full-width'
+              />
+            </div>
+            <div class='col-xs-12 col-sm-4'>
               <q-btn
                 :to='{name: "register"}'
                 :label='$t("create_account")'
@@ -126,7 +135,15 @@ export default {
         this.$q.notify(`Wrong username or password!`)
         this.$q.loading.hide()
       })
-    }
+    },
+      forget(){
+            if(this.username!=''){
+              this.$q.notify(`Verification code sent to email!`)
+              this.$router.push("/forgetPassword")
+            }else{
+              this.$q.notify(`Please provide the username!`)
+            }
+      }
   },
   beforeRouteEnter (to, from, next) {
     if (store().state.main.username !== '') {

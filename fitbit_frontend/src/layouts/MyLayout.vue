@@ -73,6 +73,26 @@
             </q-item-section>
           </q-item>
 
+          <q-item :to='{name: "help"}' clickable tag="a">
+            <q-item-section avatar>
+              <q-icon name="help" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Help</q-item-label>
+              <q-item-label caption>Find help on how to get started!</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item @click='logout' clickable tag="a">
+            <q-item-section avatar>
+              <q-icon name="exit_to_app" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Log out</q-item-label>
+            </q-item-section>
+          </q-item>
+
+
 
         </template>
         <template v-else-if='$store.state.main.loggedIn && $store.state.main.is_specialist'>
@@ -94,6 +114,26 @@
               <q-item-label>Edit Profile</q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-item :to='{name: "help"}' clickable tag="a">
+            <q-item-section avatar>
+              <q-icon name="help" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Help</q-item-label>
+              <q-item-label caption>Find help on how to get started!</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item @click='logout' clickable tag="a">
+            <q-item-section avatar>
+              <q-icon name="exit_to_app" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Log out</q-item-label>
+            </q-item-section>
+          </q-item>
+
         </template>
 
         <template v-else>
@@ -116,15 +156,6 @@
             </q-item-section>
           </q-item>
         </template>
-        <q-item :to='{name: "help"}' clickable tag="a">
-          <q-item-section avatar>
-            <q-icon name="help" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Help</q-item-label>
-            <q-item-label caption>Find help on how to get started!</q-item-label>
-          </q-item-section>
-        </q-item>
         <q-item clickable tag="a" target="_blank" href="https://github.com/CS-UCY-EPL343/winter19.team12">
           <q-item-section avatar>
             <q-icon name="code" />
@@ -132,15 +163,6 @@
           <q-item-section>
             <q-item-label>Github</q-item-label>
             <q-item-label caption>EPL343 - winter19.team12</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item @click='logout' clickable tag="a">
-          <q-item-section avatar>
-            <q-icon name="exit_to_app" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Log out</q-item-label>
           </q-item-section>
         </q-item>
 

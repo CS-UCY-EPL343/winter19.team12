@@ -17,6 +17,7 @@ const routes = [
       { name: 'CookiesPolicy', path: 'CookiesPolicy', component: () => import('pages/CookiesPolicy.vue') },
       { name: 'PrivacyPolicy', path: 'PrivacyPolicy', component: () => import('pages/PrivacyPolicy.vue') },
       { name: 'activity', path: 'activity', component: () => import('pages/Activity.vue') },
+      { name: 'forgetPassword', path: 'forgetPassword', component: () => import('pages/ForgetPassword.vue') },
     ]
   },
   {
