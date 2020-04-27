@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login , logout
 from django.http import JsonResponse
 import sys
 from subprocess import run,PIPE
+from .email import *
 from .models import *
 from .forms import *
 import json
@@ -680,7 +681,7 @@ class ExportData(APIView):
 
 class DeleteData(APIView):
 	permission_classes = (IsAuthenticated,)
-	
+
 	def post(self,request):
 		user = request.user
 		Metrics.objects.filter(user_fk=user).delete()
@@ -697,3 +698,28 @@ class Activity(APIView):
 		output = ActivityPredictorOnlyAccel.evaluate_model_and_user_data_prediction(1,1,1,trainX, trainy, testX, testy)
 		print(output)
 		return JsonResponse({'activity':output})
+
+def request_reset_code(request):
+	email = request.POST.get('email')
+	if not email:
+		return JsonResponse({'msg':'Missing email field','status':0})
+	verification_code = generate_verification_code()
+	try:
+		send_verification_email(email,verification_code)
+	except Exception as e:
+		return JsonResponse({'msg':'Email does not exist'})
+	return JsonResponse({'msg':'Reset email sent successfully','status':1})
+
+def reset_password(request):
+	email = request.POST.get('email')
+	reset_code = request.POST.get('reset_code')
+	password = request.POST.get('password')
+	if not email or not reset_code or not password:
+		return JsonResponse({'msg':'Missing fields','status':0})
+	user = FitbitUser.objects.filter(email=email,reset_code=reset_code).first()
+	if not user:
+		return JsonResponse({'msg':'Wrong email or reset code','status':0})
+	user.reset_code = None
+	user.set_password(password)
+	user.save()
+	return JsonResponse({'msg':'Password reset successfully','status':1})
