@@ -120,14 +120,19 @@ export default {
   },
   methods: {
     submit () {
-      this.$q.loading.show()
 
-      let config = {
-          headers:{
-            'Content-Type': 'application/json',
-            Authorization:"Bearer "+store().state.main.token
-          }
+      let data={
+        email: this.email,
+        reset_code: this.code,
+        password: this.password,
       }
+
+      this.$axios.post(this.$store.state.main.domain + '/reset_password',data).then(response => {
+        console.log(response);
+        if (response.data.status == '1') {
+          this.$q.notify(`Password reseted successfully!`)
+        }
+      })
 
     }
   }

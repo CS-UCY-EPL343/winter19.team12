@@ -138,8 +138,19 @@ export default {
     },
       forget(){
             if(this.username!=''){
-              this.$q.notify(`Verification code sent to email!`)
-              this.$router.push("/forgetPassword")
+
+              let data={
+                username: this.username
+              }
+              this.$axios.post(this.$store.state.main.domain + '/request_reset_code',{
+              username: this.username,
+              }).then(response => {
+                console.log(response);
+                if (response.data.status == '1') {
+                  this.$q.notify(`Verification code sent to email!`)
+                  this.$router.push("/forgetPassword")
+                }
+              })
             }else{
               this.$q.notify(`Please provide the username!`)
             }

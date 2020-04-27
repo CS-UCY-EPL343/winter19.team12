@@ -700,7 +700,13 @@ class Activity(APIView):
 		return JsonResponse({'activity':output})
 
 def request_reset_code(request):
-	email = request.POST.get('email')
+	# import pdb; pdb.set_trace()
+	body = str(request.body.decode('utf-8').replace("\'", "\""))
+	body = json.loads(body)
+	username = body['username']
+	if not username:
+		return JsonResponse({'msg':'Missing username field','status':0})
+	email = FitbitUser.objects.filter(username=username).first().email
 	if not email:
 		return JsonResponse({'msg':'Missing email field','status':0})
 	verification_code = generate_verification_code()
@@ -711,9 +717,12 @@ def request_reset_code(request):
 	return JsonResponse({'msg':'Reset email sent successfully','status':1})
 
 def reset_password(request):
-	email = request.POST.get('email')
-	reset_code = request.POST.get('reset_code')
-	password = request.POST.get('password')
+	body = str(request.body.decode('utf-8').replace("\'", "\""))
+	body = json.loads(body)
+
+	email = body['email']
+	reset_code = body['reset_code']
+	password = body['password']
 	if not email or not reset_code or not password:
 		return JsonResponse({'msg':'Missing fields','status':0})
 	user = FitbitUser.objects.filter(email=email,reset_code=reset_code).first()
