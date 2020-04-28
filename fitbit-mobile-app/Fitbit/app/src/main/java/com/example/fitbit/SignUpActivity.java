@@ -2,6 +2,9 @@ package com.example.fitbit;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -17,6 +20,7 @@ public class SignUpActivity extends AppCompatActivity {
     EditText username;
     EditText password;
     EditText rePassword;
+    CheckBox termOfUse;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,10 @@ public class SignUpActivity extends AppCompatActivity {
         username=findViewById(R.id.editTextUsernameSignUp);
         password=findViewById(R.id.editTextPasswordSignUp);
         rePassword=findViewById(R.id.editTextRePasswordSignUp);
+        termOfUse=findViewById(R.id.termOfUseCheckBox);
+        String TermsofUse="I acknowledge that i agree to the <br><a href=\""+Urls.FRONT_END_URL+"/TermsAndConditions\">Terms of Use</a>,<a href=\""+Urls.FRONT_END_URL+"/PrivacyPolicy\"> Privacy Policy</a> and <a href=\""+Urls.FRONT_END_URL+"/CookiesPolicy\">Cookies Policy</a>";
+        termOfUse.setText(Html.fromHtml(TermsofUse));
+        termOfUse.setMovementMethod(LinkMovementMethod.getInstance());
         findViewById(R.id.buttonSignUp).setOnClickListener((view)->{
             if(username.getText().toString().trim().equals("")){
                 username.setError("You must provide a username");
@@ -34,6 +42,9 @@ public class SignUpActivity extends AppCompatActivity {
                 return;
             }else if(!password.getText().toString().equals(rePassword.getText().toString())){
                 rePassword.setError("Password are not matching");
+                return;
+            }else if(!termOfUse.isChecked()){
+                termOfUse.setError("You must read and accept our policy");
                 return;
             }
             CallAPI request=new CallAPI("POST", output -> {
@@ -56,8 +67,6 @@ public class SignUpActivity extends AppCompatActivity {
                 }
 
             });
-            //String params = String.format("{\"username\":\"%s\",\"password\":\"%s\",\"repeat_password\":\"%s\"}",username.getText().toString(),password.getText().toString(),rePassword.getText().toString());
-
             request.execute(Urls.SERVER_URL+Urls.SIGNUP_ENDPOINT,"username",username.getText().toString(),"password",password.getText().toString(),"repeat_password",rePassword.getText().toString());
         });
 
