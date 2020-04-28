@@ -87,66 +87,6 @@
       "value": ""
     }]
   }, {
-    "id": "bf28a6cb-e293-45ab-aede-201a6818d150",
-    "name": "LinkToGithub Test",
-    "commands": [{
-      "id": "eb1c23bf-19f4-41a4-b449-af9f0169d176",
-      "comment": "",
-      "command": "open",
-      "target": "/",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "ab61628b-0603-4a74-a1ce-099ee579b87a",
-      "comment": "",
-      "command": "setWindowSize",
-      "target": "1552x880",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "c1cd5646-e720-4d44-8ce3-5a63d80af6ab",
-      "comment": "",
-      "command": "click",
-      "target": "css=.q-item:nth-child(7) .q-item__label:nth-child(1)",
-      "targets": [
-        ["css=.q-item:nth-child(7) .q-item__label:nth-child(1)", "css:finder"],
-        ["xpath=//div[@id='q-app']/div/div/aside/div/div/a[7]/div[3]/div", "xpath:idRelative"],
-        ["xpath=//a[7]/div[3]/div", "xpath:position"]
-      ],
-      "value": "",
-      "opensWindow": true,
-      "windowHandleName": "win9647",
-      "windowTimeout": 2000
-    }, {
-      "id": "1ddd29c3-06ce-41f9-874f-e0f6ccdaeffa",
-      "comment": "",
-      "command": "storeWindowHandle",
-      "target": "root",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "a29888e7-4cb6-489f-8d95-4a0014d436fe",
-      "comment": "",
-      "command": "selectWindow",
-      "target": "handle=${win9647}",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "6c0d8ea0-3888-4939-a40e-356269e378bd",
-      "comment": "",
-      "command": "close",
-      "target": "",
-      "targets": [],
-      "value": ""
-    }, {
-      "id": "0cb59949-7e62-4aff-abf2-26a6baafb86c",
-      "comment": "",
-      "command": "selectWindow",
-      "target": "handle=${root}",
-      "targets": [],
-      "value": ""
-    }]
-  }, {
     "id": "eb3c18b3-36b7-4cd6-8724-1da292afdc10",
     "name": "NoteDelete Test",
     "commands": [{
