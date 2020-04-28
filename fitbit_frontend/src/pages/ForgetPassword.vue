@@ -131,6 +131,9 @@ export default {
         console.log(response);
         if (response.data.status == '1') {
           this.$q.notify(`Password reseted successfully!`)
+          this.$router.push({ name: 'login'})
+        }else{
+          this.$q.notify(`An error have occured!`)
         }
       })
 
