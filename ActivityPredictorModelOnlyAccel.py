@@ -15,8 +15,8 @@ from keras.layers import ConvLSTM2D
 import sys
 import numpy as np
 import pandas as pd
-from sklearn.experimental import enable_iterative_imputer
-from sklearn.impute import IterativeImputer
+#from sklearn.experimental import enable_iterative_imputer
+#from sklearn.impute import IterativeImputer
 from keras.models import model_from_json
 
 import os

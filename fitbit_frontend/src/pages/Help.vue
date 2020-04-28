@@ -33,15 +33,66 @@
       <q-separator />
 
       <q-card-actions vertical>
-        <q-btn flat>Delete Data</q-btn>
-        <q-btn flat>Retrive Data</q-btn>
+        <q-btn flat @click='delete_data()'>Delete Data</q-btn>
+        <q-btn flat @click='retrieve_data()'>Retrieve Data</q-btn>
       </q-card-actions>
     </q-card>
 </div>
 </template>
 
 <script>
+import store from 'src/store/index'
+import axios from 'axios'
+import { exportFile } from 'quasar'
+
 export default {
-  name: 'Help'
+  name: 'Help',
+  methods:{
+
+    delete_data() {
+
+      let config = {
+          headers: {
+            Authorization:"Bearer "+ store().state.main.token
+          }
+      }
+      console.log(store().state.main.token);
+      this.$axios.post(this.$store.state.main.domain + '/delete_data',"",config).then(response => {
+        console.log(response);
+        if (response.data.status == '1') {
+          this.$q.notify(`Data Deleted successfully!`)
+        }
+      });
+
+    },
+    retrieve_data() {
+      let config = {
+        headers:{
+          Authorization:"Bearer "+store().state.main.token
+        }
+      }
+
+      axios.get(this.$store.state.main.domain + '/export_data',config).then(response => {
+
+        //Download data
+        const content = [response.request.response]
+        const status = exportFile(
+        'data.json',
+        content,
+        'text/json'
+      )
+
+      if (status !== true) {
+        this.$q.notify({
+          message: 'Browser denied file download...',
+          color: 'negative',
+          icon: 'warning'
+        })
+      }
+        this.$q.notify(`Data Retrieved`)
+      });
+    }
+  }
 }
+
 </script>

@@ -19,6 +19,11 @@
             android:icon="@drawable/ic_chart2"
             android:title="@string/history_heartbeat" />
         <item
+            android:id="@+id/nav_comparison"
+            android:checked="false"
+            android:icon="@drawable/ic_chart2"
+            android:title="Metrics comparison" />
+        <item
             android:id="@+id/nav_permissions"
             android:checked="false"
             android:icon="@drawable/ic_permission"

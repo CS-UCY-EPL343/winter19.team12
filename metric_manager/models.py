@@ -10,6 +10,7 @@ class FitbitUser(AbstractUser):
     gender = models.CharField(max_length=10,null=True)
     address = models.CharField(max_length=20,null=True)
     is_specialist = models.BooleanField(default=False)
+    reset_code = models.CharField(null=True,max_length=10)
 
 class Monitor(models.Model):
     from_user = models.ForeignKey(

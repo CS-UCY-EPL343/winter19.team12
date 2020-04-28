@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login , logout
 from django.http import JsonResponse
 import sys
+from subprocess import run,PIPE
+from .email import *
 from .models import *
 from .forms import *
 import json
@@ -26,7 +28,7 @@ from django.db.models import F
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import CharField
 from django.db.models.functions import Cast
-
+import ActivityPredictorOnlyAccel
 # Create your views here.
 
 
@@ -44,6 +46,7 @@ class Register(APIView):
 				username = form.cleaned_data['username']
 				password = form.cleaned_data['password1']
 				is_specialist = form.cleaned_data['type']
+				email = form.cleaned_data['email']
 				user = authenticate(username=username, password=password,is_specialist=is_specialist)
 				login(request, user)
 				return redirect('index')
@@ -149,12 +152,18 @@ class RetrieveHistoryMetrics(APIView):
 	permission_classes = (IsAuthenticated,)
 	def post(self,request):
 		if request.method == "POST":
-			body = str(request.body.decode('utf-8').replace("\'", "\""))
-			body = json.loads(body)
-			username = body.get("username")
-			type_metric = body.get("type_metric")
-			startDate = body.get("startDate")
-			endDate = body.get("endDate")
+			try:
+				body = str(request.body.decode('utf-8').replace("\'", "\""))
+				body = json.loads(body)
+				username = body.get("username")
+				type_metric = body.get("type_metric")
+				startDate = body.get("startDate")
+				endDate = body.get("endDate")
+			except Exception as e:
+				username=request.POST['username']
+				type_metric=request.POST['type_metric']
+				startDate=request.POST['startDate']
+				endDate=request.POST['endDate']
 			start_list = startDate.split("-")
 			end_list = endDate.split("-")
 
@@ -219,6 +228,7 @@ def register_api(request):
 	username = body.get('username')
 	password = body.get('password')
 	password_r = body.get('repeat_password')
+	email = body.get('email')
 	if body.get('type') == 'specialist_select':
 		type=True
 	else:
@@ -230,13 +240,15 @@ def register_api(request):
 		return JsonResponse({'required':'password'})
 	if not password_r:
 		return JsonResponse({'required':'repeat_password'})
+	if not email:
+		return JsonResponse({'required':'email'})
 	if not body.get('type'):
 		return JsonResponse({'required':'type'})
 	if password!=password_r:
 		return JsonResponse({'error':'password not equal repeat password'})
 	if len(FitbitUser.objects.filter(username=username))>0:
 		return JsonResponse({'error':'username already exists'})
-	user = FitbitUser.objects.create_user(username,'testmail@test.com',password,is_specialist=type)
+	user = FitbitUser.objects.create_user(username,email,password,is_specialist=type)
 	login(request,user)
 	return JsonResponse({'status':1})
 
@@ -524,9 +536,6 @@ class GraphView(APIView):
 
 
 
-
-
-
 class AuthView(APIView):
     permission_classes = (IsAuthenticated,)
     def post(self, request):
@@ -547,7 +556,6 @@ class PermissionManager(APIView):
 		print(request.user.username)
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
-
 		username = body['username']
 		if not username:
 			return JsonResponse({'status':0,'msg':'missing fields'})
@@ -557,7 +565,7 @@ class PermissionManager(APIView):
 			request.user.is_specialist
 			and not FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if 'reject' in body and (body['reject']=='True' or body['reject']==True):
+			if body.get('reject') and body['reject']=='True':
 				rejected=True
 			else:
 				rejected=False
@@ -567,6 +575,7 @@ class PermissionManager(APIView):
 			if rejected:
 				user_deleted = req.from_user
 				user = req.delete()
+				print(response_user)
 				return JsonResponse({'status':1,
 									 'msg':'Rejected successfuly',
 									 'username':user_deleted.username,
@@ -579,7 +588,7 @@ class PermissionManager(APIView):
 			not request.user.is_specialist
 			and FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if 'reject' in body and (body['reject']=='True' or body['reject']==True):
+			if body.get('reject') and body['reject']=='True':
 				rejected=True
 			else:
 				rejected=False
@@ -590,7 +599,15 @@ class PermissionManager(APIView):
 				permission_record = Monitor(from_user=request.user,to_user=to_user)
 				permission_record.save()
 			elif rejected:
-				Monitor.objects.filter(from_user=request.user,to_user=to_user).delete()
+				user_row = Monitor.objects.filter(from_user=request.user,to_user=to_user)
+				user_deleted = user_row.first().to_user
+				user_row.delete()
+				return JsonResponse({'status':1,
+									 'msg':'Rejected successfuly',
+									 'username':user_deleted.username,
+	 								 'first_name':user_deleted.first_name,
+	 								 'last_name':user_deleted.last_name,
+	 								 'telephone':user_deleted.telephone})
 		else:
 			return JsonResponse({'status':0,'msg':'Wrong user type'})
 			#update db that request has been accepted
@@ -649,9 +666,9 @@ class ExportData(APIView):
 				'username':user.username,
 				'first_name':user.first_name,
 				'last_name':user.last_name,
-				'birthday':user.birthdate,
+				'birthday':str(user.birthdate),
 				'height':user.height,
-				'date':user.birthdate,
+				'date':str(user.birthdate),
 				'is_specialist':user.is_specialist,
 				'email':user.email
 			},
@@ -666,29 +683,56 @@ class ExportData(APIView):
 		response['Content-Disposition'] = 'attachment; filename=data.json'
 		return response
 
+class DeleteData(APIView):
+	permission_classes = (IsAuthenticated,)
 
-def output(request):
-	data=requests.get("https://reqres.in/api/users")
-	print(data.text)
-	data=data.text
-	return render(request,'livegraph\graph.html',{'data':data})
+	def post(self,request):
+		user = request.user
+		Metrics.objects.filter(user_fk=user).delete()
+		Notes.objects.filter(Q(id_writer=user) | Q(id_reader=user)).delete()
+		Monitor.objects.filter(Q(from_user=user) | Q(to_user=user)).delete()
+		return JsonResponse({'status':1})
 
-def external(request):
-	# Input of user. Is static here, but need to get the following array values from db and continue.
-	accel=[1,1,1]
-	gyro=[1,1,1]
-	# Executing with the above data the script of prediction of both sensors.
-	# Just the accel metrics to be used and teh script name change if only accel prediction to be made.
-	# Both scripts in github.
-	output=run([sys.executable,'winter19.team12//ActivityPredictor.py',accel[0],accel[1],accel[2],gyro[0],gyro[1],gyro[2]],shell=False,stdout=PIPE) #You can pass input layer. Check bookmarks
-	print(output)
-	
-	# This part to insert metrics in db.
-	record = Metrics(user_fk=user_row,amount=item['amount'],type=metric_desc,output=output)
-	record.save()
-	
-	#out = output.stdout.splitlines()
-	#out=str(out).strip('b[\'\']')
-	
-	#Display data in frontend.
-	return render(request,'livegraph\graph.html',{'data1': output.stdout})
+class Activity(APIView):
+	permission_classes = (IsAuthenticated,)
+	def get(self,request):
+		#import pdb; pdb.set_trace();
+		user = request.user
+		trainX, trainy, testX, testy = ActivityPredictorOnlyAccel.load_dataset()
+		output = ActivityPredictorOnlyAccel.evaluate_model_and_user_data_prediction(1,1,1,trainX, trainy, testX, testy)
+		print(output)
+		return JsonResponse({'activity':output})
+
+def request_reset_code(request):
+	# import pdb; pdb.set_trace()
+	body = str(request.body.decode('utf-8').replace("\'", "\""))
+	body = json.loads(body)
+	username = body['username']
+	if not username:
+		return JsonResponse({'msg':'Missing username field','status':0})
+	email = FitbitUser.objects.filter(username=username).first().email
+	if not email:
+		return JsonResponse({'msg':'Missing email field','status':0})
+	verification_code = generate_verification_code()
+	try:
+		send_verification_email(email,verification_code)
+	except Exception as e:
+		return JsonResponse({'msg':'Email does not exist'})
+	return JsonResponse({'msg':'Reset email sent successfully','status':1})
+
+def reset_password(request):
+	body = str(request.body.decode('utf-8').replace("\'", "\""))
+	body = json.loads(body)
+
+	email = body['email']
+	reset_code = body['reset_code']
+	password = body['password']
+	if not email or not reset_code or not password:
+		return JsonResponse({'msg':'Missing fields','status':0})
+	user = FitbitUser.objects.filter(email=email,reset_code=reset_code).first()
+	if not user:
+		return JsonResponse({'msg':'Wrong email or reset code','status':0})
+	user.reset_code = None
+	user.set_password(password)
+	user.save()
+	return JsonResponse({'msg':'Password reset successfully','status':1})

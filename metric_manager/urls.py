@@ -28,8 +28,10 @@ urlpatterns = [
     path('change_password', views.change_password, name='change_password'),
     path('permission_request', views.PermissionManager.as_view(), name='permission_request'),
     path('export_data', views.ExportData.as_view(), name='export_data'),
-	path('output', views.output,name='script'),
-	path('external', views.external)
+	path('activity', views.Activity.as_view(), name='activity'),
+    path('delete_data',views.DeleteData.as_view(),name='delete_data'),
+    path('request_reset_code',views.request_reset_code,name='request_reset_code'),
+    path('reset_password',views.reset_password,name='reset_password')
 ]
 try:
     fixture_manager.load_fixtures()
