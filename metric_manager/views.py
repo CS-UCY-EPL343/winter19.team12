@@ -46,6 +46,7 @@ class Register(APIView):
 				username = form.cleaned_data['username']
 				password = form.cleaned_data['password1']
 				is_specialist = form.cleaned_data['type']
+				email = form.cleaned_data['email']
 				user = authenticate(username=username, password=password,is_specialist=is_specialist)
 				login(request, user)
 				return redirect('index')
@@ -227,6 +228,7 @@ def register_api(request):
 	username = body.get('username')
 	password = body.get('password')
 	password_r = body.get('repeat_password')
+	email = body.get('email')
 	if body.get('type') == 'specialist_select':
 		type=True
 	else:
@@ -238,13 +240,15 @@ def register_api(request):
 		return JsonResponse({'required':'password'})
 	if not password_r:
 		return JsonResponse({'required':'repeat_password'})
+	if not email:
+		return JsonResponse({'required':'email'})
 	if not body.get('type'):
 		return JsonResponse({'required':'type'})
 	if password!=password_r:
 		return JsonResponse({'error':'password not equal repeat password'})
 	if len(FitbitUser.objects.filter(username=username))>0:
 		return JsonResponse({'error':'username already exists'})
-	user = FitbitUser.objects.create_user(username,'testmail@test.com',password,is_specialist=type)
+	user = FitbitUser.objects.create_user(username,email,password,is_specialist=type)
 	login(request,user)
 	return JsonResponse({'status':1})
 

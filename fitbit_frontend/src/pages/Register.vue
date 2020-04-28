@@ -20,6 +20,20 @@
               <q-icon name='face' />
             </template>
           </q-input>
+
+          <q-input :label="$t('email')"
+                   :hint="$t('email_hint')"
+                   type='text'
+                   v-model='email'
+                   ref='email'
+                   outlined bottom-slots
+          >
+            <template v-slot:prepend>
+              <q-icon name='email' />
+            </template>
+          </q-input>
+
+
           <q-input :label="$t('password')"
                    :hint="$t('password_hint')"
                    :rules='passwordRules'
@@ -159,6 +173,7 @@ export default {
         username: this.username,
         password: this.password,
         repeat_password: this.retypePassword,
+        email: this.email,
         type: this.type
       }
 
