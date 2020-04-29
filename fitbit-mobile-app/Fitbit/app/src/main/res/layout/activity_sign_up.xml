@@ -72,7 +72,7 @@
                         android:textColorLink="@color/colorPrimaryDark"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/editTextUsernameSignUp" />
+                        app:layout_constraintTop_toBottomOf="@+id/editTextEmail" />
 
                 <EditText
                         android:id="@+id/editTextRePasswordSignUp"
@@ -137,10 +137,10 @@
                         android:id="@+id/imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
+                        android:layout_marginTop="8dp"
                         android:contentDescription="@string/password"
                         app:layout_constraintEnd_toStartOf="@+id/editTextPasswordSignUp"
-                        app:layout_constraintTop_toBottomOf="@+id/editTextUsernameSignUp"
+                        app:layout_constraintTop_toTopOf="@+id/editTextPasswordSignUp"
                         app:srcCompat="@drawable/ic_lock" />
 
                 <ImageView
@@ -157,10 +157,10 @@
                         android:id="@+id/imageView3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="32dp"
+                        android:layout_marginTop="8dp"
                         android:contentDescription="@string/username"
-                        app:layout_constraintBottom_toTopOf="@+id/imageView"
                         app:layout_constraintEnd_toStartOf="@+id/editTextUsernameSignUp"
+                        app:layout_constraintTop_toTopOf="@+id/editTextUsernameSignUp"
                         app:srcCompat="@drawable/ic_person" />
 
                 <CheckBox
@@ -168,12 +168,34 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="@string/privacy_policy"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="@+id/editTextRePasswordSignUp"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/imageView16"
                         app:layout_constraintTop_toBottomOf="@+id/editTextRePasswordSignUp" />
+
+                <EditText
+                        android:id="@+id/editTextEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/editTextUsernameSignUp"
+                        android:autofillHints="" />
+
+                <ImageView
+                        android:id="@+id/imageView15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:contentDescription="@string/email"
+                        app:layout_constraintEnd_toStartOf="@+id/editTextEmail"
+                        app:layout_constraintTop_toTopOf="@+id/editTextEmail"
+                        app:srcCompat="@drawable/ic_mail" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

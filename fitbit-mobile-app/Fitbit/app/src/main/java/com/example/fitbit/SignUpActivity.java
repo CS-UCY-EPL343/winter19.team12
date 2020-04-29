@@ -3,7 +3,9 @@ package com.example.fitbit;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Patterns;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,6 +21,7 @@ public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
     EditText username;
     EditText password;
+    EditText email;
     EditText rePassword;
     CheckBox termOfUse;
 
@@ -28,14 +31,18 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
         username=findViewById(R.id.editTextUsernameSignUp);
         password=findViewById(R.id.editTextPasswordSignUp);
+        email=findViewById(R.id.editTextEmail);
         rePassword=findViewById(R.id.editTextRePasswordSignUp);
         termOfUse=findViewById(R.id.termOfUseCheckBox);
-        String TermsofUse="I acknowledge that i agree to the <br><a href=\""+Urls.FRONT_END_URL+"/TermsAndConditions\">Terms of Use</a>,<a href=\""+Urls.FRONT_END_URL+"/PrivacyPolicy\"> Privacy Policy</a> and <a href=\""+Urls.FRONT_END_URL+"/CookiesPolicy\">Cookies Policy</a>";
-        termOfUse.setText(Html.fromHtml(TermsofUse));
+        String TermsOfUse="I acknowledge that i agree to the <br><a href=\""+Urls.FRONT_END_URL+"/TermsAndConditions\">Terms of Use</a>,<a href=\""+Urls.FRONT_END_URL+"/PrivacyPolicy\"> Privacy Policy</a> and <a href=\""+Urls.FRONT_END_URL+"/CookiesPolicy\">Cookies Policy</a>";
+        termOfUse.setText(Html.fromHtml(TermsOfUse));
         termOfUse.setMovementMethod(LinkMovementMethod.getInstance());
         findViewById(R.id.buttonSignUp).setOnClickListener((view)->{
             if(username.getText().toString().trim().equals("")){
                 username.setError("You must provide a username");
+                return;
+            }else if(TextUtils.isEmpty(email.getText()) || !Patterns.EMAIL_ADDRESS.matcher(email.getText()).matches()){
+                email.setError("You must provide a valid email");
                 return;
             }else if(password.getText().toString().equals("")){
                 password.setError("You must provide a password");
@@ -67,7 +74,7 @@ public class SignUpActivity extends AppCompatActivity {
                 }
 
             });
-            request.execute(Urls.SERVER_URL+Urls.SIGNUP_ENDPOINT,"username",username.getText().toString(),"password",password.getText().toString(),"repeat_password",rePassword.getText().toString());
+            request.execute(Urls.SERVER_URL+Urls.SIGNUP_ENDPOINT,"username",username.getText().toString(),"password",password.getText().toString(),"repeat_password",rePassword.getText().toString(),"email",email.getText().toString());
         });
 
         findViewById(R.id.textViewLogin).setOnClickListener((view)->{
