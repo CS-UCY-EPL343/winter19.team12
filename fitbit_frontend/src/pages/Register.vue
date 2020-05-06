@@ -1,4 +1,4 @@
-<template>
+htm<template>
   <q-page class="flex flex-center">
     <q-card class='full-width' style='max-width: 700px'>
       <q-card-section class='bg-grey-1'>

@@ -77,6 +77,7 @@ z<template>
                    type='text'
                    v-model='email'
                    ref='email'
+                   :rules="[val => !!val || 'Email is missing', isValidEmail]"
                    outlined bottom-slots
                    dense
           >
@@ -255,7 +256,11 @@ export default {
         }
         this.$q.loading.hide()
       })
-    }
+    },
+    isValidEmail () {
+      const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailPattern.test(this.email) || 'Invalid email';
+  }
   },
   mounted () {
     this.fetchUserData()
