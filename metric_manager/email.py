@@ -20,7 +20,7 @@ EMAIL_HTML="""
         </p>
         <p>If you did not request this code, please let us know.</p><br><br>
         <p>Thanks,<br>
-        Serums Team</p>
+        Fitbit EPL449 Team</p>
     </body>
 </html>
 """

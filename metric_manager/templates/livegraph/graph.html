@@ -91,6 +91,7 @@ function updateGraph(type){
   $.ajax({
     method: "GET",
     url: LATEST_URL,
+    headers: { "Authorization": "{{token}}" },
     data: { 'type': METRIC_TYPE}
   })
   .done(function( data ) {
@@ -179,4 +180,4 @@ series.events.on("validated", function() {
 <!-- HTML -->
 <div id="chartdiv"></div>
 
-<div id="activitydic">You activity is: {{data1}} </div>
+<div id="activitydic">{{data1}} </div>
