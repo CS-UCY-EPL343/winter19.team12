@@ -60,7 +60,7 @@
               <q-icon name="supervised_user_circle" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Select Doctor</q-item-label>
+              <q-item-label>Select Specialist</q-item-label>
             </q-item-section>
           </q-item>
 
