@@ -189,11 +189,12 @@ export default {
             'password': this.password
           }).then(response => {
             if (response.data.access) {
-              this.$store.commit('main/login', {'username':this.username,'token':response.data.access})
               if (this.type == 'specialist_select') {
+                this.$store.commit('main/login', {'username':this.username,'token':response.data.access,'is_specialist':true})
                 this.$router.push({ name: 'monitor' }) // Redirect to monitor
               }
               else {
+                this.$store.commit('main/login', {'username':this.username,'token':response.data.access,'is_specialist':false})
                 this.$router.push({ name: 'dashboard' }) // Redirect to dashboard
               }
             }
