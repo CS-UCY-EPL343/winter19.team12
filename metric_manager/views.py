@@ -556,6 +556,7 @@ class PermissionManager(APIView):
 		print(request.user.username)
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
+
 		username = body['username']
 		if not username:
 			return JsonResponse({'status':0,'msg':'missing fields'})
@@ -574,14 +575,15 @@ class PermissionManager(APIView):
 			req = Monitor.objects.filter(from_user=from_user,to_user=to_user).first()
 			if rejected:
 				user_deleted = req.from_user
+				response_user = {'username':user_deleted.username,
+								 'first_name':user_deleted.first_name,
+								 'last_name':user_deleted.last_name,
+								 'telephone':user_deleted.telephone}
 				user = req.delete()
 				print(response_user)
 				return JsonResponse({'status':1,
 									 'msg':'Rejected successfuly',
-									 'username':user_deleted.username,
-	 								 'first_name':user_deleted.first_name,
-	 								 'last_name':user_deleted.last_name,
-	 								 'telephone':user_deleted.telephone})
+									 'user':list(response_user)})
 			req.completed=True
 			req.save()
 		elif(
@@ -601,13 +603,14 @@ class PermissionManager(APIView):
 			elif rejected:
 				user_row = Monitor.objects.filter(from_user=request.user,to_user=to_user)
 				user_deleted = user_row.first().to_user
+				response_user = {'username':user_deleted.username,
+								 'first_name':user_deleted.first_name,
+								 'last_name':user_deleted.last_name,
+								 'telephone':user_deleted.telephone}
 				user_row.delete()
 				return JsonResponse({'status':1,
 									 'msg':'Rejected successfuly',
-									 'username':user_deleted.username,
-	 								 'first_name':user_deleted.first_name,
-	 								 'last_name':user_deleted.last_name,
-	 								 'telephone':user_deleted.telephone})
+									 'user':list(response_user)})
 		else:
 			return JsonResponse({'status':0,'msg':'Wrong user type'})
 			#update db that request has been accepted
@@ -642,7 +645,7 @@ class PermissionManager(APIView):
 												 .values('username','first_name','last_name','telephone')
 		return JsonResponse({'specialists_sent':list(specialists_sent),
 							 'specialists_not_sent':list(specialists_not_sent)})
-
+							 
 class DateTimeEncoder(json.JSONEncoder):
         #Override the default method
         def default(self, obj):
