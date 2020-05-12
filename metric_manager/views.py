@@ -556,7 +556,6 @@ class PermissionManager(APIView):
 		print(request.user.username)
 		body = str(request.body.decode('utf-8').replace("\'", "\""))
 		body = json.loads(body)
-
 		username = body['username']
 		if not username:
 			return JsonResponse({'status':0,'msg':'missing fields'})
@@ -566,7 +565,7 @@ class PermissionManager(APIView):
 			request.user.is_specialist
 			and not FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if body.get('reject') and body['reject']==True:
+			if body.get('reject') and (body['reject']==True or body['reject']=='True'):
 				rejected=True
 			else:
 				rejected=False
@@ -590,17 +589,14 @@ class PermissionManager(APIView):
 			not request.user.is_specialist
 			and FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if body.get('reject') and body['reject']==True:
+			if body.get('reject') and (body['reject']==True or body['reject']=='True'):
 				rejected=True
 			else:
 				rejected=False
 			from_user = request.user
 			to_user = FitbitUser.objects.filter(username=username).first()
 			#store in db that request is sent
-			if len(Monitor.objects.filter(from_user=request.user,to_user=to_user,completed=False))==0:
-				permission_record = Monitor(from_user=request.user,to_user=to_user)
-				permission_record.save()
-			elif rejected:
+			if rejected:
 				user_row = Monitor.objects.filter(from_user=request.user,to_user=to_user)
 				user_deleted = user_row.first().to_user
 				response_user = {'username':user_deleted.username,
@@ -611,6 +607,9 @@ class PermissionManager(APIView):
 				return JsonResponse({'status':1,
 									 'msg':'Rejected successfuly',
 									 'user':list(response_user)})
+			elif len(Monitor.objects.filter(from_user=request.user,to_user=to_user,completed=False))==0:
+				permission_record = Monitor(from_user=request.user,to_user=to_user)
+				permission_record.save()
 		else:
 			return JsonResponse({'status':0,'msg':'Wrong user type'})
 			#update db that request has been accepted
@@ -645,7 +644,7 @@ class PermissionManager(APIView):
 												 .values('username','first_name','last_name','telephone')
 		return JsonResponse({'specialists_sent':list(specialists_sent),
 							 'specialists_not_sent':list(specialists_not_sent)})
-							 
+
 class DateTimeEncoder(json.JSONEncoder):
         #Override the default method
         def default(self, obj):
