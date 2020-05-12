@@ -588,7 +588,7 @@ class PermissionManager(APIView):
 			not request.user.is_specialist
 			and FitbitUser.objects.filter(username=username).first().is_specialist
 		):
-			if body.get('reject') and body['reject']=='True':
+			if body.get('reject') and body['reject']==True:
 				rejected=True
 			else:
 				rejected=False
