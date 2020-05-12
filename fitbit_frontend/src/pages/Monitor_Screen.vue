@@ -225,7 +225,7 @@ export default {
           this.$axios.post(this.$store.state.main.domain + '/permission_request',data,config).then(response => {
             console.log(response);
             if (response.data.status == '1') {
-              this.$q.notify(`Patient rejected!`)
+              this.$q.notify(`Patient deleted!`)
             }
           })
           location.reload();
