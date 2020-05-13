@@ -577,12 +577,11 @@ class PermissionManager(APIView):
 				response_user = {'username':user_deleted.username,
 								 'first_name':user_deleted.first_name,
 								 'last_name':user_deleted.last_name,
-								 'telephone':user_deleted.telephone}
+								 'telephone':user_deleted.telephone,
+								 'status':1}
 				user = req.delete()
 				print(response_user)
-				return JsonResponse({'status':1,
-									 'msg':'Rejected successfuly',
-									 'user':list(response_user)})
+				return JsonResponse(response_user)
 			req.completed=True
 			req.save()
 		elif(
@@ -602,11 +601,10 @@ class PermissionManager(APIView):
 				response_user = {'username':user_deleted.username,
 								 'first_name':user_deleted.first_name,
 								 'last_name':user_deleted.last_name,
-								 'telephone':user_deleted.telephone}
+								 'telephone':user_deleted.telephone,
+								 'status':1}
 				user_row.delete()
-				return JsonResponse({'status':1,
-									 'msg':'Rejected successfuly',
-									 'user':list(response_user)})
+				return JsonResponse(response_user)
 			elif len(Monitor.objects.filter(from_user=request.user,to_user=to_user,completed=False))==0:
 				permission_record = Monitor(from_user=request.user,to_user=to_user)
 				permission_record.save()
