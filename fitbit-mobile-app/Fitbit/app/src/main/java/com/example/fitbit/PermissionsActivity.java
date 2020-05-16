@@ -49,7 +49,7 @@ public class PermissionsActivity extends AppCompatActivity {
 
             for (int i = 0; i < specialistsSend.length(); i++) {
                 JSONObject specialist = specialistsSend.getJSONObject(i);
-                nameArray[i] = specialist.getString("first_name") + specialist.getString("last_name");
+                nameArray[i] = specialist.getString("first_name") + " " + specialist.getString("last_name");
                 username[i] = specialist.getString("username");
                 secondaryArray[i] = specialist.getBoolean("completed") ? getResources().getString(R.string.accept_permission) : getResources().getString(R.string.pending_acceptance);
             }
